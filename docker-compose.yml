@@ -2,6 +2,7 @@ version: '2.1'
 services:
   trudesk:
     image: trudesk
+    container_name: trudesk
     restart: always
     ports:
       - "8118:8118"

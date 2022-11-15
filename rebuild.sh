@@ -1,5 +1,6 @@
 #!/bin/bash
 
+docker rm trudesk
 docker rmi trudesk
 
 previous_line=""
