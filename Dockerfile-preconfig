@@ -1,0 +1,15 @@
+FROM node:16.14-alpine AS builder
+
+RUN mkdir -p /usr/src/trudesk
+WORKDIR /usr/src/trudesk
+
+COPY . /usr/src/trudesk
+
+RUN apk add --no-cache --update bash make gcc g++ python3
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --all --production
+RUN rm -rf prod_node_modules
+RUN cp -R node_modules prod_node_modules
+RUN yarn install
+
+CMD [ "/bin/bash", "/usr/src/trudesk/preconfig-done.sh" ]

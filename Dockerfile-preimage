@@ -1,0 +1,5 @@
+FROM node:16.14-alpine
+
+RUN apk add --no-cache ca-certificates bash mongodb-tools
+
+CMD [ "/bin/bash", "/usr/src/trudesk/preconfig-done.sh" ]
