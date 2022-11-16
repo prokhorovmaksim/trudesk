@@ -114,25 +114,25 @@ class ProfileDropdownPartial extends React.Component {
             </div>
           </div>
         </div>
-        <div className={'pdrop-footer'}>
-          <div className='links'>
-            <a href='https://forum.trudesk.io' target={'_blank'} rel={'noreferrer'}>
-              Community
-            </a>
-            <span>&middot;</span>
-            <a
-              href='#'
-              className={'no-ajaxy'}
-              onClick={e => {
-                e.preventDefault()
-                helpers.hideAllpDropDowns()
-                this.props.showModal('PRIVACY_POLICY')
-              }}
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </div>
+        {/* <div className={'pdrop-footer'}> */}
+        {/*   <div className='links'> */}
+        {/*     <a href='https://forum.trudesk.io' target={'_blank'} rel={'noreferrer'}> */}
+        {/*       Community */}
+        {/*     </a> */}
+        {/*     <span>&middot;</span> */}
+        {/*     <a */}
+        {/*       href='#' */}
+        {/*       className={'no-ajaxy'} */}
+        {/*       onClick={e => { */}
+        {/*         e.preventDefault() */}
+        {/*         helpers.hideAllpDropDowns() */}
+        {/*         this.props.showModal('PRIVACY_POLICY') */}
+        {/*       }} */}
+        {/*     > */}
+        {/*       Privacy Policy */}
+        {/*     </a> */}
+        {/*   </div> */}
+        {/* </div> */}
       </PDropdown>
     )
   }

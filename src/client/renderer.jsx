@@ -173,13 +173,13 @@ export default function (store) {
     ReactDOM.render(SettingsContainerWithProvider, document.getElementById('settings-container'))
   }
 
-  if (document.getElementById('about-container')) {
-    const AboutContainerWithProvider = (
-      <Provider store={store}>
-        <AboutContainer />
-      </Provider>
-    )
-
-    ReactDOM.render(AboutContainerWithProvider, document.getElementById('about-container'))
-  }
+  // if (document.getElementById('about-container')) {
+  //   const AboutContainerWithProvider = (
+  //     <Provider store={store}>
+  //       <AboutContainer />
+  //     </Provider>
+  //   )
+  //
+  //   ReactDOM.render(AboutContainerWithProvider, document.getElementById('about-container'))
+  // }
 }

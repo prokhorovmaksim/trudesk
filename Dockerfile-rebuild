@@ -1,5 +1,6 @@
 FROM trudesk-preconfig:latest as config
 COPY [".", "."]
+
 RUN yarn build
 
 FROM trudesk-preimage:latest
