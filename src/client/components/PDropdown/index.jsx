@@ -89,6 +89,11 @@ class PDropDown extends React.Component {
         if (this.props.leftOffset) left += Number(this.props.leftOffset)
 
         left = left + 'px'
+        if(ref.classList.contains('language-drop')) {
+          left0 = 170
+          left = pTriggerOffsetLeft - window.scrollX - pageOffsetLeft - left0
+          left = left + 'px'
+        }
 
         const topOffset = pTriggerOffsetTop - window.scrollY + pageOffsetTop
         let top = pTriggerHeight + topOffset

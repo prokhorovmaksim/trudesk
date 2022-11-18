@@ -4,14 +4,17 @@ import { makeObservable } from 'mobx'
 
 import PDropdown from 'components/PDropdown'
 
-
 @observer
 class LanguagesDropdownPartial extends React.Component {
-
   constructor (props) {
     super(props)
 
     makeObservable(this)
+  }
+
+  closeOnClick () {
+    const dropElem = document.getElementById('language-drop')
+    dropElem.classList.remove('pDropOpen')
   }
 
   render () {
@@ -30,11 +33,13 @@ class LanguagesDropdownPartial extends React.Component {
       >
         <div className={'ldrop-content'}>
           <div className={'language-drop-actions'}>
-            <div className={'action-change-language'}>
+            <div className={'action-change-language'}
+                 onClick={this.closeOnClick}>
               <img  src={'/img/flag_usa.png'} alt="flagUsa"/>
               <span>English</span>
             </div>
-            <div className={'action-change-language'}>
+            <div className={'action-change-language'}
+                 onClick={this.closeOnClick}>
               <img  src={'/img/flag_rus.png'} alt="flagRus"/>
               <span>Русский</span>
             </div>

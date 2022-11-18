@@ -233,8 +233,13 @@ class TopbarContainer extends React.Component {
                           className='no-ajaxy uk-vertical-align'
                           onClick={e => TopbarContainer.onLanguagesClicked(e)}
                         >
-                          <img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'} className='no-ajaxy uk-vertical-align'
-                                alt="flagUsa"/>
+                          {/*<img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'} className='material-icons'*/}
+                          {/*      alt="flagUsa"/>*/}
+                          <i className='material-icons'>
+                            <img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'}
+                                                              alt="flag"
+                                                              style={{'vertical-align' : 'bottom'}}/>
+                          </i>
                         </a>
                       </PDropdownTrigger>
                     </li>
