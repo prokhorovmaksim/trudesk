@@ -32,6 +32,8 @@ import HotKeysGlobal from 'containers/Global/HotKeysGlobal'
 import BackupRestoreOverlay from 'containers/Global/BackupRestoreOverlay'
 import ChatDock from 'containers/Global/ChatDock'
 
+import './i18n'
+
 const sagaMiddleware = createSagaMiddleware()
 
 /*eslint-disable */
