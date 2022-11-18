@@ -30,16 +30,24 @@ import NotificationsDropdownPartial from './notificationsDropdown'
 import ProfileDropdownPartial from 'containers/Topbar/profileDropdown'
 import ConversationsDropdownPartial from 'containers/Topbar/conversationsDropdown'
 import OnlineUserListPartial from 'containers/Topbar/onlineUserList'
+import languageDropdownPartial from 'containers/Topbar/languageDropdown'
 
 import helpers from 'lib/helpers'
 import Cookies from 'jscookie'
 import { NOTIFICATIONS_UPDATE, USERS_UPDATE, NOTICE_UI_SHOW, NOTICE_UI_CLEAR } from 'serverSocket/socketEventConsts'
+import LanguagesDropdownPartial from "./languageDropdown";
+
+// import flagUsa from '../../../../public/img/flag_usa.png';
+// import flagRus from'../../../../public/img/flag_rus.png';
 
 @observer
 class TopbarContainer extends React.Component {
   conversationsDropdownPartial = createRef()
   notificationsDropdownPartial = createRef()
   profileDropdownPartial = createRef()
+  languageDropdownPartial = createRef()
+
+  isRus = true
 
   @observable notificationCount = 0
   @observable activeUserCount = 0
@@ -138,6 +146,10 @@ class TopbarContainer extends React.Component {
     e.preventDefault()
   }
 
+  static onLanguagesClicked (e) {
+    e.preventDefault()
+  }
+
   render () {
     const { loadingViewData, viewdata, sessionUser } = this.props
     if (loadingViewData || !sessionUser) return <div />
@@ -214,6 +226,22 @@ class TopbarContainer extends React.Component {
                     <li className='top-bar-icon nopadding nohover'>
                       <i className='material-icons separator'>remove</i>
                     </li>
+                    <li className='top-bar-icon'>
+                      <PDropdownTrigger target={this.languageDropdownPartial}>
+                        <a
+                          title={'Change language'}
+                          className='no-ajaxy uk-vertical-align'
+                          onClick={e => TopbarContainer.onLanguagesClicked(e)}
+                        >
+                          <img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'} className='no-ajaxy uk-vertical-align'
+                                alt="flagUsa"/>
+                        </a>
+                      </PDropdownTrigger>
+                    </li>
+
+                    <li className='top-bar-icon nopadding nohover'>
+                      <i className='material-icons separator'>remove</i>
+                    </li>
 
                     <li className='profile-area profile-name'>
                       <span style={{ fontSize: 16 }}>{sessionUser.fullname}</span>
@@ -248,6 +276,7 @@ class TopbarContainer extends React.Component {
                     timezone={viewdata.get('timezone')}
                     socket={this.props.socket}
                   />
+                  <LanguagesDropdownPartial forwardedRef={this.languageDropdownPartial} />
                   <ProfileDropdownPartial forwardedRef={this.profileDropdownPartial} />
                 </div>
               </section>
