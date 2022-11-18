@@ -2,6 +2,8 @@ import React from 'react'
 import { observer } from 'mobx-react'
 import { makeObservable } from 'mobx'
 
+import i18n from '../../i18n'
+
 import PDropdown from 'components/PDropdown'
 
 @observer
@@ -15,6 +17,14 @@ class LanguagesDropdownPartial extends React.Component {
   closeOnClick () {
     const dropElem = document.getElementById('language-drop')
     dropElem.classList.remove('pDropOpen')
+  }
+
+  onLanguageChange(newLanguage) {
+    console.log('CLICKED ON:')
+    console.log(newLanguage)
+    i18n.changeLanguage(newLanguage);
+
+    this.closeOnClick()
   }
 
   render () {
@@ -34,13 +44,13 @@ class LanguagesDropdownPartial extends React.Component {
         <div className={'ldrop-content'}>
           <div className={'language-drop-actions'}>
             <div className={'action-change-language'}
-                 onClick={this.closeOnClick}>
-              <img  src={'/img/flag_usa.png'} alt="flagUsa"/>
+                 onClick={() => this.onLanguageChange("en")}>
+              <img src={'/img/flag_usa.png'} alt="flagUsa" />
               <span>English</span>
             </div>
             <div className={'action-change-language'}
-                 onClick={this.closeOnClick}>
-              <img  src={'/img/flag_rus.png'} alt="flagRus"/>
+                 onClick={() => this.onLanguageChange("ru")}>
+              <img src={'/img/flag_rus.png'} alt="flagRus" />
               <span>Русский</span>
             </div>
           </div>

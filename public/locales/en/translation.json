@@ -1,0 +1,22 @@
+{
+  "Dashboard": "Dashboard",
+  "Most active ticket...": "Most active ticket...",
+  "Most assigned support user...": "Most assigned support user...",
+  "Most comments by...": "Most comments by...",
+  "Most tickets by...": "Most tickets by...",
+  "Select Import Type": "Select Import Type",
+  "Quick Stats (Last 365 Days)": "Quick Stats (Last 365 Days)",
+  "Last Updated: ": "Last Updated: ",
+  "Ticket": "Ticket",
+  "Status": "Status",
+  "Subject": "Subject",
+  "Last Updated": "Last Updated",
+  "Cache Still Loading...": "Cache Still Loading...",
+  "Tickets Completed": "Tickets Completed",
+  "Avg Response Time": "Avg Response Time",
+  "Ticket Breakdown": "Ticket Breakdown",
+  "Overdue Tickets": "Overdue Tickets",
+  "No Data Available": "No Data Available",
+  "Total Tickets_pre": "Total Tickets (last ",
+  "Total Tickets_post": " d)"
+}

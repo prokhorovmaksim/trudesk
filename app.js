@@ -67,7 +67,7 @@ function launchInstallServer () {
 
   const ws = require('./src/webserver')
   ws.installServer(function () {
-    return winston.info('Trudesk Install Server Running...')
+    return winston.info('Time Desk Install Server Running...')
   })
 }
 
@@ -226,7 +226,7 @@ function launchServer (db) {
         if (err) throw new Error(err)
 
         ws.listen(function () {
-          winston.info('trudesk Ready')
+          winston.info('Time Desk Ready')
         })
       }
     )

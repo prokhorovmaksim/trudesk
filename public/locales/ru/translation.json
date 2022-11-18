@@ -1,3 +1,22 @@
 {
-  "dashboard": "Панель мониторинга"
+  "Dashboard": "Панель мониторинга",
+  "Most active ticket...": "Наиболее активная заявка...",
+  "Most assigned support user...": "Самый назначаемый агент поддержки...",
+  "Most comments by...": "Наибольшее количество комментариев от...",
+  "Most tickets by...": "Наибольшее количество заявок от...",
+  "Select Import Type": "Выберите тип импорта",
+  "Quick Stats (Last 365 Days)": "Статистика (за последний год)",
+  "Last Updated: ": "Последнее изменение: ",
+  "Ticket": "Заявка",
+  "Status": "Статус",
+  "Subject": "Тема",
+  "Last Updated": "Последнее изменение",
+  "Cache Still Loading...": "Загрузка кэша...",
+  "Tickets Completed": "Завершенные заявки",
+  "Avg Response Time": "Ср. время ответа",
+  "Ticket Breakdown": "История заявок",
+  "Overdue Tickets": "Просроченные заявки",
+  "No Data Available": "Нет доступной информации",
+  "Total Tickets_pre": "Всего заявок (последние ",
+  "Total Tickets_post": " дн.)"
 }

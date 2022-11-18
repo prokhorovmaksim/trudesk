@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { observable } from 'mobx'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import {
   fetchDashboardData,
@@ -26,6 +28,7 @@ import D3Pie from 'components/D3/d3pie'
 
 import moment from 'moment-timezone'
 import helpers from 'lib/helpers'
+import '../../i18n'
 
 @observer
 class DashboardContainer extends React.Component {
@@ -59,7 +62,7 @@ class DashboardContainer extends React.Component {
       ? moment(this.props.dashboardState.lastUpdated, 'MM/DD/YYYY hh:mm:ssa')
           .tz(tz)
           .format(formatString)
-      : 'Cache Still Loading...'
+      : this.props.t('Cache Still Loading...')
 
     const closedPercent = this.props.dashboardState.closedCount
       ? Math.round((this.props.dashboardState.closedCount / this.props.dashboardState.ticketCount) * 100).toString()
@@ -68,7 +71,7 @@ class DashboardContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={'Dashboard'}
+          title={this.props.t('Dashboard')}
           rightComponent={
             <div>
               <div className={'uk-float-right'} style={{ minWidth: 250 }}>
@@ -87,7 +90,7 @@ class DashboardContainer extends React.Component {
                 </div>
               </div>
               <div className={'uk-float-right uk-text-muted uk-text-small'} style={{ margin: '23px 25px 0 0' }}>
-                <strong>Last Updated: </strong>
+                <strong>{this.props.t('Last Updated: ')}</strong>
                 <span>{lastUpdatedFormatted}</span>
               </div>
             </div>
@@ -103,7 +106,7 @@ class DashboardContainer extends React.Component {
                       <PeityBar values={'5,3,9,6,5,9,7'} />
                     </div>
                     <span className='uk-text-muted uk-text-small'>
-                      Total Tickets (last {this.timespan.toString()}d)
+                      {this.props.t('Total Tickets_pre') + this.timespan.toString() + this.props.t('Total Tickets_post')}
                     </span>
 
                     <h2 className='uk-margin-remove'>
@@ -120,7 +123,7 @@ class DashboardContainer extends React.Component {
                     <div className='right uk-margin-top uk-margin-small-right'>
                       <PeityPie type={'donut'} value={(closedPercent !== 'NaN' ? closedPercent : '0') + '/100'} />
                     </div>
-                    <span className='uk-text-muted uk-text-small'>Tickets Completed</span>
+                    <span className='uk-text-muted uk-text-small'>{this.props.t('Tickets Completed')}</span>
 
                     <h2 className='uk-margin-remove'>
                       <span>{closedPercent !== 'NaN' ? closedPercent : '0'}</span>%
@@ -136,7 +139,7 @@ class DashboardContainer extends React.Component {
                     <div className='right uk-margin-top uk-margin-small-right'>
                       <PeityLine values={'5,3,9,6,5,9,7,3,5,2'} />
                     </div>
-                    <span className='uk-text-muted uk-text-small'>Avg Response Time</span>
+                    <span className='uk-text-muted uk-text-small'>{this.props.t('Avg Response Time')}</span>
 
                     <h2 className='uk-margin-remove'>
                       <CountUp endNumber={this.props.dashboardState.ticketAvg || 0} extraText={'hours'} />
@@ -149,7 +152,7 @@ class DashboardContainer extends React.Component {
               <TruCard
                 header={
                   <div className='uk-text-left'>
-                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>Ticket Breakdown</h6>
+                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>{this.props.t('Ticket Breakdown')}</h6>
                   </div>
                 }
                 fullSize={true}
@@ -207,7 +210,7 @@ class DashboardContainer extends React.Component {
                 style={{ minHeight: 250 }}
                 header={
                   <div className='uk-text-left'>
-                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>Overdue Tickets</h6>
+                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>{this.props.t('Overdue Tickets')}</h6>
                   </div>
                 }
                 content={
@@ -215,10 +218,10 @@ class DashboardContainer extends React.Component {
                     <table className='uk-table'>
                       <thead>
                         <tr>
-                          <th className='uk-text-nowrap'>Ticket</th>
-                          <th className='uk-text-nowrap'>Status</th>
-                          <th className='uk-text-nowrap'>Subject</th>
-                          <th className='uk-text-nowrap uk-text-right'>Last Updated</th>
+                          <th className='uk-text-nowrap'>{this.props.t('Ticket')}</th>
+                          <th className='uk-text-nowrap'>{this.props.t('Status')}</th>
+                          <th className='uk-text-nowrap'>{this.props.t('Subject')}</th>
+                          <th className='uk-text-nowrap uk-text-right'>{this.props.t('Last Updated')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -251,7 +254,7 @@ class DashboardContainer extends React.Component {
               <TruCard
                 header={
                   <div className='uk-text-left'>
-                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>Quick Stats (Last 365 Days)</h6>
+                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>{this.props.t('Quick Stats (Last 365 Days)')}</h6>
                   </div>
                 }
                 content={
@@ -266,7 +269,7 @@ class DashboardContainer extends React.Component {
                       <tbody>
                         <tr className='uk-table-middle'>
                           <td className='uk-width-6-10 uk-text-nowrap uk-text-muted uk-text-small'>
-                            Most tickets by...
+                            {this.props.t('Most tickets by...')}
                           </td>
                           <td id='mostRequester' className='uk-width-4-10 uk-text-right  uk-text-small'>
                             {this.props.dashboardState.mostRequester
@@ -279,7 +282,7 @@ class DashboardContainer extends React.Component {
 
                         <tr className='uk-table-middle'>
                           <td className='uk-width-6-10 uk-text-nowrap uk-text-muted uk-text-small'>
-                            Most comments by....
+                            {this.props.t('Most comments by...')}
                           </td>
                           <td id='mostCommenter' className='uk-width-4-10 uk-text-right  uk-text-small'>
                             {this.props.dashboardState.mostCommenter
@@ -292,7 +295,7 @@ class DashboardContainer extends React.Component {
 
                         <tr className='uk-table-middle'>
                           <td className='uk-width-6-10 uk-text-nowrap uk-text-muted uk-text-small'>
-                            Most assigned support user....
+                            {this.props.t('Most assigned support user...')}
                           </td>
                           <td id='mostAssignee' className='uk-width-4-10 uk-text-right  uk-text-small'>
                             {this.props.dashboardState.mostAssignee
@@ -305,7 +308,7 @@ class DashboardContainer extends React.Component {
 
                         <tr className='uk-table-middle'>
                           <td className='uk-width-6-10 uk-text-nowrap uk-text-muted uk-text-small'>
-                            Most active ticket...
+                            {this.props.t('Most active ticket...')}
                           </td>
                           <td className='uk-width-4-10 uk-text-right  uk-text-small'>
                             <a id='mostActiveTicket' href='#'>
@@ -340,9 +343,9 @@ const mapStateToProps = state => ({
   dashboardState: state.dashboardState
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   fetchDashboardData,
   fetchDashboardTopGroups,
   fetchDashboardTopTags,
   fetchDashboardOverdueTickets
-})(DashboardContainer)
+}))(DashboardContainer)

@@ -13,6 +13,7 @@
  */
 
 import React, { createRef } from 'react'
+import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types'
 import PageTitle from 'components/PageTitle'
 import PageContent from 'components/PageContent'
@@ -76,7 +77,7 @@ class AccountsImportContainer extends React.Component {
         <PageContent>
           <div className='uk-grid uk-grid-medium uk-margin-medium-bottom js-wizard-select-wrapper'>
             <div className='uk-width-1-1 uk-margin-small-bottom'>
-              <h3>Select Import Type</h3>
+              <h3>{this.props.t('Select Import Type')}</h3>
             </div>
             <div className='uk-width-1-3'>
               <div
@@ -386,4 +387,4 @@ class AccountsImportContainer extends React.Component {
 
 AccountsImportContainer.propTypes = {}
 
-export default AccountsImportContainer
+export default withTranslation() (AccountsImportContainer)
