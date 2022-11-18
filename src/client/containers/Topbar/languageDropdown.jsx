@@ -19,12 +19,19 @@ class LanguagesDropdownPartial extends React.Component {
     dropElem.classList.remove('pDropOpen')
   }
 
+  changeFlag(newLanguage) {
+    const flagElem = document.getElementById('flag-language')
+    const newImage = newLanguage === 'ru' ? '/img/flag_rus.png' : '/img/flag_usa.png'
+    flagElem.src = newImage
+  }
+
   onLanguageChange(newLanguage) {
     console.log('CLICKED ON:')
     console.log(newLanguage)
     i18n.changeLanguage(newLanguage);
 
     this.closeOnClick()
+    this.changeFlag(newLanguage)
   }
 
   render () {

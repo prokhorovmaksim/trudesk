@@ -47,7 +47,7 @@ class TopbarContainer extends React.Component {
   profileDropdownPartial = createRef()
   languageDropdownPartial = createRef()
 
-  isRus = true
+  isRus = false
 
   @observable notificationCount = 0
   @observable activeUserCount = 0
@@ -233,12 +233,11 @@ class TopbarContainer extends React.Component {
                           className='no-ajaxy uk-vertical-align'
                           onClick={e => TopbarContainer.onLanguagesClicked(e)}
                         >
-                          {/*<img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'} className='material-icons'*/}
-                          {/*      alt="flagUsa"/>*/}
                           <i className='material-icons'>
                             <img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'}
-                                                              alt="flag"
-                                                              style={{'vertical-align' : 'bottom'}}/>
+                                  alt="flag"
+                                  style={{'vertical-align' : 'bottom'}}
+                                  id={'flag-language'}/>
                           </i>
                         </a>
                       </PDropdownTrigger>
