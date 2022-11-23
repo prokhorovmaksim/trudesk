@@ -36,6 +36,7 @@ import helpers from 'lib/helpers'
 import Cookies from 'jscookie'
 import { NOTIFICATIONS_UPDATE, USERS_UPDATE, NOTICE_UI_SHOW, NOTICE_UI_CLEAR } from 'serverSocket/socketEventConsts'
 import LanguagesDropdownPartial from "./languageDropdown";
+import i18n from '../../i18n';
 
 // import flagUsa from '../../../../public/img/flag_usa.png';
 // import flagRus from'../../../../public/img/flag_rus.png';
@@ -47,7 +48,7 @@ class TopbarContainer extends React.Component {
   profileDropdownPartial = createRef()
   languageDropdownPartial = createRef()
 
-  isRus = false
+  isRus = i18n.language == 'ru'
 
   @observable notificationCount = 0
   @observable activeUserCount = 0

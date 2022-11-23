@@ -13,6 +13,7 @@ i18n
   .init({
     // Стандартный язык
     fallbackLng: 'en',
+    lng: localStorage.getItem('lng') || 'en',
     debug: true,
     // Распознавание и кэширование языковых кук
     detection: {

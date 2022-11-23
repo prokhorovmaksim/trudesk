@@ -28,7 +28,6 @@ import D3Pie from 'components/D3/d3pie'
 
 import moment from 'moment-timezone'
 import helpers from 'lib/helpers'
-import '../../i18n'
 
 @observer
 class DashboardContainer extends React.Component {
