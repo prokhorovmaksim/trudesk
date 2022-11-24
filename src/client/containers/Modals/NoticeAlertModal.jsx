@@ -20,6 +20,8 @@ import { hideModal } from 'actions/common'
 
 import Button from 'components/Button'
 import BaseModal from 'containers/Modals/BaseModal'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import helpers from 'lib/helpers'
 import Cookies from 'jscookie'
@@ -64,7 +66,7 @@ class NoticeAlertModal extends React.Component {
               Important: {notice.message}
             </p>
             <Button
-              text={'Confirm'}
+              text={this.props.t('Confirm')}
               flat={true}
               style={'success'}
               extraClass={'uk-float-right'}
@@ -87,7 +89,7 @@ NoticeAlertModal.propTypes = {
   hideModal: PropTypes.func.isRequired
 }
 
-export default connect(
+export default compose(withTranslation(), connect(
   null,
   { hideModal }
-)(NoticeAlertModal)
+))(NoticeAlertModal)

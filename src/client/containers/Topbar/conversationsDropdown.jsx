@@ -17,6 +17,8 @@ import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
 import moment from 'moment-timezone'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { MESSAGES_UPDATE_UI_CONVERSATION_NOTIFICATIONS } from 'serverSocket/socketEventConsts'
 import PDropDown from 'components/PDropdown'
@@ -61,7 +63,7 @@ class ConversationsDropdownPartial extends React.Component {
       <PDropDown
         ref={forwardedRef}
         id={'conversations'}
-        title={'Conversations'}
+        title={this.props.t('Conversations')}
         titleHref={'/messages'}
         topOffset={-4}
         leftOffset={4}
@@ -70,7 +72,7 @@ class ConversationsDropdownPartial extends React.Component {
         }}
         rightComponent={
           <a href={'/messages/startconversation'} className={'hoverUnderline'}>
-            Start Conversation
+            {this.props.t('Start Conversation')}
           </a>
         }
         footerComponent={
@@ -81,7 +83,7 @@ class ConversationsDropdownPartial extends React.Component {
                 History.pushState(null, null, '/messages')
               }}
             >
-              View All Conversations
+              {this.props.t('View All Conversations')}
             </a>
           </div>
         }
@@ -136,4 +138,4 @@ ConversationsDropdownPartial.propTypes = {
   forwardedRef: PropTypes.any.isRequired
 }
 
-export default ConversationsDropdownPartial
+export default compose(withTranslation())(ConversationsDropdownPartial)

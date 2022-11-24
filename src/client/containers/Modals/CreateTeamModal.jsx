@@ -17,6 +17,8 @@ import PropTypes from 'prop-types'
 import { makeObservable, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import { connect } from 'react-redux'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { fetchAccounts, unloadAccounts } from 'actions/accounts'
 import { createTeam } from 'actions/teams'
@@ -83,11 +85,11 @@ class CreateTeamModal extends React.Component {
     return (
       <BaseModal {...this.props} options={{ bgclose: false }}>
         <div className={'mb-25'}>
-          <h2>Create Team</h2>
+          <h2>{this.props.t('Create Team')}</h2>
         </div>
         <form className={'uk-form-stacked'} onSubmit={e => this.onFormSubmit(e)}>
           <div className={'uk-margin-medium-bottom'}>
-            <label>Team Name</label>
+            <label>{this.props.t('Team Name')}</label>
             <input
               type='text'
               className={'md-input'}
@@ -95,16 +97,16 @@ class CreateTeamModal extends React.Component {
               onChange={e => this.onInputChange(e)}
               data-validation='length'
               data-validation-length={'min2'}
-              data-validation-error-msg={'Please enter a valid Team name. (Must contain 2 characters)'}
+              data-validation-error-msg={this.props.t('Please enter a valid Team name. (Must contain 2 characters)')}
             />
           </div>
           <div className={'uk-margin-medium-bottom'}>
-            <label style={{ marginBottom: 5 }}>Team Members</label>
+            <label style={{ marginBottom: 5 }}>{this.props.t('Team Members')}</label>
             <MultiSelect items={mappedAccounts} onChange={() => {}} ref={r => (this.membersSelect = r)} />
           </div>
           <div className='uk-modal-footer uk-text-right'>
-            <Button text={'Close'} flat={true} waves={true} extraClass={'uk-modal-close'} />
-            <Button text={'Create Team'} flat={true} waves={true} style={'primary'} type={'submit'} />
+            <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
+            <Button text={this.props.t('Create Team')} flat={true} waves={true} style={'primary'} type={'submit'} />
           </div>
         </form>
       </BaseModal>
@@ -123,4 +125,5 @@ const mapStateToProps = state => ({
   accounts: state.accountsState.accounts
 })
 
-export default connect(mapStateToProps, { fetchAccounts, unloadAccounts, createTeam })(CreateTeamModal)
+export default compose(withTranslation(), connect(mapStateToProps, { fetchAccounts, unloadAccounts, createTeam }
+))(CreateTeamModal)

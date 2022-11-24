@@ -15,7 +15,8 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser'
 import Avatar from 'components/Avatar/Avatar'
-
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 import helpers from 'lib/helpers'
 
 const setupImages = parent => {
@@ -58,7 +59,7 @@ class CommentNotePartial extends React.Component {
           </time>
 
           <br />
-          {isNote && <span className='uk-badge uk-badge-small nomargin-left-right text-white'>NOTE</span>}
+          {isNote && <span className='uk-badge uk-badge-small nomargin-left-right text-white'>{this.props.t('NOTE')}</span>}
 
           <div className='comment-body' style={{ marginTop: 10 }} ref={r => (this.body = r)}>
             {isNote && <Fragment>{ReactHtmlParser(comment.note)}</Fragment>}
@@ -98,4 +99,4 @@ CommentNotePartial.defaultProps = {
   isNote: false
 }
 
-export default CommentNotePartial
+export default compose(withTranslation())(CommentNotePartial)

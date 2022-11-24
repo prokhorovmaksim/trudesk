@@ -18,6 +18,8 @@ import { observable, computed, makeObservable } from 'mobx'
 import { observer } from 'mobx-react'
 import sortBy from 'lodash/sortBy'
 import union from 'lodash/union'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { transferToThirdParty, fetchTicketTypes } from 'actions/tickets'
 import { fetchGroups, unloadGroups } from 'actions/groups'
@@ -296,7 +298,7 @@ class SingleTicketContainer extends React.Component {
                 style={{ width: 360, maxWidth: 360, minWidth: 360 }}
               >
                 <div className='page-title-border-right relative' style={{ padding: '0 30px' }}>
-                  <p>Ticket #{this.ticket.uid}</p>
+                  <p>{this.props.t('Ticket')} #{this.ticket.uid}</p>
                   <StatusSelector
                     ticketId={this.ticket._id}
                     status={this.ticket.status}
@@ -309,12 +311,12 @@ class SingleTicketContainer extends React.Component {
                 <div className='page-content-left full-height scrollable'>
                   <div className='ticket-details-wrap uk-position-relative uk-clearfix'>
                     <div className='ticket-assignee-wrap uk-clearfix' style={{ paddingRight: 30 }}>
-                      <h4>Assignee</h4>
+                      <h4>{this.props.t('Assignee')}</h4>
                       <div className='ticket-assignee uk-clearfix'>
                         {hasTicketUpdate && (
                           <a
                             role='button'
-                            title='Set Assignee'
+                            title={this.props.t('Set Assignee')}
                             style={{ float: 'left' }}
                             className='relative no-ajaxy'
                             onClick={() => this.props.socket.emit(TICKETS_ASSIGNEE_LOAD)}
@@ -337,7 +339,7 @@ class SingleTicketContainer extends React.Component {
                           />
                         )}
                         <div className='ticket-assignee-details'>
-                          {!this.ticket.assignee && <h3>No User Assigned</h3>}
+                          {!this.ticket.assignee && <h3>{this.props.t('No User Assigned')}</h3>}
                           {this.ticket.assignee && (
                             <Fragment>
                               <h3>{this.ticket.assignee.fullname}</h3>
@@ -368,7 +370,7 @@ class SingleTicketContainer extends React.Component {
                         {/* Type */}
                         <div className='uk-width-1-2 uk-float-left nopadding'>
                           <div className='marginright5'>
-                            <span>Type</span>
+                            <span>{this.props.t('Type')}</span>
                             {hasTicketUpdate && (
                               <select
                                 value={this.ticket.type._id}
@@ -410,7 +412,7 @@ class SingleTicketContainer extends React.Component {
                         {/* Priority */}
                         <div className='uk-width-1-2 uk-float-left nopadding'>
                           <div className='marginleft5'>
-                            <span>Priority</span>
+                            <span>{this.props.t('Priority')}</span>
                             {hasTicketUpdate && (
                               <select
                                 name='tPriority'
@@ -437,7 +439,7 @@ class SingleTicketContainer extends React.Component {
                         </div>
                         {/*  Group */}
                         <div className='uk-width-1-1 nopadding uk-clearfix'>
-                          <span>Group</span>
+                          <span>{this.props.t('Group')}</span>
                           {hasTicketUpdate && (
                             <select
                               value={this.ticket.group._id}
@@ -460,7 +462,7 @@ class SingleTicketContainer extends React.Component {
                         </div>
                         {/*  Due Date */}
                         <div className='uk-width-1-1 p-0'>
-                          <span>Due Date</span> {hasTicketUpdate && <span>-&nbsp;</span>}
+                          <span>{this.props.t('Due Date')}</span> {hasTicketUpdate && <span>-&nbsp;</span>}
                           {hasTicketUpdate && (
                             <div className={'uk-display-inline'}>
                               <a
@@ -473,7 +475,7 @@ class SingleTicketContainer extends React.Component {
                                   })
                                 }}
                               >
-                                Clear
+                                {this.props.t('Clear')}
                               </a>
                               <DatePicker
                                 name={'ticket_due_date'}
@@ -500,7 +502,7 @@ class SingleTicketContainer extends React.Component {
                         {/* Tags */}
                         <div className='uk-width-1-1 nopadding'>
                           <span>
-                            Tags
+                            {this.props.t('Tags')}
                             {hasTicketUpdate && (
                               <Fragment>
                                 <span> - </span>
@@ -516,7 +518,7 @@ class SingleTicketContainer extends React.Component {
                                       })
                                     }}
                                   >
-                                    Edit Tags
+                                    {this.props.t('Edit Tags')}
                                   </a>
                                 </div>
                               </Fragment>
@@ -537,7 +539,7 @@ class SingleTicketContainer extends React.Component {
                     {helpers.canUser('agent:*', true) && (
                       <div className='uk-width-1-1 padding-left-right-15'>
                         <div className='tru-card ticket-details pr-0 pb-0' style={{ height: 250 }}>
-                          Ticket History
+                          {this.props.t('Ticket History')}
                           <hr style={{ padding: 0, margin: 0 }} />
                           <div className='history-items scrollable' style={{ paddingTop: 12 }}>
                             {this.ticket.history &&
@@ -547,7 +549,7 @@ class SingleTicketContainer extends React.Component {
                                     dateTime={helpers.formatDate(item.date, this.props.common.get('longDateFormat'))}
                                   />
                                   <em>
-                                    Action by: <span>{item.owner.fullname}</span>
+                                    {this.props.t('Action by:')} <span>{item.owner.fullname}</span>
                                   </em>
                                   <p>{item.description}</p>
                                 </div>
@@ -572,7 +574,7 @@ class SingleTicketContainer extends React.Component {
                           this.transferToThirdParty(e)
                         }}
                       >
-                        Transfer to ThirdParty
+                        {this.props.t('Transfer to ThirdParty')}
                       </a>
                     </div>
                   )}
@@ -585,7 +587,7 @@ class SingleTicketContainer extends React.Component {
                         helpers.scrollToBottom('.page-content-right', true)
                       }}
                     >
-                      Add Comment
+                      {this.props.t('Add Comment')}
                     </a>
                   </div>
                   <div
@@ -644,21 +646,21 @@ class SingleTicketContainer extends React.Component {
                         <TruTabSelectors style={{ marginLeft: 110 }}>
                           <TruTabSelector
                             selectorId={0}
-                            label='All'
+                            label={this.props.t('All')}
                             active={true}
                             showBadge={true}
                             badgeText={this.commentsAndNotes.length}
                           />
                           <TruTabSelector
                             selectorId={1}
-                            label='Comments'
+                            label={this.props.t('Comments')}
                             showBadge={true}
                             badgeText={this.ticket ? this.ticket.comments && this.ticket.comments.length : 0}
                           />
                           {helpers.canUser('tickets:notes', true) && (
                             <TruTabSelector
                               selectorId={2}
-                              label='Notes'
+                              label={this.props.t('Notes')}
                               showBadge={true}
                               badgeText={this.ticket ? this.ticket.notes && this.ticket.notes.length : 0}
                             />
@@ -789,12 +791,12 @@ class SingleTicketContainer extends React.Component {
                           <TruTabWrapper style={{ paddingLeft: 85 }}>
                             <TruTabSelectors showTrack={false}>
                               {helpers.canUser('comments:create', true) && (
-                                <TruTabSelector selectorId={0} label={'Comment'} active={true} />
+                                <TruTabSelector selectorId={0} label={this.props.t('Comment')} active={true} />
                               )}
                               {helpers.canUser('tickets:notes', true) && (
                                 <TruTabSelector
                                   selectorId={1}
-                                  label={'Internal Note'}
+                                  label={this.props.t('Internal Note')}
                                   active={!helpers.canUser('comments:create', true)}
                                 />
                               )}
@@ -818,7 +820,7 @@ class SingleTicketContainer extends React.Component {
                                       className='uk-button uk-button-accent'
                                       style={{ padding: '10px 15px' }}
                                     >
-                                      Post Comment
+                                      {this.props.t('Post Comment')}
                                     </button>
                                   </div>
                                 </div>
@@ -843,7 +845,7 @@ class SingleTicketContainer extends React.Component {
                                       className='uk-button uk-button-accent'
                                       style={{ padding: '10px 15px' }}
                                     >
-                                      Save Note
+                                      {this.props.t('Save Note')}
                                     </button>
                                   </div>
                                 </div>
@@ -856,7 +858,7 @@ class SingleTicketContainer extends React.Component {
                 </div>
               </div>
             </div>
-            <OffCanvasEditor primaryLabel={'Save Edit'} ref={r => (this.editorWindow = r)} />
+            <OffCanvasEditor primaryLabel={this.props.t('Save Edit')} ref={r => (this.editorWindow = r)} />
           </Fragment>
         )}
       </div>
@@ -889,10 +891,10 @@ const mapStateToProps = state => ({
   groupsState: state.groupsState
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   fetchTicketTypes,
   fetchGroups,
   unloadGroups,
   showModal,
   transferToThirdParty
-})(SingleTicketContainer)
+}))(SingleTicketContainer)

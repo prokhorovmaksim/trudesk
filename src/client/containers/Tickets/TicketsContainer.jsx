@@ -17,6 +17,8 @@ import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
 import { each, without, uniq } from 'lodash'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import Log from '../../logger'
 import axios from 'axios'
@@ -142,16 +144,16 @@ class TicketsContainer extends React.Component {
       .put(`/api/v2/tickets/batch`, { batch })
       .then(res => {
         if (res.data.success) {
-          helpers.UI.showSnackbar({ text: `Ticket status set to ${statusText}` })
+          helpers.UI.showSnackbar({ text: `${this.props.t('Ticket status set to')} ${statusText}` })
           this._clearChecked()
         } else {
-          helpers.UI.showSnackbar('An unknown error occurred.', true)
+          helpers.UI.showSnackbar(this.props.t('An unknown error occurred.'), true)
           Log.error(res.data.error)
         }
       })
       .catch(error => {
         Log.error(error)
-        helpers.UI.showSnackbar('An Error occurred. Please check console.', true)
+        helpers.UI.showSnackbar(this.props.t('An Error occurred. Please check console.'), true)
       })
   }
 
@@ -251,7 +253,7 @@ class TicketsContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={'Tickets'}
+          title={this.props.t('Tickets')}
           shadow={false}
           rightComponent={
             <div>
@@ -286,14 +288,14 @@ class TicketsContainer extends React.Component {
                 <DropdownTrigger pos={'bottom-right'} offset={5} extraClass={'uk-float-left'}>
                   <PageTitleButton fontAwesomeIcon={'fa-tasks'} />
                   <Dropdown small={true} width={120}>
-                    <DropdownItem text={'Create'} onClick={() => this.props.showModal('CREATE_TICKET')} />
+                    <DropdownItem text={this.props.t('Create')} onClick={() => this.props.showModal('CREATE_TICKET')} />
                     <DropdownSeparator />
-                    <DropdownItem text={'Set Open'} onClick={() => this.onSetStatus(1)} />
-                    <DropdownItem text={'Set Pending'} onClick={() => this.onSetStatus(2)} />
-                    <DropdownItem text={'Set Closed'} onClick={() => this.onSetStatus(3)} />
+                    <DropdownItem text={this.props.t('Set Open')} onClick={() => this.onSetStatus(1)} />
+                    <DropdownItem text={this.props.t('Set Pending')} onClick={() => this.onSetStatus(2)} />
+                    <DropdownItem text={this.props.t('Set Closed')} onClick={() => this.onSetStatus(3)} />
                     {helpers.canUser('tickets:delete', true) && <DropdownSeparator />}
                     {helpers.canUser('tickets:delete', true) && (
-                      <DropdownItem text={'Delete'} extraClass={'text-danger'} onClick={() => this.onDeleteClicked()} />
+                      <DropdownItem text={this.props.t('Delete')} extraClass={'text-danger'} onClick={() => this.onDeleteClicked()} />
                     )}
                   </Dropdown>
                 </DropdownTrigger>
@@ -306,7 +308,7 @@ class TicketsContainer extends React.Component {
                     <input
                       type='text'
                       id='tickets_Search'
-                      placeholder={'Search'}
+                      placeholder={this.props.t('Search')}
                       className={'ticket-top-search'}
                       value={this.searchTerm}
                       onChange={e => this.onSearchTermChanged(e)}
@@ -329,21 +331,21 @@ class TicketsContainer extends React.Component {
             striped={true}
             headers={[
               <TableHeader key={0} width={45} height={50} component={selectAllCheckbox} />,
-              <TableHeader key={1} width={60} text={'Status'} />,
+              <TableHeader key={1} width={60} text={this.props.t('Status')} />,
               <TableHeader key={2} width={65} text={'#'} />,
-              <TableHeader key={3} width={'23%'} text={'Subject'} />,
-              <TableHeader key={4} width={110} text={'Created'} />,
-              <TableHeader key={5} width={125} text={'Requester'} />,
-              <TableHeader key={6} width={175} text={'Customer'} />,
-              <TableHeader key={7} text={'Assignee'} />,
-              <TableHeader key={8} width={110} text={'Due Date'} />,
-              <TableHeader key={9} text={'Updated'} />
+              <TableHeader key={3} width={'23%'} text={this.props.t('Subject')} />,
+              <TableHeader key={4} width={110} text={this.props.t('Created')} />,
+              <TableHeader key={5} width={125} text={this.props.t('Requester')} />,
+              <TableHeader key={6} width={175} text={this.props.t('Customer')} />,
+              <TableHeader key={7} text={this.props.t('Assignee')} />,
+              <TableHeader key={8} width={110} text={this.props.t('Due Date')} />,
+              <TableHeader key={9} text={this.props.t('Updated')} />
             ]}
           >
             {!this.props.loading && this.props.tickets.size < 1 && (
               <TableRow clickable={false}>
                 <TableCell colSpan={10}>
-                  <h5 style={{ margin: 10 }}>No Tickets Found</h5>
+                  <h5 style={{ margin: 10 }}>{this.props.t('No Tickets Found')}</h5>
                 </TableCell>
               </TableRow>
             )}
@@ -484,7 +486,7 @@ const mapStateToProps = state => ({
   socket: state.shared.socket
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   fetchTickets,
   deleteTicket,
   ticketEvent,
@@ -492,4 +494,4 @@ export default connect(mapStateToProps, {
   ticketUpdated,
   fetchSearchResults,
   showModal
-})(TicketsContainer)
+}))(TicketsContainer)
