@@ -12,7 +12,7 @@ i18n
   .use (initReactI18next)
   .init({
     // Стандартный язык
-    fallbackLng: 'en',
+    lng: localStorage.getItem('lng') || 'en',
     debug: true,
     // Распознавание и кэширование языковых кук
     detection: {

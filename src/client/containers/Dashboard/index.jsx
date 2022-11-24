@@ -78,11 +78,11 @@ class DashboardContainer extends React.Component {
                 <div style={{ marginTop: 8 }}>
                   <SingleSelect
                     items={[
-                      { text: 'Last 30 Days', value: '30' },
-                      { text: 'Last 60 Days', value: '60' },
-                      { text: 'Last 90 Days', value: '90' },
-                      { text: 'Last 180 Days', value: '180' },
-                      { text: 'Last 365 Days', value: '365' }
+                      { text: this.props.t('Last 30 Days'), value: '30' },
+                      { text: this.props.t('Last 60 Days'), value: '60' },
+                      { text: this.props.t('Last 90 Days'), value: '90' },
+                      { text: this.props.t('Last 180 Days'), value: '180' },
+                      { text: this.props.t('Last 365 Days'), value: '365' }
                     ]}
                     defaultValue={'30'}
                     onSelectChange={e => this.onTimespanChange(e)}
@@ -177,7 +177,7 @@ class DashboardContainer extends React.Component {
                 style={{ minHeight: 256 }}
                 header={
                   <div className='uk-text-left'>
-                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>Top 5 Groups</h6>
+                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>{this.props.t('Top 5 Groups')}</h6>
                   </div>
                 }
                 content={
@@ -195,7 +195,7 @@ class DashboardContainer extends React.Component {
                 style={{ minHeight: 256 }}
                 header={
                   <div className='uk-text-left'>
-                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>Top 10 Tags</h6>
+                    <h6 style={{ padding: 15, margin: 0, fontSize: '14px' }}>{this.props.t('Top 10 Tags')}</h6>
                   </div>
                 }
                 content={
@@ -262,8 +262,8 @@ class DashboardContainer extends React.Component {
                     <table className='uk-table'>
                       <thead>
                         <tr>
-                          <th className='uk-text-nowrap'>Stat</th>
-                          <th className='uk-text-nowrap uk-text-right'>Value</th>
+                          <th className='uk-text-nowrap'>{this.props.t('Stat')}</th>
+                          <th className='uk-text-nowrap uk-text-right'>{this.props.t('Value')}</th>
                         </tr>
                       </thead>
                       <tbody>

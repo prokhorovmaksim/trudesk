@@ -6,6 +6,8 @@ import Log from '../../logger'
 import axios from 'axios'
 import { fetchNotices, deleteNotice, unloadNotices } from 'actions/notices'
 import { showModal } from 'actions/common'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { NOTICE_SHOW, NOTICE_CLEAR } from 'serverSocket/socketEventConsts'
 
@@ -40,7 +42,7 @@ class NoticeContainer extends React.Component {
 
   onActivateNotice (noticeId) {
     if (!helpers.canUser('notices:activate')) {
-      helpers.UI.showSnackbar('Unauthorized', true)
+      helpers.UI.showSnackbar(this.props.t('Unauthorized'), true)
       return
     }
 
@@ -61,7 +63,7 @@ class NoticeContainer extends React.Component {
       .then(() => {
         this.props.socket.emit(NOTICE_CLEAR)
 
-        helpers.UI.showSnackbar('Notice has been deactivated', false)
+        helpers.UI.showSnackbar(this.props.t('Notice has been deactivated'), false)
       })
       .catch(err => {
         Log.error(err)
@@ -75,16 +77,16 @@ class NoticeContainer extends React.Component {
 
   onDeleteNotice (noticeId) {
     UIKit.modal.confirm(
-      `<h2>Are you sure?</h2>
+      `<h2>${this.props.t('Are you sure?')}</h2>
         <p style="font-size: 15px;">
-            <span class="uk-text-danger" style="font-size: 15px;">This is a permanent action.</span> 
+            <span class="uk-text-danger" style="font-size: 15px;">${this.props.t('This is a permanent action.')}</span> 
         </p>
         `,
       () => {
         this.props.deleteNotice({ _id: noticeId })
       },
       {
-        labels: { Ok: 'Yes', Cancel: 'No' },
+        labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
         confirmButtonClass: 'md-btn-danger'
       }
     )
@@ -135,14 +137,14 @@ class NoticeContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={'Notices'}
+          title={this.props.t('Notices')}
           shadow={false}
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               <div className={'uk-width-1-1 mt-15 uk-text-right'}>
                 {helpers.canUser('notices:deactivate') && (
                   <Button
-                    text={'Deactivate'}
+                    text={this.props.t('Deactivate')}
                     flat={false}
                     small={true}
                     waves={false}
@@ -152,7 +154,7 @@ class NoticeContainer extends React.Component {
                 )}
                 {helpers.canUser('notices:create') && (
                   <Button
-                    text={'Create'}
+                    text={this.props.t('Create')}
                     flat={false}
                     small={true}
                     waves={false}
@@ -174,16 +176,16 @@ class NoticeContainer extends React.Component {
             striped={true}
             headers={[
               <TableHeader key={0} width={45} height={50} text={''} />,
-              <TableHeader key={1} width={'20%'} text={'Name'} />,
-              <TableHeader key={2} width={'60%'} text={'Message'} />,
-              <TableHeader key={3} width={'10%'} text={'Date'} />,
+              <TableHeader key={1} width={'20%'} text={this.props.t('Name')} />,
+              <TableHeader key={2} width={'60%'} text={this.props.t('Message')} />,
+              <TableHeader key={3} width={'10%'} text={this.props.t('Date')} />,
               <TableHeader key={4} width={150} text={''} />
             ]}
           >
             {!this.props.loading && this.props.notices.size < 1 && (
               <TableRow clickable={false}>
                 <TableCell colSpan={10}>
-                  <h5 style={{ margin: 10 }}>No Notices Found</h5>
+                  <h5 style={{ margin: 10 }}>{this.props.t('No Notices Found')}</h5>
                 </TableCell>
               </TableRow>
             )}
@@ -212,10 +214,10 @@ const mapStateToProps = state => ({
   loading: state.noticesState.loading
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   fetchNotices,
   deleteNotice,
   unloadNotices,
 
   showModal
-})(NoticeContainer)
+}))(NoticeContainer)

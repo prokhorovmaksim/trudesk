@@ -8,6 +8,8 @@ import PageTitle from 'components/PageTitle'
 import TruCard from 'components/TruCard'
 import Grid from 'components/Grid'
 import GridItem from 'components/Grid/GridItem'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import ReportTicketByGroups from 'containers/Reports/subreports/ticketsByGroups'
 import ReportTicketsByPriorities from 'containers/Reports/subreports/ticketsByPriorities'
@@ -44,7 +46,7 @@ class ReportsContainer extends React.Component {
   render () {
     return (
       <>
-        <PageTitle title={'Generate Report'} />
+        <PageTitle title={this.props.t('Generate Report')} />
         <Grid>
           <GridItem width={'1-4'} extraClass={'full-height'}>
             <TruCard
@@ -53,7 +55,7 @@ class ReportsContainer extends React.Component {
               extraContentClass={'nopadding'}
               content={
                 <div>
-                  <h6 style={{ padding: '15px 30px', margin: 0, fontSize: '14px' }}>Select Report</h6>
+                  <h6 style={{ padding: '15px 30px', margin: 0, fontSize: '14px' }}>{this.props.t('Select Report')}</h6>
                   <hr className={'nomargin'} />
                   <div style={{ padding: '15px 30px' }}>
                     <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
@@ -63,7 +65,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_groups')}
                         >
-                          Tickets by Groups
+                          {this.props.t('Tickets by Groups')}
                         </a>
                       </li>
                       <li>
@@ -72,7 +74,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_priorities')}
                         >
-                          Tickets by Priorities
+                          {this.props.t('Tickets by Priorities')}
                         </a>
                       </li>
                       <li>
@@ -81,7 +83,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_status')}
                         >
-                          Tickets by Status
+                          {this.props.t('Tickets by Status')}
                         </a>
                       </li>
                       <li>
@@ -90,7 +92,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_tags')}
                         >
-                          Tickets by Tags
+                          {this.props.t('Tickets by Tags')}
                         </a>
                       </li>
                       <li>
@@ -99,7 +101,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_types')}
                         >
-                          Tickets by Types
+                          {this.props.t('Tickets by Types')}
                         </a>
                       </li>
                       <li>
@@ -108,7 +110,7 @@ class ReportsContainer extends React.Component {
                           className={'no-ajaxy'}
                           onClick={e => this.onSelectReportClicked(e, 'tickets_by_assignee')}
                         >
-                          Tickets by Assignee
+                          {this.props.t('Tickets by Assignee')}
                         </a>
                       </li>
                     </ul>
@@ -122,7 +124,7 @@ class ReportsContainer extends React.Component {
               <div>
                 {!this.selectedReport && (
                   <h3 className={'uk-text-muted'} style={{ fontWeight: 300, opacity: 0.7 }}>
-                    Please select a report type
+                    {this.props.t('Please select a report type')}
                   </h3>
                 )}
                 {this.selectedReport === 'tickets_by_groups' && <ReportTicketByGroups />}
@@ -144,4 +146,4 @@ ReportsContainer.propTypes = {}
 
 const mapStateToProps = state => ({})
 
-export default connect(mapStateToProps, {})(ReportsContainer)
+export default compose(withTranslation(), connect(mapStateToProps, {}))(ReportsContainer)

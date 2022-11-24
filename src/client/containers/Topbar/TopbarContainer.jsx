@@ -18,6 +18,9 @@ import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
 import { size } from 'lodash'
+import i18n from '../../i18n'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { fetchViewData, showModal, hideModal, showNotice, clearNotice } from 'actions/common'
 
@@ -46,8 +49,6 @@ class TopbarContainer extends React.Component {
   notificationsDropdownPartial = createRef()
   profileDropdownPartial = createRef()
   languageDropdownPartial = createRef()
-
-  isRus = false
 
   @observable notificationCount = 0
   @observable activeUserCount = 0
@@ -150,6 +151,8 @@ class TopbarContainer extends React.Component {
     e.preventDefault()
   }
 
+  isRus = () => i18n.language === 'ru'
+
   render () {
     const { loadingViewData, viewdata, sessionUser } = this.props
     if (loadingViewData || !sessionUser) return <div />
@@ -171,7 +174,7 @@ class TopbarContainer extends React.Component {
                     {sessionUser && helpers.canUser('tickets:create') && (
                       <li className='top-bar-icon nopadding'>
                         <button
-                          title={'Create Ticket'}
+                          title={this.props.t("Create Ticket")}
                           className={'anchor'}
                           onClick={() => this.props.showModal('CREATE_TICKET')}
                         >
@@ -188,7 +191,7 @@ class TopbarContainer extends React.Component {
                     <li className='top-bar-icon'>
                       <PDropdownTrigger target={this.conversationsDropdownPartial}>
                         <a
-                          title={'Conversations'}
+                          title={this.props.t('Conversations')}
                           className='no-ajaxy uk-vertical-align'
                           onClick={e => TopbarContainer.onConversationsClicked(e)}
                         >
@@ -198,7 +201,7 @@ class TopbarContainer extends React.Component {
                     </li>
                     <li className='top-bar-icon'>
                       <PDropdownTrigger target={this.notificationsDropdownPartial}>
-                        <a title={'Notifications'} className={'no-ajaxy uk-vertical-align'}>
+                        <a title={this.props.t('Notifications')} className={'no-ajaxy uk-vertical-align'}>
                           <i className='material-icons'>notifications</i>
                           <span
                             className={'alert uk-border-circle label ' + (this.notificationCount < 1 ? 'hide' : '')}
@@ -229,12 +232,12 @@ class TopbarContainer extends React.Component {
                     <li className='top-bar-icon'>
                       <PDropdownTrigger target={this.languageDropdownPartial}>
                         <a
-                          title={'Change language'}
+                          title={this.props.t('Change language')}
                           className='no-ajaxy uk-vertical-align'
                           onClick={e => TopbarContainer.onLanguagesClicked(e)}
                         >
                           <i className='material-icons'>
-                            <img  src={this.isRus ? '/img/flag_rus.png' : '/img/flag_usa.png'}
+                            <img  src={this.isRus() ? '/img/flag_rus.png' : '/img/flag_usa.png'}
                                   alt="flag"
                                   style={{'vertical-align' : 'bottom'}}
                                   id={'flag-language'}/>
@@ -320,6 +323,7 @@ const mapStateToProps = state => ({
   viewdata: state.common.viewdata
 })
 
-export default connect(mapStateToProps, { fetchViewData, showModal, hideModal, showNotice, clearNotice })(
+export default compose(withTranslation(), connect(mapStateToProps, { fetchViewData, showModal, hideModal,
+  showNotice, clearNotice }))(
   TopbarContainer
 )

@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchGroups, unloadGroups } from 'actions/groups'
 import { fetchAccounts, unloadAccounts } from 'actions/accounts'
 import { generateReport } from 'actions/reports'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import TruCard from 'components/TruCard'
 import Grid from 'components/Grid'
@@ -15,6 +17,7 @@ import SpinLoader from 'components/SpinLoader'
 
 import moment from 'moment-timezone'
 import helpers from 'lib/helpers'
+import i18n from "../../../i18n";
 
 const ReportTicketsByAssignee = () => {
   const groupsState = useSelector(state => state.groupsState)
@@ -97,7 +100,8 @@ const ReportTicketsByAssignee = () => {
         hover={false}
         header={
           <div style={{ padding: '10px 15px' }}>
-            <h4 style={{ width: '100%', textAlign: 'left', fontSize: '14px', margin: 0 }}>Tickets by Assignee</h4>
+            <h4 style={{ width: '100%', textAlign: 'left', fontSize: '14px', margin: 0 }}>{i18n.t('Tickets by' +
+              ' Assignee')}</h4>
           </div>
         }
         extraContentClass={'nopadding'}
@@ -105,7 +109,7 @@ const ReportTicketsByAssignee = () => {
           <div>
             <SpinLoader active={isLoading} />
             <p className='padding-15 nomargin uk-text-muted'>
-              Please select the start and end dates and which groups to include in the report.
+              {i18n.t('Please select the start and end dates and which groups to include in the report.')}
             </p>
             <hr className='uk-margin-large-bottom' style={{ marginTop: 0 }} />
             <div className={'padding-15'}>
@@ -113,7 +117,7 @@ const ReportTicketsByAssignee = () => {
                 <Grid>
                   <GridItem width={'1-2'}>
                     <label htmlFor='filterDate_Start' className={'uk-form-label nopadding nomargin'}>
-                      Start Date
+                      {i18n.t('Start Date')}
                     </label>
                     <DatePicker
                       name={'filterDate_start'}
@@ -126,7 +130,7 @@ const ReportTicketsByAssignee = () => {
                   </GridItem>
                   <GridItem width={'1-2'}>
                     <label htmlFor='filterDate_End' className={'uk-form-label nopadding nomargin'}>
-                      End Date
+                      {i18n.t('End Date')}
                     </label>
                     <DatePicker
                       name={'filterDate_End'}
@@ -140,7 +144,7 @@ const ReportTicketsByAssignee = () => {
                   <GridItem width={'1-1'}>
                     <div className='uk-margin-medium-top uk-margin-medium-bottom'>
                       <label htmlFor='groups' className={'uk-form-label'}>
-                        Groups
+                        {i18n.t('Groups')}
                       </label>
                       <SingleSelect
                         multiple={true}
@@ -154,7 +158,7 @@ const ReportTicketsByAssignee = () => {
                   </GridItem>
                   <GridItem width={'1-1'}>
                     <div className='uk-margin-medium-top uk-margin-medium-bottom'>
-                      <label htmlFor='priorities'>Assignee</label>
+                      <label htmlFor='priorities'>{i18n.t('Assignee')}</label>
                       <SingleSelect
                         multiple={true}
                         items={agents}
@@ -169,7 +173,7 @@ const ReportTicketsByAssignee = () => {
                     <div>
                       <Button
                         disabled={isLoading}
-                        text={'Generate'}
+                        text={i18n.t('Generate')}
                         type={'submit'}
                         style={'primary'}
                         waves={true}
@@ -187,4 +191,4 @@ const ReportTicketsByAssignee = () => {
   )
 }
 
-export default ReportTicketsByAssignee
+export default compose(withTranslation())(ReportTicketsByAssignee)

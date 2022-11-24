@@ -18,6 +18,8 @@ import { connect } from 'react-redux'
 import moment from 'moment-timezone'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import PDropdown from 'components/PDropdown'
 
@@ -73,18 +75,18 @@ class NotificationsDropdownPartial extends React.Component {
       <PDropdown
         ref={forwardedRef}
         id={'notifications'}
-        title={'Notifications'}
+        title={this.props.t('Notifications')}
         topOffset={-4}
         leftOffset={4}
         rightComponent={
           <a className={'hoverUnderline no-ajaxy'} onClick={e => this.clearNotificationsClicked(e)}>
-            Clear Notifications
+            {this.props.t('Clear Notifications')}
           </a>
         }
         footerComponent={
           <div className={'uk-text-center' + (this.notifications.length < 1 ? ' hide' : '')}>
             <a className={'no-ajaxy hoverUnderline'} onClick={this.props.onViewAllNotificationsClick}>
-              View All Notifications
+              {this.props.t('View All Notifications')}
             </a>
           </div>
         }
@@ -151,4 +153,4 @@ const mapStateToProps = state => ({
   socket: state.shared.socket
 })
 
-export default connect(mapStateToProps, {}, null, { forwardRef: true })(NotificationsDropdownPartial)
+export default compose(withTranslation(), connect(mapStateToProps, {}, null, { forwardRef: true }))(NotificationsDropdownPartial)

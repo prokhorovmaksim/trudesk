@@ -26,9 +26,8 @@ class LanguagesDropdownPartial extends React.Component {
   }
 
   onLanguageChange(newLanguage) {
-    console.log('CLICKED ON:')
-    console.log(newLanguage)
     i18n.changeLanguage(newLanguage);
+    localStorage.setItem('lng', newLanguage);
 
     this.closeOnClick()
     this.changeFlag(newLanguage)

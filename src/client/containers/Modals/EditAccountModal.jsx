@@ -19,6 +19,8 @@ import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
 import axios from 'axios'
 import Log from '../../logger'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { saveEditAccount } from 'actions/accounts'
 import { fetchGroups, unloadGroups } from 'actions/groups'
@@ -218,7 +220,7 @@ class EditAccountModal extends React.Component {
           <form className='uk-form-stacked' onSubmit={e => this.onSubmitSaveAccount(e)}>
             <div className='uk-margin-medium-bottom uk-clearfix'>
               <div className='uk-float-left' style={{ width: '50%', paddingRight: '20px' }}>
-                <label className={'uk-form-label'}>Name</label>
+                <label className={'uk-form-label'}>{this.props.t('Name')}</label>
                 <input
                   type='text'
                   className={'md-input'}
@@ -228,7 +230,7 @@ class EditAccountModal extends React.Component {
                 />
               </div>
               <div className='uk-float-left uk-width-1-2'>
-                <label className={'uk-form-label'}>Title</label>
+                <label className={'uk-form-label'}>{this.props.t('Title')}</label>
                 <input
                   type='text'
                   className={'md-input'}
@@ -242,7 +244,7 @@ class EditAccountModal extends React.Component {
               <div>
                 <div className='uk-margin-medium-bottom uk-clearfix'>
                   <div className='uk-float-left' style={{ width: '50%', paddingRight: '20px' }}>
-                    <label className={'uk-form-label'}>Password</label>
+                    <label className={'uk-form-label'}>{this.props.t('Password')}</label>
                     <input
                       type='password'
                       className={'md-input'}
@@ -251,7 +253,7 @@ class EditAccountModal extends React.Component {
                     />
                   </div>
                   <div className='uk-float-left uk-width-1-2'>
-                    <label className={'uk-form-label'}>Confirm Password</label>
+                    <label className={'uk-form-label'}>{this.props.t('Confirm Password')}</label>
                     <input
                       type='password'
                       className={'md-input'}
@@ -263,7 +265,7 @@ class EditAccountModal extends React.Component {
               </div>
             )}
             <div className='uk-margin-medium-bottom'>
-              <label className='uk-form-label'>Email</label>
+              <label className='uk-form-label'>{this.props.t('Email')}</label>
               <input
                 type='email'
                 className={'md-input'}
@@ -274,7 +276,7 @@ class EditAccountModal extends React.Component {
             </div>
             {edit && (
               <div className='uk-margin-medium-bottom'>
-                <label className={'uk-form-label'}>Role</label>
+                <label className={'uk-form-label'}>{this.props.t('Role')}</label>
                 <SingleSelect
                   items={roles}
                   width={'100'}
@@ -287,7 +289,7 @@ class EditAccountModal extends React.Component {
             )}
             {this.props.groups && customer && (
               <div className='uk-margin-medium-bottom'>
-                <label className='uk-form-label'>Groups</label>
+                <label className='uk-form-label'>{this.props.t('Groups')}</label>
                 <MultiSelect
                   items={groups}
                   initialSelected={user.groups.map(i => i._id)}
@@ -300,7 +302,7 @@ class EditAccountModal extends React.Component {
             {!customer && (
               <div>
                 <div className='uk-margin-medium-bottom'>
-                  <label className='uk-form-label'>Teams</label>
+                  <label className='uk-form-label'>{this.props.t('Teams')}</label>
                   <MultiSelect
                     items={teams}
                     initialSelected={user.teams.map(i => i._id)}
@@ -311,7 +313,7 @@ class EditAccountModal extends React.Component {
                 </div>
 
                 <div className='uk-margin-medium-bottom'>
-                  <label className='uk-form-label'>Departments</label>
+                  <label className='uk-form-label'>{this.props.t('DepartmentsDepartments')}</label>
                   <MultiSelect
                     items={departments}
                     initialSelected={user.departments.map(i => i._id)}
@@ -322,9 +324,9 @@ class EditAccountModal extends React.Component {
               </div>
             )}
             <div className='uk-modal-footer uk-text-right'>
-              <Button text={'Close'} flat={true} waves={true} extraClass={'uk-modal-close'} />
+              <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
               <Button
-                text={'Save Account'}
+                text={this.props.t('Save Account')}
                 flat={true}
                 waves={true}
                 style={'primary'}
@@ -367,7 +369,7 @@ const mapStateToProps = state => ({
   roles: state.shared.roles
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   saveEditAccount,
   fetchGroups,
   unloadGroups,
@@ -376,4 +378,4 @@ export default connect(mapStateToProps, {
   fetchDepartments,
   unloadDepartments,
   fetchRoles
-})(EditAccountModal)
+}))(EditAccountModal)

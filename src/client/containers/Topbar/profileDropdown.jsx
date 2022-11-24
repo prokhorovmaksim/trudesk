@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { setSessionUser, showModal } from 'actions/common'
 import { saveEditAccount } from 'actions/accounts'
@@ -79,7 +81,7 @@ class ProfileDropdownPartial extends React.Component {
                   {this.props.sessionUser.fullname}
                 </span>
                 <span>{this.props.sessionUser.email}</span>
-                <a href='/profile'>Profile Settings</a>
+                <a href='/profile'>{this.props.t('Profile Settings')}</a>
               </div>
             </div>
           </div>
@@ -110,7 +112,7 @@ class ProfileDropdownPartial extends React.Component {
           <div className={'profile-drop-actions'}>
             <div className={'action-logout'}>
               <i className='material-icons'>logout</i>
-              <a href='/logout'>Logout</a>
+              <a href='/logout'>{this.props.t('Logout')}</a>
             </div>
           </div>
         </div>
@@ -150,6 +152,7 @@ const mapStateToProps = state => ({
   sessionUser: state.shared.sessionUser
 })
 
-export default connect(mapStateToProps, { setSessionUser, showModal, saveEditAccount }, null, { forwardRef: true })(
+export default compose(withTranslation(), connect(mapStateToProps, { setSessionUser, showModal, saveEditAccount }, null,
+  { forwardRef: true }))(
   ProfileDropdownPartial
 )

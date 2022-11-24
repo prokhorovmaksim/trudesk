@@ -20,6 +20,8 @@ import { makeObservable, observable } from 'mobx'
 import helpers from 'lib/helpers'
 import Log from '../../logger'
 import { updateNotice } from 'actions/notices'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import BaseModal from 'containers/Modals/BaseModal'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
@@ -80,11 +82,11 @@ class EditNoticeModal extends React.Component {
     return (
       <BaseModal {...this.props} options={{ bgclose: false }}>
         <div className={'mb-25'}>
-          <h2>Edit Notice</h2>
+          <h2>{this.props.t('Edit Notice')}</h2>
         </div>
         <form className={'uk-form-stacked'} onSubmit={e => this.onFormSubmit(e)}>
           <div className={'uk-margin-medium-bottom'}>
-            <label>Name</label>
+            <label>{this.props.t('Name')}</label>
             <input
               type='text'
               className={'md-input'}
@@ -92,22 +94,22 @@ class EditNoticeModal extends React.Component {
               onChange={e => this.onInputChange('name', e)}
               data-validation='length'
               data-validation-length={'min2'}
-              data-validation-error-msg={'Please enter a notice name. (Must contain 2 characters)'}
+              data-validation-error-msg={this.props.t('Please enter a notice name. (Must contain 2 characters)')}
             />
           </div>
           <div className={'uk-margin-medium-bottom'}>
-            <label>Message</label>
+            <label>{this.props.t('Message')}</label>
             <textarea
               className={'md-input'}
               value={this.message}
               onChange={e => this.onInputChange('message', e)}
               data-validation='length'
               data-validation-length={'min10'}
-              data-validation-error-msg={'Please enter a notice message. (Must contain 10 characters)'}
+              data-validation-error-msg={this.props.t('Please enter a notice message. (Must contain 10 characters)')}
             />
           </div>
           <div>
-            <span style={{ display: 'inline-block', float: 'left', paddingTop: 5 }}>Background Color</span>
+            <span style={{ display: 'inline-block', float: 'left', paddingTop: 5 }}>{this.props.t('Background Color')}</span>
             <PopoverColorPicker
               color={this.color}
               onChange={c => {
@@ -115,7 +117,7 @@ class EditNoticeModal extends React.Component {
               }}
               style={{ float: 'left', marginLeft: 5, marginRight: 15 }}
             />
-            <span style={{ display: 'inline-block', float: 'left', paddingTop: 5 }}>Font Color</span>
+            <span style={{ display: 'inline-block', float: 'left', paddingTop: 5 }}>{this.props.t('Font Color')}</span>
             <PopoverColorPicker
               color={this.fontColor}
               onChange={c => {
@@ -126,8 +128,8 @@ class EditNoticeModal extends React.Component {
           </div>
 
           <div className='uk-modal-footer uk-text-right'>
-            <Button text={'Close'} flat={true} waves={true} extraClass={'uk-modal-close'} />
-            <Button text={'Save Notice'} flat={true} waves={true} style={'primary'} type={'submit'} />
+            <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
+            <Button text={this.props.t('Save Notice')} flat={true} waves={true} style={'primary'} type={'submit'} />
           </div>
         </form>
       </BaseModal>
@@ -142,4 +144,4 @@ EditNoticeModal.propTypes = {
 
 const mapStateToProps = state => ({})
 
-export default connect(mapStateToProps, { updateNotice })(EditNoticeModal)
+export default compose(withTranslation(), connect(mapStateToProps, { updateNotice }))(EditNoticeModal)

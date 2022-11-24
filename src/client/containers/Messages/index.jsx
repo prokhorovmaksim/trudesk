@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
 import clsx from 'clsx'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { fetchAccounts, unloadAccounts } from 'actions/accounts'
 
@@ -190,7 +192,7 @@ class MessagesContainer extends React.Component {
 
   onUserStartConversationClick (account) {
     if (!account || !this.props.sessionUser) {
-      helpers.UI.showSnackbar('Invalid participants', true)
+      helpers.UI.showSnackbar(this.props.t('Invalid participants'), true)
       return false
     }
 
@@ -309,7 +311,7 @@ class MessagesContainer extends React.Component {
         <Grid>
           <GridItem width={'3-10'} extraClass={'full-height'}>
             <PageTitle
-              title={'Conversations'}
+              title={this.props.t('Conversations')}
               extraClasses={'page-title-border-right'}
               hideBorderBottom={true}
               rightComponent={
@@ -317,7 +319,7 @@ class MessagesContainer extends React.Component {
                   <div id='convo-actions' style={{ position: 'absolute', top: 20, right: 15 }}>
                     {!this.userListShown && (
                       <a
-                        title='Start Conversation'
+                        title={this.props.t('Start Conversation')}
                         className='no-ajaxy'
                         style={{ display: 'block', height: 28 }}
                         onClick={e => this.showUserList(e)}
@@ -333,7 +335,7 @@ class MessagesContainer extends React.Component {
                         style={{ height: 28, lineHeight: '30px', fontSize: '16px', fontWeight: 300 }}
                         onClick={e => this.hideUserList(e)}
                       >
-                        Cancel
+                        {this.props.t('Cancel')}
                       </a>
                     )}
                   </div>
@@ -377,7 +379,7 @@ class MessagesContainer extends React.Component {
                 <div className='search-box'>
                   <input
                     type='text'
-                    placeholder={'Search'}
+                    placeholder={this.props.t('Search')}
                     value={this.userListSearchText}
                     onChange={e => this.onUserListSearchChange(e)}
                   />
@@ -413,11 +415,11 @@ class MessagesContainer extends React.Component {
                 style={{ marginBottom: '41px !important' }}
               >
                 <span className={'conversation-start'}>
-                  Conversation Started on {helpers.formatDate(currentConversation.get('createdAt'), helpers.getLongDateWithTimeFormat())}
+                  {this.props.t('Conversation Started on')} {helpers.formatDate(currentConversation.get('createdAt'), helpers.getLongDateWithTimeFormat())}
                 </span>
                 {currentConversation.get('requestingUserMeta').get('deletedAt') && (
                   <span className={'conversation-deleted'}>
-                    Conversation Deleted at {helpers.formatDate(currentConversation.get('requestingUserMeta').get('deletedAt'), helpers.getLongDateWithTimeFormat())}
+                    {this.props.t('Conversation Deleted at')} {helpers.formatDate(currentConversation.get('requestingUserMeta').get('deletedAt'), helpers.getLongDateWithTimeFormat())}
                   </span>
                 )}
                 <div ref={this.conversationScrollSpy} className={clsx('uk-text-center', 'uk-hidden')}>
@@ -497,7 +499,7 @@ class MessagesContainer extends React.Component {
                   <input
                     type='text'
                     name={'chatMessage'}
-                    placeholder={'Type your message...'}
+                    placeholder={this.props.t('Type your message...')}
                     onKeyDown={e =>
                       this.onSendMessageKeyDown(
                         e,
@@ -506,7 +508,7 @@ class MessagesContainer extends React.Component {
                       )
                     }
                   />
-                  <button type={'submit'}>SEND</button>
+                  <button type={'submit'}>{this.props.t('SEND')}</button>
                 </form>
               </div>
             </GridItem>
@@ -514,7 +516,7 @@ class MessagesContainer extends React.Component {
         </Grid>
         <ul className='context-menu'>
           <li data-action={'delete'} style={{ color: '#d32f2f' }}>
-            Delete Conversation
+            {this.props.t('Delete Conversation')}
           </li>
         </ul>
       </div>
@@ -548,7 +550,7 @@ const mapStateToProps = state => ({
   accountsState: state.accountsState
 })
 
-export default connect(mapStateToProps, {
+export default compose(withTranslation(), connect(mapStateToProps, {
   fetchAccounts,
   unloadAccounts,
   fetchConversations,
@@ -559,4 +561,4 @@ export default connect(mapStateToProps, {
   unloadSingleConversation,
   sendMessage,
   receiveMessage
-})(MessagesContainer)
+}))(MessagesContainer)
