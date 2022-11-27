@@ -51,7 +51,7 @@ util.getSettings = async callback => {
         s.emailBeta = parseSetting(settings, 'beta:email', false)
         s.hasThirdParty = !nconf.get('thirdParty') ? false : nconf.get('thirdParty').enable
 
-        s.siteTitle = parseSetting(settings, 'gen:sitetitle', 'Time')
+        s.siteTitle = parseSetting(settings, 'gen:sitetitle', 'ServiceDesk')
         s.siteUrl = parseSetting(settings, 'gen:siteurl', '')
         s.timezone = parseSetting(settings, 'gen:timezone', 'America/New_York')
         s.timeFormat = parseSetting(settings, 'gen:timeFormat', 'hh:mma')
