@@ -18,6 +18,8 @@ import { connect } from 'react-redux'
 
 import { fetchGroups, deleteGroup } from 'actions/groups'
 import { showModal } from 'actions/common'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import Avatar from 'components/Avatar/Avatar'
 import PageTitle from 'components/PageTitle'
@@ -47,20 +49,20 @@ class GroupsContainer extends React.Component {
 
   onDeleteGroupClick (_id) {
     UIKit.modal.confirm(
-      `<h2>Are you sure?</h2>
+      `<h2>${this.props.t('Are you sure?')}</h2>
         <p style="font-size: 15px;">
-            <span class="uk-text-danger" style="font-size: 15px;">This is a permanent action.</span> 
+            <span class="uk-text-danger" style="font-size: 15px;">${this.props.t('This is a permanent action.')}</span> 
         </p>
         <p style="font-size: 12px;">
-            Agents may lose access to resources once this group is deleted.
+            ${this.props.t('Agents may lose access to resources once this group is deleted.')}
         </p>
-        <span>Groups that are associated with ticket cannot be deleted.</span>
+        <span>${this.props.t('Groups that are associated with ticket cannot be deleted.')}</span>
         `,
       () => {
         this.props.deleteGroup({ _id })
       },
       {
-        labels: { Ok: 'Yes', Cancel: 'No' },
+        labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
         confirmButtonClass: 'md-btn-danger'
       }
     )
@@ -99,11 +101,11 @@ class GroupsContainer extends React.Component {
           <TableCell style={{ textAlign: 'right', paddingRight: 15 }}>
             <ButtonGroup>
               {helpers.canUser('groups:update', true) && (
-                <Button text={'Edit'} small={true} waves={true} onClick={() => this.onEditGroupClick(group.toJS())} />
+                <Button text={this.props.t('Edit')} small={true} waves={true} onClick={() => this.onEditGroupClick(group.toJS())} />
               )}
               {helpers.canUser('groups:delete', true) && (
                 <Button
-                  text={'Delete'}
+                  text={this.props.t('Delete')}
                   style={'danger'}
                   small={true}
                   waves={true}
@@ -119,12 +121,12 @@ class GroupsContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={'Customer Groups'}
+          title={this.props.t('Customer Groups')}
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               <div className={'uk-width-1-1 mt-15 uk-text-right'}>
                 <Button
-                  text={'Create'}
+                  text={this.props.t('Create')}
                   flat={false}
                   small={true}
                   waves={false}
@@ -138,9 +140,9 @@ class GroupsContainer extends React.Component {
         <PageContent padding={0} paddingBottom={0}>
           <Table
             headers={[
-              <TableHeader key={0} width={'25%'} height={40} text={'Name'} padding={'8px 8px 8px 15px'} />,
-              <TableHeader key={1} width={'50%'} text={'Group Members'} />,
-              <TableHeader key={2} width={130} text={'Group Actions'} />
+              <TableHeader key={0} width={'25%'} height={40} text={this.props.t('Name')} padding={'8px 8px 8px 15px'} />,
+              <TableHeader key={1} width={'50%'} text={this.props.t('Group Members')} />,
+              <TableHeader key={2} width={130} text={this.props.t('Group Actions')} />
             ]}
           >
             {tableItems}
@@ -162,4 +164,5 @@ const mapStateToProps = state => ({
   groups: state.groupsState.groups
 })
 
-export default connect(mapStateToProps, { fetchGroups, deleteGroup, showModal })(GroupsContainer)
+export default compose(withTranslation(), connect(mapStateToProps, { fetchGroups, deleteGroup, showModal }
+))(GroupsContainer)

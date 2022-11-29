@@ -228,6 +228,25 @@
   "End Date": "End Date",
   "Priorities": "Priorities",
   "Save Account": "Save Account",
-  "Types": "Types"
-
+  "Types": "Types",
+  "Agents may lose access to resources once this group is deleted.": "Agents may lose access to resources once this group is deleted.",
+  "Groups that are associated with ticket cannot be deleted.": "Groups that are associated with ticket cannot be deleted.",
+  "Group Members": "Group Members",
+  "Group Actions": "Group Actions",
+  "Save Group": "Save Group",
+  "Send Notifications To": "Send Notifications To",
+  "Please enter a valid Group name. (Must contain 2 characters)": "Please enter a valid Group name. (Must contain 2 characters)",
+  "Group Name": "Group Name",
+  "Edit Group": "Edit Group",
+  "Create Group": "Create Group",
+  "Agents may lose access to resources once this department is deleted.": "Agents may lose access to resources once this department is deleted.",
+  "Actions": "Actions",
+  "All Groups": "All Groups",
+  "All Public Groups": "All Public Groups",
+  "Edit Department:": "Edit Department:",
+  "Department Name": "Department Name",
+  "Create Department": "Create Department",
+  "Please enter a valid department name. (Must contain 2 characters)": "Please enter a valid department name. (Must contain 2 characters)",
+  "Access all current and new customer groups?": "Access all current and new customer groups?",
+  "Access all current and new public groups?": "Access all current and new public groups?"
 }

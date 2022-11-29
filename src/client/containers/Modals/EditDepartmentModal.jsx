@@ -17,6 +17,8 @@ import PropTypes from 'prop-types'
 import { makeObservable, observable } from 'mobx'
 import { observer } from 'mobx-react'
 import { connect } from 'react-redux'
+import { compose } from 'redux';
+import { withTranslation } from 'react-i18next';
 
 import { fetchTeams, unloadTeams } from 'actions/teams'
 import { fetchGroups, unloadGroups } from 'actions/groups'
@@ -103,11 +105,11 @@ class EditDepartmentModal extends React.Component {
     return (
       <BaseModal {...this.props} options={{ bgclose: false }}>
         <div className={'mb-25'}>
-          <h2>Edit Department: {department.get('name')}</h2>
+          <h2>{this.props.t('Edit Department:')} {department.get('name')}</h2>
         </div>
         <form className={'uk-form-stacked'} onSubmit={e => this.onFormSubmit(e)}>
           <div className={'uk-margin-medium-bottom'}>
-            <label>Department Name</label>
+            <label>{this.props.t('Department Name')}</label>
             <input
               type='text'
               className={'md-input'}
@@ -115,11 +117,11 @@ class EditDepartmentModal extends React.Component {
               onChange={e => this.onInputChange(e)}
               data-validation='length'
               data-validation-length={'min2'}
-              data-validation-error-msg={'Please enter a valid department name. (Must contain 2 characters)'}
+              data-validation-error-msg={this.props.t('Please enter a valid department name. (Must contain 2 characters)')}
             />
           </div>
           <div className={'uk-margin-medium-bottom'}>
-            <label style={{ marginBottom: 5 }}>Teams</label>
+            <label style={{ marginBottom: 5 }}>{this.props.t('Teams')}</label>
             <MultiSelect
               items={mappedTeams}
               initialSelected={departmentTeams ? departmentTeams.map(d => d.get('_id')).toArray() : []}
@@ -130,7 +132,7 @@ class EditDepartmentModal extends React.Component {
           <hr />
           <div className={'uk-margin-medium-bottom uk-clearfix'}>
             <div className='uk-float-left'>
-              <h4 style={{ paddingLeft: 2 }}>Access all current and new customer groups?</h4>
+              <h4 style={{ paddingLeft: 2 }}>{this.props.t('Access all current and new customer groups?')}</h4>
             </div>
             <div className='uk-float-right md-switch md-green' style={{ marginTop: 5 }}>
               <label>
@@ -151,11 +153,11 @@ class EditDepartmentModal extends React.Component {
           </div>
           <div className={'uk-margin-medium-bottom uk-clearfix'}>
             <div className='uk-float-left'>
-              <h4 style={{ paddingLeft: 2 }}>Access all current and new public groups?</h4>
+              <h4 style={{ paddingLeft: 2 }}>{this.props.t('Access all current and new public groups?')}</h4>
             </div>
             <div className='uk-float-right md-switch md-green' style={{ marginTop: 1 }}>
               <label>
-                Yes
+                {this.props.t('Yes')}
                 <input
                   type='checkbox'
                   checked={this.publicGroups}
@@ -168,7 +170,7 @@ class EditDepartmentModal extends React.Component {
             </div>
           </div>
           <div className={'uk-margin-medium-bottom'}>
-            <label style={{ marginBottom: 5 }}>Customer Groups</label>
+            <label style={{ marginBottom: 5 }}>{this.props.t('Customer Groups')}</label>
             <MultiSelect
               items={mappedGroups}
               onChange={() => {}}
@@ -178,8 +180,8 @@ class EditDepartmentModal extends React.Component {
             />
           </div>
           <div className='uk-modal-footer uk-text-right'>
-            <Button text={'Close'} flat={true} waves={true} extraClass={'uk-modal-close'} />
-            <Button text={'Save Department'} flat={true} waves={true} style={'primary'} type={'submit'} />
+            <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
+            <Button text={this.props.t('Save Department')} flat={true} waves={true} style={'primary'} type={'submit'} />
           </div>
         </form>
       </BaseModal>
@@ -203,6 +205,6 @@ const mapStateToProps = state => ({
   groups: state.groupsState.groups
 })
 
-export default connect(mapStateToProps, { updateDepartment, fetchTeams, unloadTeams, fetchGroups, unloadGroups })(
+export default compose(withTranslation(), connect(mapStateToProps, { updateDepartment, fetchTeams, unloadTeams, fetchGroups, unloadGroups }))(
   EditDepartmentModal
 )
