@@ -75,6 +75,7 @@ apiGroups.update = function (req, res) {
     if (putData.name) group.name = putData.name
     if (putData.members) group.members = putData.members
     if (putData.sendMailTo) group.sendMailTo = putData.sendMailTo
+    if (putData.ticketTypes) group.ticketTypes = putData.ticketTypes
 
     group.save(function (err, group) {
       if (err) return apiUtils.sendApiError(res, 500, err.message)

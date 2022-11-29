@@ -105,17 +105,23 @@ class FilterTicketsModal extends React.Component {
       })
       .toArray()
 
-    const types = this.props.ticketTypes
-      .map(t => {
-        return { text: t.get('name'), value: t.get('_id') }
+    const groups = this.props.groupsState.groups
+      .map(g => {
+        return {
+          text: g.get('name'), value: g.get('_id'), ticketTypes: g.get('ticketTypes').toArray().map(type => {
+            return {text: type.get('name'), value: type.get('_id')}
+          })
+        }
       })
       .toArray()
 
-    const groups = this.props.groupsState.groups
-      .map(g => {
-        return { text: g.get('name'), value: g.get('_id') }
-      })
-      .toArray()
+    // const allTypes = this.props.ticketTypes
+    //   .map(t => {
+    //     return { text: t.get('name'), value: t.get('_id') }
+    //   })
+    //   .toArray()
+
+    const types = groups.map(g => g.ticketTypes)
 
     const assignees = this.props.accountsState.accounts
       .map(a => {

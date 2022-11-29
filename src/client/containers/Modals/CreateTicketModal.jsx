@@ -45,6 +45,8 @@ class CreateTicketModal extends React.Component {
   @observable selectedPriority = ''
   issueText = ''
 
+  types = []
+
   constructor (props) {
     super(props)
     makeObservable(this)
@@ -154,7 +156,23 @@ class CreateTicketModal extends React.Component {
     //   .map(a => {
     //     return { text: a.get('fullname'), value: a.get('_id') }
     //   })
-    //   .toArray()
+    //   .toArray
+    const mappedGroupsWithTicketTypes = this.props.groups
+      .map(gr => {
+        return {
+          id: gr.get('_id'), ticketTypes: gr.get('ticketTypes').toArray().map(type => {
+            return {text: type.get('name'), value: type.get('_id')}
+          })
+        }
+      })
+      .toArray()
+    const group = e.target.value
+    const filteredGroup = mappedGroupsWithTicketTypes.filter(gr => gr.id === group)
+    this.types = head(filteredGroup) ? head(filteredGroup).ticketTypes : []
+
+    const firstType = head(this.types)
+    this.typeSelect = firstType
+    this.onTicketTypeSelectChange({ target: { value: firstType.value } })
   }
 
   render () {
@@ -175,9 +193,27 @@ class CreateTicketModal extends React.Component {
       })
       .toArray()
 
-    const mappedTicketTypes = this.props.ticketTypes.toArray().map(type => {
-      return { text: type.get('name'), value: type.get('_id') }
-    })
+    // const mappedTicketTypes = this.props.ticketTypes.toArray().map(type => {
+    //   return { text: type.get('name'), value: type.get('_id') }
+    // })
+
+    // types for current selected group
+    const mappedGroupsWithTicketTypes = this.props.groups
+      .map(gr => {
+        return {
+          id: gr.get('_id'), ticketTypes: gr.get('ticketTypes').toArray().map(type => {
+            return {text: type.get('name'), value: type.get('_id')}
+          })
+        }
+      })
+      .toArray()
+    let selectedGroup = head(mappedGroups) ? head(mappedGroups).value : ''
+    if (this.groupSelect && this.groupSelect.value !== '') {
+      selectedGroup = this.groupSelect.value
+    }
+    const filteredGroup = mappedGroupsWithTicketTypes.filter(gr => gr.id === selectedGroup)
+    this.types = head(filteredGroup) ? head(filteredGroup).ticketTypes : []
+
     const mappedTicketTags = this.props.ticketTags.toArray().map(tag => {
       return { text: tag.get('name'), value: tag.get('_id') }
     })
@@ -230,8 +266,9 @@ class CreateTicketModal extends React.Component {
               <GridItem width={'1-3'}>
                 <label className={'uk-form-label'}>{this.props.t('Type')}</label>
                 <SingleSelect
+                  key={this.types}
                   showTextbox={false}
-                  items={mappedTicketTypes}
+                  items={this.types}
                   width={'100%'}
                   defaultValue={this.props.viewdata.get('defaultTicketType').get('_id')}
                   onSelectChange={e => {

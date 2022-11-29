@@ -39,10 +39,19 @@ var groupSchema = mongoose.Schema({
     }
   ],
   sendMailTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'accounts' }],
+  ticketTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'tickettypes' }],
   public: { type: Boolean, required: true, default: false }
 })
 
 groupSchema.plugin(require('mongoose-autopopulate'))
+
+var autoPopulateTypes = function (next) {
+  this.populate('ticketTypes')
+  return next()
+}
+
+groupSchema.pre('find', autoPopulateTypes)
+groupSchema.pre('findOne', autoPopulateTypes)
 
 groupSchema.pre('save', function (next) {
   this.name = utils.sanitizeFieldPlainText(this.name.trim())

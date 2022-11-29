@@ -30,6 +30,7 @@ import Button from 'components/Button'
 import helpers from 'lib/helpers'
 import $ from 'jquery'
 import SpinLoader from 'components/SpinLoader'
+import { fetchTicketTypes } from 'actions/tickets';
 
 @observer
 class EditGroupModal extends React.Component {
@@ -42,6 +43,7 @@ class EditGroupModal extends React.Component {
 
   componentDidMount () {
     this.props.fetchAccounts({ type: 'customers', limit: -1 })
+    this.props.fetchTicketTypes({ limit: -1 })
     this.name = this.props.group.name
 
     helpers.UI.inputs()
@@ -66,7 +68,8 @@ class EditGroupModal extends React.Component {
       _id: this.props.group._id,
       name: this.name,
       members: this.membersSelect.getSelected() || [],
-      sendMailTo: this.sendMailToSelect.getSelected() || []
+      sendMailTo: this.sendMailToSelect.getSelected() || [],
+      ticketTypes: this.ticketTypesSelect.getSelected() || []
     }
 
     this.props.updateGroup(payload)
@@ -82,6 +85,16 @@ class EditGroupModal extends React.Component {
         return { text: account.get('fullname'), value: account.get('_id') }
       })
       .toArray()
+
+    const allTicketTypes = this.props.ticketTypes
+      .map(type => {
+        return {text: type.get('name'), value: type.get('_id')}
+      })
+      .toArray()
+
+    const selectedTicketTypes = this.props.group.ticketTypes.map(type => {
+      return type._id
+    })
 
     const selectedMembers = this.props.group.members.map(member => {
       return member._id
@@ -126,6 +139,15 @@ class EditGroupModal extends React.Component {
               ref={r => (this.sendMailToSelect = r)}
             />
           </div>
+          <div className={'uk-margin-medium-bottom'}>
+            <label style={{ marginBottom: 5 }}>Possible ticket types</label>
+            <MultiSelect
+              items={allTicketTypes}
+              initialSelected={selectedTicketTypes}
+              onChange={() => {}}
+              ref={r => (this.ticketTypesSelect = r)}
+            />
+          </div>
           <div className='uk-modal-footer uk-text-right'>
             <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
             <Button text={this.props.t('Save Group')} flat={true} waves={true} style={'primary'} type={'submit'} />
@@ -139,16 +161,21 @@ class EditGroupModal extends React.Component {
 EditGroupModal.propTypes = {
   group: PropTypes.object.isRequired,
   accounts: PropTypes.object.isRequired,
+  ticketTypes: PropTypes.object.isRequired,
   updateGroup: PropTypes.func.isRequired,
   fetchAccounts: PropTypes.func.isRequired,
+  fetchTicketTypes: PropTypes.func.isRequired,
   unloadAccounts: PropTypes.func.isRequired,
-  accountsLoading: PropTypes.bool.isRequired
+  accountsLoading: PropTypes.bool.isRequired,
+  ticketTypesLoading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = state => ({
   accounts: state.accountsState.accounts,
-  accountsLoading: state.accountsState.loading
+  accountsLoading: state.accountsState.loading,
+  ticketTypes: state.ticketsState.types,
+  ticketTypesLoading: state.ticketsState.loadingTicketTypes
 })
 
-export default compose(withTranslation(), connect(mapStateToProps, { updateGroup, fetchAccounts, unloadAccounts }
+export default compose(withTranslation(), connect(mapStateToProps, { updateGroup, fetchAccounts, fetchTicketTypes, unloadAccounts }
 ))(EditGroupModal)
