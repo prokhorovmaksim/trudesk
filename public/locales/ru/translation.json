@@ -156,8 +156,8 @@
   "Save Tags": "Сохранить метки",
   "Create Account": "Создать аккаунт",
   "Please provide account details below": "Пожалуйста, укажите данные учетной записи ниже",
-  "Username": "Имя пользователя",
-  "Username must contain at least 4 characters.": "Имя пользователя должно содержать не менее 4 символов.",
+  "Username": "Username",
+  "Username must contain at least 4 characters.": "Username должен содержать не менее 4 символов.",
   "Name must contain at least 1 character.": "Имя должно содержать не менее 1 символа.",
   "Password": "Пароль",
   "Password does not match": "Пароль не совпадает",
@@ -248,5 +248,8 @@
   "Create Department": "Создать отдел",
   "Please enter a valid department name. (Must contain 2 characters)": "Пожалуйста, введите действительное название отдела. (Должно содержать 2 символа)",
   "Access all current and new customer groups?": "Дать доступ ко всем текущим и новым группам клиентов?",
-  "Access all current and new public groups?": "Дать доступ ко всем текущим и новым публичным группам?"
+  "Access all current and new public groups?": "Дать доступ ко всем текущим и новым публичным группам?",
+  "Releases": "Релизы",
+  "Release": "Релиз",
+  "No Releases Found": "Релизы не найдены"
 }

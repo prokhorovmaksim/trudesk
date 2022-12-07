@@ -145,14 +145,6 @@ class ReleaseContainer extends React.Component {
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               <div className={'uk-width-1-1 mt-15 uk-text-right'}>
-                <Button
-                  text={this.props.t('Create')}
-                  flat={false}
-                  small={true}
-                  waves={false}
-                  extraClass={'hover-accent'}
-                  // onClick={() => this.onDeactivateRelease()}
-                />
                 {helpers.canUser('release:deactivate') && (
                   <Button
                     text={this.props.t('Deactivate')}

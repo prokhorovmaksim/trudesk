@@ -248,5 +248,8 @@
   "Create Department": "Create Department",
   "Please enter a valid department name. (Must contain 2 characters)": "Please enter a valid department name. (Must contain 2 characters)",
   "Access all current and new customer groups?": "Access all current and new customer groups?",
-  "Access all current and new public groups?": "Access all current and new public groups?"
+  "Access all current and new public groups?": "Access all current and new public groups?",
+  "Releases": "Releases",
+  "Release": "Release",
+  "No Releases Found": "No Releases Found"
 }
