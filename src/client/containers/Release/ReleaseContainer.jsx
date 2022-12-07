@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Log from '../../logger'
 import axios from 'axios'
-import { fetchRelease, deleteRelease, unloadRelease } from 'actions/release'
+import { fetchReleases, deleteRelease, unloadReleases } from 'actions/release'
 import { showModal } from 'actions/common'
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ class ReleaseContainer extends React.Component {
   componentDidMount () {
     console.log("did mount release")
     console.log(helpers.canUser('release:create'))
-    this.props.fetchRelease()
+    this.props.fetchReleases()
   }
 
   componentDidUpdate () {
@@ -39,7 +39,7 @@ class ReleaseContainer extends React.Component {
   }
 
   componentWillUnmount () {
-    this.props.unloadRelease()
+    this.props.unloadReleases()
   }
 
   onActivateRelease (releaseId) {
@@ -205,9 +205,9 @@ ReleaseContainer.propTypes = {
   releases: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
 
-  fetchRelease: PropTypes.func.isRequired,
+  fetchReleases: PropTypes.func.isRequired,
   deleteRelease: PropTypes.func.isRequired,
-  unloadRelease: PropTypes.func.isRequired,
+  unloadReleases: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired
 }
 
@@ -218,9 +218,9 @@ const mapStateToProps = state => ({
 })
 
 export default compose(withTranslation(), connect(mapStateToProps, {
-  fetchRelease,
+  fetchReleases,
   deleteRelease,
-  unloadRelease,
+  unloadReleases,
 
   showModal
 }))(ReleaseContainer)

@@ -22,7 +22,7 @@ var COLLECTION = 'priorities'
 
 var prioritySchema = mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true},
     overdueIn: { type: Number, required: true, default: 2880 }, // Minutes until overdue (48 Hours)
     htmlColor: { type: String, default: '#29b955' },
 

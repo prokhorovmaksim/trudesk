@@ -1,94 +1,185 @@
-/*
- *       .                             .o8                     oooo
- *    .o8                             "888                     `888
- *  .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
- *    888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
- *    888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
- *    888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
- *    "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
- *  ========================================================================
- *  Author:     Chris Brame
- *  Updated:    2/17/22 8:25 PM
- *  Copyright (c) 2014-2022. All rights reserved.
- */
+const apiUtils = require('../apiUtils');
+const logger = require('../../../logger');
+const Models = require('../../../models');
+const permissions = require('../../../permissions');
+const async = require('../../../public/js/vendor/async/async');
 
-const winston = require('../../../logger')
-const apiUtils = require('../apiUtils')
-const Release = require('../../../models/release')
 
-const apiRelease = {}
+const releasesV2 = {}
 
-apiRelease.create = async (req, res) => {
-  const payload = req.body
+releasesV2.create = function (req, res) {
+  const postRelease =  req.body
+  if (!postRelease) return apiUtils.sendApiError_InvalidPostData(res)
+}
+
+releasesV2.get = async (req, res) => {
+  const query = req.query
+  const type = query.type || 'all'
+
+  let limit = 50
+  let page = 0
 
   try {
-    const release = await Release.create({
-      name: payload.name,
-      message: payload.message,
-      color: payload.color,
-      fontColor: payload.fontColor
-    })
+    limit = query.limit ? parseInt(query.limit) : limit
+    page = query.page ? parseInt(query.page) : page
+  } catch (e) {
+    logger.warn(e)
+    return apiUtils.sendApiError_InvalidPostData(res)
+  }
 
-    return apiUtils.sendApiSuccess(res, { release })
+  const queryObject = {
+    limit,
+    page
+  }
+
+  try {
+    let groups = []
+    if (req.user.role.isAdmin || req.user.role.isAgent) {
+      const dbGroups = await Models.Department.getDepartmentGroupsOfUser(req.user._id)
+      groups = dbGroups.map(g => g._id)
+    } else {
+      groups = await Models.Group.getAllGroupsOfUser(req.user._id)
+    }
+
+    const mappedGroups = groups.map(g => g._id)
+
+    switch (type.toLowerCase()) {
+      case 'pending':
+        queryObject.status = [0]
+        break
+      case 'overdue':
+        queryObject.status = [1]
+        break
+      case 'closed':
+        queryObject.status = [2]
+        break
+      case 'filter':
+        try {
+          queryObject.filter = JSON.parse(query.filter)
+          queryObject.status = queryObject.filter.status
+        } catch (error) {
+          logger.warn(error)
+        }
+        break
+    }
+
+    if (!permissions.canThis(req.user.role, 'tickets:viewall', false)) queryObject.owner = req.user._id
+
+    const releases = await Models.Release.getReleasesWithObject(mappedGroups, queryObject, null)
+    const totalCount = await Models.Release.getCountWithObject(mappedGroups, queryObject)
+
+    return apiUtils.sendApiSuccess(res, {
+      releases: releases,
+      count: releases.length,
+      totalCount,
+      page,
+      prevPage: page === 0 ? 0 : page - 1,
+      nextPage: page * limit + limit <= totalCount ? page + 1 : page
+    })
   } catch (err) {
-    winston.debug(err)
+    logger.warn(err)
     return apiUtils.sendApiError(res, 500, err.message)
   }
 }
 
-apiRelease.get = function (req, res) {
-  Release.find({}, function (err, releases) {
-    if (err) return apiUtils.sendApiError(res, 500, err.message)
+releasesV2.single = async function (req, res) {
+  const uid = req.params.uid
+  if (!uid) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
+  Models.Release.getReleaseByUid(uid, function (err, release) {
+    if (err) return apiUtils.sendApiError(res, 500, err)
 
-    return apiUtils.sendApiSuccess(res, { releases: releases })
+    if (req.user.role.isAdmin || req.user.role.isAgent) {
+      Models.Department.getDepartmentGroupsOfUser(req.user._id, function (err, dbGroups) {
+        if (err) return apiUtils.sendApiError(res, 500, err)
+
+        const groups = dbGroups.map(function (g) {
+          return g._id.toString()
+        })
+
+        if (groups.includes(release.group._id.toString())) {
+          return apiUtils.sendApiSuccess(res, { release: release })
+        } else {
+          return apiUtils.sendApiError(res, 403, 'Forbidden')
+        }
+      })
+    } else {
+      Models.Group.getAllGroupsOfUser(req.user._id, function (err, userGroups) {
+        if (err) return apiUtils.sendApiError(res, 500, err)
+
+        const groupIds = userGroups.map(function (m) {
+          return m._id.toString()
+        })
+
+        if (groupIds.includes(release.group._id.toString())) {
+          return apiUtils.sendApiSuccess(res, { release: release })
+        } else {
+          return apiUtils.sendApiError(res, 403, 'Forbidden')
+        }
+      })
+    }
   })
 }
 
-apiRelease.update = function (req, res) {
-  var id = req.params.id
-  var payload = req.body
-  if (!id || !payload || !payload.name || !payload.message || !payload.color || !payload.fontColor)
-    return apiUtils.sendApiError_InvalidPostData(res)
+releasesV2.update = function (req, res) {
+  const uid = req.params.uid
+  const putRelease = req.body.release
+  if (!uid || !putRelease) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
 
-  Release.findOneAndUpdate({ _id: id }, payload, { new: true }, function (err, updatedRelease) {
+  // todo: complete this...
+  Models.Release.getReleaseByUid(uid, function (err, release) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
 
-    return apiUtils.sendApiSuccess(res, { release: updatedRelease })
+    return apiUtils.sendApiSuccess(res, release)
   })
 }
 
-apiRelease.activate = function (req, res) {
-  var id = req.params.id
-  if (!id) return apiUtils.sendApiError_InvalidPostData(res)
+releasesV2.batchUpdate = function (req, res) {
+  const batch = req.body.batch
+  if (!_.isArray(batch)) return apiUtils.sendApiError_InvalidPostData(res)
 
-  Release.updateMany({}, { active: false }, function (err) {
-    if (err) return apiUtils.sendApiError(res, 500, err.message)
+  async.each(
+    batch,
+    function (batchRelease, next) {
+      Models.Release.getReleaseById(batchRelease.id, function (err, release) {
+        if (err) return next(err)
 
-    Release.findOneAndUpdate({ _id: id }, { active: true }, function (err) {
-      if (err) return apiUtils.sendApiError(res, 500, err.message)
+        if (!_.isUndefined(batchRelease.status)) {
+          release.status = batchRelease.status
+        }
+
+        return release.save(next)
+      })
+    },
+    function (err) {
+      if (err) return apiUtils.sendApiError(res, 400, err.message)
 
       return apiUtils.sendApiSuccess(res)
-    })
-  })
+    }
+  )
 }
 
-apiRelease.clear = function (req, res) {
-  Release.updateMany({}, { active: false }, function (err) {
+releasesV2.delete = function (req, res) {
+  const uid = req.params.uid
+  if (!uid) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
+
+  Models.Release.softDeleteUid(uid, function (err, success) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
+    if (!success) return apiUtils.sendApiError(res, 500, 'Unable to delete release')
 
-    return apiUtils.sendApiSuccess(res)
+    return apiUtils.sendApiSuccess(res, { deleted: true })
   })
 }
 
-apiRelease.delete = function (req, res) {
-  var id = req.params.id
-  if (!id) return apiUtils.sendApiError_InvalidPostData(res)
+releasesV2.permDelete = function (req, res) {
+  const id = req.params.id
+  if (!id) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
 
-  Release.findOneAndDelete({ _id: id }, function (err) {
-    if (err) return apiUtils.sendApiError(res, 500, err.message)
+  Models.Release.deleteOne({ _id: id }, function (err, success) {
+    if (err) return apiUtils.sendApiError(res, 400, err.message)
+    if (!success) return apiUtils.sendApiError(res, 400, 'Unable to delete release')
 
-    return apiUtils.sendApiSuccess(res)
+    return apiUtils.sendApiSuccess(res, { deleted: true })
   })
 }
 
-module.exports = apiRelease
+module.exports = releasesV2

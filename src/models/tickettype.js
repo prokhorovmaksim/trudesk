@@ -31,7 +31,7 @@ require('./ticketpriority')
  * @property {String} name ```Required``` ```unique``` Name of Ticket Type
  */
 var ticketTypeSchema = mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   priorities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'priorities' }]
 })
 

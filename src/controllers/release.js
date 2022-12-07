@@ -30,11 +30,11 @@ function handleError (res, err) {
 
 releaseController.get = function (req, res) {
   const user = req.user
-  if (_.isUndefined(user) || !permissions.canThis(user.role, 'release:create')) {
-    req.flash('message', 'Permission Denied.')
-    console.log("get release controller")
-    return res.redirect('/')
-  }
+  // if (_.isUndefined(user) || !permissions.canThis(user.role, 'release:create')) {
+  //   req.flash('message', 'Permission Denied.')
+  //   console.log("get release controller")
+  //   return res.redirect('/')
+  // }
   //TODO fix it!!!
   // if (_.isUndefined(user) || !permissions.canThis(user.role, 'release:create')) {
   //   req.flash('message', 'Permission Denied.')

@@ -13,7 +13,7 @@ i18n
   .init({
     // Стандартный язык
     lng: localStorage.getItem('lng') || 'en',
-    debug: true,
+    debug: false,
     // Распознавание и кэширование языковых кук
     detection: {
       order: ['queryString', 'cookie'],

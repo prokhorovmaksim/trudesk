@@ -31,6 +31,7 @@ class LanguagesDropdownPartial extends React.Component {
 
     this.closeOnClick()
     this.changeFlag(newLanguage)
+    localStorage.setItem('lng', newLanguage)
   }
 
   render () {

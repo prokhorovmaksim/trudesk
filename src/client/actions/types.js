@@ -115,12 +115,20 @@ export const UPDATE_NOTICE = defineAction('UPDATE_NOTICE', [SUCCESS, PENDING, ER
 export const DELETE_NOTICE = defineAction('DELETE_NOTICE', [PENDING, SUCCESS, ERROR])
 export const UNLOAD_NOTICES = defineAction('UNLOAD_NOTICES', [SUCCESS])
 
+// // Releases
+// export const FETCH_RELEASE = defineAction('FETCH_RELEASE', [PENDING, SUCCESS, ERROR])
+// export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
+// export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS, PENDING, ERROR])
+// export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [PENDING, SUCCESS, ERROR])
+// export const UNLOAD_RELEASE = defineAction('UNLOAD_RELEASE', [SUCCESS])
+
 // Releases
-export const FETCH_RELEASE = defineAction('FETCH_RELEASE', [PENDING, SUCCESS, ERROR])
+export const FETCH_RELEASES = defineAction('FETCH_RELEASES', [SUCCESS, PENDING, ERROR])
 export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
-export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS, PENDING, ERROR])
-export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [PENDING, SUCCESS, ERROR])
-export const UNLOAD_RELEASE = defineAction('UNLOAD_RELEASE', [SUCCESS])
+export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [SUCCESS, PENDING, ERROR])
+export const UNLOAD_RELEASES = defineAction('UNLOAD_RELEASES', [SUCCESS])
+export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS])
+export const RELEASE_EVENT = defineAction('RELEASE_EVENT', [SUCCESS])
 
 // Reports
 export const GENERATE_REPORT = defineAction('GENERATE_REPORT', [SUCCESS, PENDING, ERROR])

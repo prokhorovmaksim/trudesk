@@ -1,6 +1,6 @@
 import { fromJS, List } from 'immutable'
 import { handleActions } from 'redux-actions'
-import { FETCH_RELEASE, UPDATE_RELEASE, DELETE_RELEASE, UNLOAD_RELEASE, CREATE_RELEASE } from 'actions/types'
+import { FETCH_RELEASES, CREATE_RELEASE, DELETE_RELEASE, UNLOAD_RELEASES, UPDATE_RELEASE, RELEASE_EVENT } from 'actions/types'
 
 const initialState = {
   releases: List([]),
@@ -9,7 +9,7 @@ const initialState = {
 
 const reducer = handleActions(
   {
-    [FETCH_RELEASE.PENDING]: (state, action) => {
+    [FETCH_RELEASES.PENDING]: (state, action) => {
       console.log("pending release")
       return {
         ...state,
@@ -17,7 +17,7 @@ const reducer = handleActions(
       }
     },
 
-    [FETCH_RELEASE.SUCCESS]: (state, action) => {
+    [FETCH_RELEASES.SUCCESS]: (state, action) => {
       console.log("success release")
       return {
         ...state,
@@ -60,7 +60,7 @@ const reducer = handleActions(
       }
     },
 
-    [UNLOAD_RELEASE.SUCCESS]: state => {
+    [UNLOAD_RELEASES.SUCCESS]: state => {
       return {
         ...state,
         releases: state.releases.clear(),
