@@ -177,10 +177,14 @@ define('modules/ajaxify', ['jquery', 'lodash', 'modules/helpers', 'history'], fu
             $oldContent.find('*').off('click click.chosen mouseup mousemove mousedown change')
 
             // Manually Unload React components from renders
-            if (document.getElementById('dashboard-container'))
+            if (document.getElementById('dashboard-container')){
               window.react.dom.unmountComponentAtNode(document.getElementById('dashboard-container'))
+            }
+
             if (document.getElementById('tickets-container'))
               window.react.dom.unmountComponentAtNode(document.getElementById('tickets-container'))
+            if (document.getElementById('releases-container'))
+              window.react.dom.unmountComponentAtNode(document.getElementById('releases-container'))
             if (document.getElementById('single-ticket-container'))
               window.react.dom.unmountComponentAtNode(document.getElementById('single-ticket-container'))
             if (document.getElementById('settings-container'))
@@ -197,8 +201,14 @@ define('modules/ajaxify', ['jquery', 'lodash', 'modules/helpers', 'history'], fu
               window.react.dom.unmountComponentAtNode(document.getElementById('teams-container'))
             if (document.getElementById('departments-container'))
               window.react.dom.unmountComponentAtNode(document.getElementById('departments-container'))
-            if (document.getElementById('notices-container'))
+            if (document.getElementById('notices-container')){
               window.react.dom.unmountComponentAtNode(document.getElementById('notices-container'))
+            }
+
+            if (document.getElementById('release-container')){
+              window.react.dom.unmountComponentAtNode(document.getElementById('release-container'))
+            }
+
             if (document.getElementById('messages-container'))
               window.react.dom.unmountComponentAtNode(document.getElementById('messages-container'))
             if (document.getElementById('reports-container'))
@@ -208,7 +218,6 @@ define('modules/ajaxify', ['jquery', 'lodash', 'modules/helpers', 'history'], fu
 
             // if (document.getElementById('modal-wrapper'))
             //   window.react.dom.unmountComponentAtNode(document.getElementById('modal-wrapper'))
-
             // Update the content
             $content.stop(true, true)
             $oldContent.find('*').remove()
@@ -259,6 +268,7 @@ define('modules/ajaxify', ['jquery', 'lodash', 'modules/helpers', 'history'], fu
         },
         error: function (jqXHR, textStatus, errorThrown) {
           document.location.href = url
+          console.log(url)
           console.log('[trudesk:ajaxify:Load] - Error Loading Document!!!')
           console.error(errorThrown)
           return false

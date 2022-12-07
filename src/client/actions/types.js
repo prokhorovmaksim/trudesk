@@ -23,6 +23,8 @@ export const HIDE_MODAL = defineAction('HIDE_MODAL')
 export const CLEAR_MODAL = defineAction('CLEAR_MODAL')
 export const SHOW_NOTICE = defineAction('SHOW_NOTICE', [SUCCESS])
 export const CLEAR_NOTICE = defineAction('CLEAR_NOTICE')
+// export const SHOW_RELEASE = defineAction('SHOW_RELEASE', [SUCCESS])
+// export const CLEAR_RELEASE = defineAction('CLEAR_RELEASE')
 export const SET_SESSION_USER = defineAction('SET_SESSION_USER', [SUCCESS, PENDING, ERROR])
 export const FETCH_ROLES = defineAction('FETCH_ROLES', [SUCCESS, ERROR])
 export const UPDATE_ROLE_ORDER = defineAction('UPDATE_ROLE_ORDER', [SUCCESS, ERROR])
@@ -112,6 +114,13 @@ export const CREATE_NOTICE = defineAction('CREATE_NOTICE', [SUCCESS, PENDING, ER
 export const UPDATE_NOTICE = defineAction('UPDATE_NOTICE', [SUCCESS, PENDING, ERROR])
 export const DELETE_NOTICE = defineAction('DELETE_NOTICE', [PENDING, SUCCESS, ERROR])
 export const UNLOAD_NOTICES = defineAction('UNLOAD_NOTICES', [SUCCESS])
+
+// Releases
+export const FETCH_RELEASE = defineAction('FETCH_RELEASE', [PENDING, SUCCESS, ERROR])
+export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
+export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS, PENDING, ERROR])
+export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [PENDING, SUCCESS, ERROR])
+export const UNLOAD_RELEASE = defineAction('UNLOAD_RELEASE', [SUCCESS])
 
 // Reports
 export const GENERATE_REPORT = defineAction('GENERATE_REPORT', [SUCCESS, PENDING, ERROR])

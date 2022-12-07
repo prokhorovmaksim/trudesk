@@ -16,6 +16,7 @@ const Controllers = {
   install: require('./install'),
   main: require('./main'),
   tickets: require('./tickets'),
+  release: require('./release'),
   messages: require('./messages'),
   servers: require('./servers'),
   accounts: require('./accounts'),

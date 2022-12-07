@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Log from '../../logger'
 import axios from 'axios'
-import { fetchNotices, deleteNotice, unloadNotices } from 'actions/notices'
+import { fetchRelease, deleteRelease, unloadRelease } from 'actions/release'
 import { showModal } from 'actions/common'
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
@@ -23,15 +23,15 @@ import Button from 'components/Button'
 import helpers from 'lib/helpers'
 import UIKit from 'uikit'
 
-class NoticeContainer extends React.Component {
+class ReleaseContainer extends React.Component {
   constructor (props) {
     super(props)
-    console.log("create notice")
   }
 
   componentDidMount () {
-    console.log("did mount")
-    this.props.fetchNotices()
+    console.log("did mount release")
+    console.log(helpers.canUser('release:create'))
+    this.props.fetchRelease()
   }
 
   componentDidUpdate () {
@@ -39,45 +39,46 @@ class NoticeContainer extends React.Component {
   }
 
   componentWillUnmount () {
-    this.props.unloadNotices()
+    this.props.unloadRelease()
   }
 
-  onActivateNotice (noticeId) {
-    if (!helpers.canUser('notices:activate')) {
-      helpers.UI.showSnackbar(this.props.t('Unauthorized'), true)
-      return
-    }
+  onActivateRelease (releaseId) {
+    console.log("activate release")
+    // if (!helpers.canUser('release:activate')) {
+    //   helpers.UI.showSnackbar(this.props.t('Unauthorized'), true)
+    //   return
+    // }
 
-    axios
-      .put('/api/v2/notices/' + noticeId + '/activate', { active: true })
-      .then(() => {
-        this.props.socket.emit(NOTICE_SHOW, { noticeId })
-      })
-      .catch(err => {
-        Log.error(err)
-        helpers.UI.showSnackbar(err, true)
-      })
+    // axios
+    //   .put('/api/v2/release/' + releaseId + '/activate', { active: true })
+    //   .then(() => {
+    //     this.props.socket.emit(NOTICE_SHOW, { releaseId })
+    //   })
+    //   .catch(err => {
+    //     Log.error(err)
+    //     helpers.UI.showSnackbar(err, true)
+    //   })
   }
 
-  onDeactivateNotice () {
-    axios
-      .get('/api/v1/notices/clearactive')
-      .then(() => {
-        this.props.socket.emit(NOTICE_CLEAR)
-
-        helpers.UI.showSnackbar(this.props.t('Notice has been deactivated'), false)
-      })
-      .catch(err => {
-        Log.error(err)
-        helpers.UI.showSnackbar(err, true)
-      })
+  onDeactivateRelease () {
+    // axios
+    //   .get('/api/v1/notice/clearactive')
+    //   .then(() => {
+    //     this.props.socket.emit(NOTICE_CLEAR)
+    //
+    //     helpers.UI.showSnackbar(this.props.t('Notice has been deactivated'), false)
+    //   })
+    //   .catch(err => {
+    //     Log.error(err)
+    //     helpers.UI.showSnackbar(err, true)
+    //   })
   }
 
-  onEditNotice (notice) {
-    this.props.showModal('EDIT_NOTICE', { notice })
+  onEditRelease (release) {
+    // this.props.showModal('EDIT_NOTICE', { release })
   }
 
-  onDeleteNotice (noticeId) {
+  onDeleteRelease (releaseId) {
     UIKit.modal.confirm(
       `<h2>${this.props.t('Are you sure?')}</h2>
         <p style="font-size: 15px;">
@@ -85,7 +86,7 @@ class NoticeContainer extends React.Component {
         </p>
         `,
       () => {
-        this.props.deleteNotice({ _id: noticeId })
+        this.props.deleteRelease({ _id: releaseId })
       },
       {
         labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
@@ -95,7 +96,7 @@ class NoticeContainer extends React.Component {
   }
 
   render () {
-    const tableItems = this.props.notices.map(notice => {
+    const tableItems = this.props.releases.map(notice => {
       const formattedDate =
         helpers.formatDate(notice.get('date'), helpers.getShortDateFormat()) +
         ', ' +
@@ -115,21 +116,21 @@ class NoticeContainer extends React.Component {
                 style={'success'}
                 small={true}
                 waves={true}
-                onClick={() => this.onActivateNotice(notice.get('_id'))}
+                onClick={() => this.onActivateRelease(notice.get('_id'))}
               />
               <Button
                 icon={'edit'}
                 extraClass={'hover-primary'}
                 small={true}
                 waves={true}
-                onClick={() => this.onEditNotice(notice.toJS())}
+                onClick={() => this.onEditRelease(notice.toJS())}
               />
               <Button
                 icon={'delete'}
                 extraClass={'hover-danger'}
                 small={true}
                 waves={true}
-                onClick={() => this.onDeleteNotice(notice.get('_id'))}
+                onClick={() => this.onDeleteRelease(notice.get('_id'))}
               />
             </ButtonGroup>
           </TableCell>
@@ -139,22 +140,30 @@ class NoticeContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={this.props.t('Notices')}
+          title={this.props.t('Releases')}
           shadow={false}
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               <div className={'uk-width-1-1 mt-15 uk-text-right'}>
-                {helpers.canUser('notices:deactivate') && (
+                <Button
+                  text={this.props.t('Create')}
+                  flat={false}
+                  small={true}
+                  waves={false}
+                  extraClass={'hover-accent'}
+                  // onClick={() => this.onDeactivateRelease()}
+                />
+                {helpers.canUser('release:deactivate') && (
                   <Button
                     text={this.props.t('Deactivate')}
                     flat={false}
                     small={true}
                     waves={false}
                     extraClass={'hover-accent'}
-                    onClick={() => this.onDeactivateNotice()}
+                    // onClick={() => this.onDeactivateRelease()}
                   />
                 )}
-                {helpers.canUser('notices:create') && (
+                {helpers.canUser('release:create') && (
                   <Button
                     text={this.props.t('Create')}
                     flat={false}
@@ -162,7 +171,7 @@ class NoticeContainer extends React.Component {
                     waves={false}
                     extraClass={'hover-success'}
                     onClick={() => {
-                      this.props.showModal('CREATE_NOTICE')
+                      // this.props.showModal('CREATE_NOTICE')
                     }}
                   />
                 )}
@@ -184,10 +193,10 @@ class NoticeContainer extends React.Component {
               <TableHeader key={4} width={150} text={''} />
             ]}
           >
-            {!this.props.loading && this.props.notices.size < 1 && (
+            {!this.props.loading && this.props.releases.size < 1 && (
               <TableRow clickable={false}>
                 <TableCell colSpan={10}>
-                  <h5 style={{ margin: 10 }}>{this.props.t('No Notices Found')}</h5>
+                  <h5 style={{ margin: 10 }}>{this.props.t('No Releases Found')}</h5>
                 </TableCell>
               </TableRow>
             )}
@@ -199,27 +208,27 @@ class NoticeContainer extends React.Component {
   }
 }
 
-NoticeContainer.propTypes = {
+ReleaseContainer.propTypes = {
   socket: PropTypes.object.isRequired,
-  notices: PropTypes.object.isRequired,
+  releases: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
 
-  fetchNotices: PropTypes.func.isRequired,
-  deleteNotice: PropTypes.func.isRequired,
-  unloadNotices: PropTypes.func.isRequired,
+  fetchRelease: PropTypes.func.isRequired,
+  deleteRelease: PropTypes.func.isRequired,
+  unloadRelease: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
   socket: state.shared.socket,
-  notices: state.noticesState.notices,
-  loading: state.noticesState.loading
+  releases: state.releaseState.releases,
+  loading: state.releaseState.loading
 })
 
 export default compose(withTranslation(), connect(mapStateToProps, {
-  fetchNotices,
-  deleteNotice,
-  unloadNotices,
+  fetchRelease,
+  deleteRelease,
+  unloadRelease,
 
   showModal
-}))(NoticeContainer)
+}))(ReleaseContainer)

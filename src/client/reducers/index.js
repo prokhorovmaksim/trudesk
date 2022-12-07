@@ -29,6 +29,7 @@ import departmentsState from './departmentsReducer'
 import noticesState from './noticesReducer'
 import searchState from './searchReducer'
 import messagesState from './messagesReducer'
+import releaseState from './releaseReducer'
 
 // const IndexReducer = (state = {}, action) => {
 //   return {
@@ -61,7 +62,8 @@ const IndexReducer = combineReducers({
   noticesState,
   settings,
   tagsSettings,
-  messagesState
+  messagesState,
+  releaseState
 })
 
 export default IndexReducer

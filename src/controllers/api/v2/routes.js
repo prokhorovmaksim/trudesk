@@ -78,6 +78,15 @@ module.exports = function (middleware, router, controllers) {
   router.get('/api/v2/notices/clear', apiv2Auth, canUser('notices:deactivate'), apiv2.notices.clear)
   router.delete('/api/v2/notices/:id', apiv2Auth, canUser('notices:delete'), apiv2.notices.delete)
 
+  // Release
+  router.get('/api/v2/release', apiv2Auth, apiv2.release.get)
+  router.post('/api/v2/release', apiv2Auth, canUser('release:create'), apiv2.release.create)
+  // router.get('/api/v2/release/active', apiv2Auth, apiv2.release.getActive)
+  router.put('/api/v2/release/:id', apiv2Auth, canUser('release:update'), apiv2.release.update)
+  router.put('/api/v2/release/:id/activate', apiv2Auth, canUser('release:activate'), apiv2.release.activate)
+  router.get('/api/v2/release/clear', apiv2Auth, canUser('release:deactivate'), apiv2.release.clear)
+  router.delete('/api/v2/release/:id', apiv2Auth, canUser('release:delete'), apiv2.release.delete)
+
   router.get('/api/v2/messages/conversations', apiv2Auth, apiv2.messages.getConversations)
   router.get('/api/v2/messages/conversations/:id', apiv2Auth, apiv2.messages.single)
   router.delete('/api/v2/messages/conversations/:id', apiv2Auth, apiv2.messages.deleteConversation)

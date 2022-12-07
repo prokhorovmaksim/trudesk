@@ -54,7 +54,8 @@ var roles = {
       'ticket:create edit view attachment removeAttachment',
       'comment:*',
       'notes:*',
-      'reports:view'
+      'reports:view',
+      'release:*'
     ]
   },
   support: {
@@ -68,7 +69,8 @@ var roles = {
       'comment:editSelf create delete',
       'notes:create view',
       'reports:view',
-      'notices:*'
+      'notices:*',
+      'release:*'
     ]
   },
   user: {

@@ -313,7 +313,7 @@ class EditAccountModal extends React.Component {
                 </div>
 
                 <div className='uk-margin-medium-bottom'>
-                  <label className='uk-form-label'>{this.props.t('DepartmentsDepartments')}</label>
+                  <label className='uk-form-label'>{this.props.t('Departments')}</label>
                   <MultiSelect
                     items={departments}
                     initialSelected={user.departments.map(i => i._id)}

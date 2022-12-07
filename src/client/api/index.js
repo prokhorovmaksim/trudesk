@@ -341,6 +341,32 @@ api.notices.delete = ({ _id }) => {
   })
 }
 
+api.release = {}
+api.release.create = payload => {
+  return axios.post('/api/v2/release', payload).then(res => {
+    return res.data
+  })
+}
+
+api.release.get = () => {
+  console.log("release get")
+  return axios.get('/api/v2/release').then(res => {
+    return res.data
+  })
+}
+
+api.release.update = payload => {
+  return axios.put(`/api/v2/release/${payload._id}`, payload).then(res => {
+    return res.data
+  })
+}
+
+api.release.delete = ({ _id }) => {
+  return axios.delete(`/api/v2/release/${_id}`).then(res => {
+    return res.data
+  })
+}
+
 api.reports = {}
 api.reports.generate = payload => {
   return axios.post(`/api/v1/reports/generate/${payload.type}`, payload)

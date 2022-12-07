@@ -14,6 +14,8 @@ services:
       TRUDESK_DOCKER: "true"
       TD_MONGODB_SERVER: mongo
       TD_MONGODB_DATABASE: trudesk
+#      TD_MONGODB_USERNAME: ilya
+#      TD_MONGODB_PASSWORD: 11111
       USE_XFORWARDIP: "true"
     volumes:
       - trudesk_uploads:/usr/src/trudesk/public/uploads
@@ -21,11 +23,16 @@ services:
   mongo:
     image: mongo:5.0-focal
     restart: always
+#    command: mongod --auth
     ports:
       - "27017:27017"
     volumes:
       - mongo:/var/lib/mongo
       - mongo_data:/data/db:rw
+#      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
   elasticsearch:
     image: elasticsearch:8.0.0
     restart: always
@@ -34,6 +41,7 @@ services:
       - xpack.security.http.ssl.enabled=false
       - discovery.type=single-node
       - bootstrap.memory_lock=true
+      - ingest.geoip.downloader.enabled=false
     mem_limit: 1073741824
     ulimits:
       memlock:

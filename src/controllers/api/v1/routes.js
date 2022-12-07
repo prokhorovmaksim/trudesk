@@ -155,6 +155,12 @@ module.exports = function (middleware, router, controllers) {
   router.put('/api/v1/notices/:id', apiv1, canUser('notices:update'), apiCtrl.notices.updateNotice)
   router.delete('/api/v1/notices/:id', apiv1, canUser('notices:delete'), apiCtrl.notices.deleteNotice)
 
+  // Release
+  router.post('/api/v1/release/create', apiv1, canUser('release:create'), apiCtrl.release.create)
+  router.get('/api/v1/release/clearactive', apiv1, canUser('release:deactivate'), apiCtrl.release.clearActive)
+  router.put('/api/v1/release/:id', apiv1, canUser('release:update'), apiCtrl.release.updateRelease)
+  router.delete('/api/v1/release/:id', apiv1, canUser('release:delete'), apiCtrl.release.deleteRelease)
+
   // Reports Generator
   const reportsGenCtrl = apiCtrl.reports.generate
   const genBaseUrl = '/api/v1/reports/generate/'
