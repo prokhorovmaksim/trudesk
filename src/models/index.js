@@ -11,6 +11,7 @@ const Team = require('./team')
 const Department = require('./department')
 const Message = require('./chat/message')
 const Conversation = require('./chat/conversation')
+const Release = require('./release')
 
 module.exports = {
   User,
@@ -25,5 +26,6 @@ module.exports = {
   Team,
   Department,
   Message,
-  Conversation
+  Conversation,
+  Release
 }
