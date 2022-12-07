@@ -18,6 +18,7 @@ import React from 'react'
 
 import DashboardContainer from 'containers/Dashboard'
 import TicketsContainer from 'containers/Tickets/TicketsContainer'
+import ReleaseContainer from 'containers/Release/ReleaseContainer'
 import SingleTicketContainer from 'containers/Tickets/SingleTicketContainer'
 import SettingsContainer from 'containers/Settings/SettingsContainer'
 import AccountsContainer from 'containers/Accounts'
@@ -151,6 +152,16 @@ export default function (store) {
     )
 
     ReactDOM.render(NoticeContainerWithProvider, document.getElementById('notices-container'))
+  }
+
+  if (document.getElementById('release-container')) {
+    const ReleaseContainerWithProvider = (
+      <Provider store={store}>
+        <ReleaseContainer />
+      </Provider>
+    )
+
+    ReactDOM.render(ReleaseContainerWithProvider, document.getElementById('release-container'))
   }
 
   if (document.getElementById('reports-container')) {

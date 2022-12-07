@@ -33,7 +33,8 @@ roleDefaults.supportGrants = [
   'teams:create update view',
   'comments:create view update create delete',
   'reports:view create',
-  'notices:*'
+  'notices:*',
+  'release:*'
 ]
 roleDefaults.adminGrants = [
   'admin:*',
@@ -48,7 +49,8 @@ roleDefaults.adminGrants = [
   'reports:*',
   'notices:*',
   'settings:*',
-  'api:*'
+  'api:*',
+  'release:*'
 ]
 
 settingsDefaults.roleDefaults = roleDefaults

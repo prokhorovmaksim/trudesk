@@ -14,6 +14,7 @@
 
 // Sub APIs
 const apiTicketsV1 = require('./api/v1/tickets')
+const apiReleaseV1 = require('./api/v1/release')
 const apiTagsV1 = require('./api/v1/tags')
 const apiNoticesV1 = require('./api/v1/notices')
 const apiUsersV1 = require('./api/v1/users')
@@ -32,6 +33,7 @@ apiController.index = function (req, res) {
 apiController.v1 = {}
 apiController.v1.common = require('./api/v1/common')
 apiController.v1.tickets = apiTicketsV1
+apiController.v1.release = apiReleaseV1
 apiController.v1.tags = apiTagsV1
 apiController.v1.notices = apiNoticesV1
 apiController.v1.users = apiUsersV1
@@ -46,6 +48,7 @@ apiController.v2 = {}
 apiController.v2.common = require('./api/v2/common')
 apiController.v2.accounts = require('./api/v2/accounts')
 apiController.v2.tickets = require('./api/v2/tickets')
+apiController.v2.release = require('./api/v2/release')
 apiController.v2.groups = require('./api/v2/groups')
 apiController.v2.teams = require('./api/v2/teams')
 apiController.v2.departments = require('./api/v2/departments')

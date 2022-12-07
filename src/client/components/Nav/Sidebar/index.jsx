@@ -159,6 +159,13 @@ class Sidebar extends React.Component {
               </SidebarItem>
             )}
             <SidebarItem
+              text={this.props.t('Releases')}
+              icon='campaign'
+              href='/release'
+              class='navRelease'
+              active={activeItem === 'release'}
+            />
+            <SidebarItem
               text={this.props.t('Messages')}
               icon='chat'
               href='/messages'

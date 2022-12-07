@@ -183,7 +183,6 @@ mainController.l2AuthPost = function (req, res, next) {
     if (!success) return res.redirect('/l2auth')
 
     req.session.l2auth = 'totp'
-
     let redirectUrl = '/dashboard'
 
     if (req.session.redirectUrl) {

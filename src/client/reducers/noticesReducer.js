@@ -10,6 +10,7 @@ const initialState = {
 const reducer = handleActions(
   {
     [FETCH_NOTICES.PENDING]: (state, action) => {
+      console.log("pending")
       return {
         ...state,
         loading: true
@@ -17,6 +18,7 @@ const reducer = handleActions(
     },
 
     [FETCH_NOTICES.SUCCESS]: (state, action) => {
+      console.log("success")
       return {
         ...state,
         notices: fromJS(action.response.notices || []),
