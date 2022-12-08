@@ -9,8 +9,6 @@ import { showModal } from 'actions/common'
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
 
-import { NOTICE_SHOW, NOTICE_CLEAR } from 'serverSocket/socketEventConsts'
-
 import PageTitle from 'components/PageTitle'
 import PageContent from 'components/PageContent'
 import Table from 'components/Table'
@@ -42,40 +40,13 @@ class ReleaseContainer extends React.Component {
     this.props.unloadReleases()
   }
 
-  onActivateRelease (releaseId) {
-    console.log("activate release")
-    // if (!helpers.canUser('release:activate')) {
-    //   helpers.UI.showSnackbar(this.props.t('Unauthorized'), true)
-    //   return
-    // }
-
-    // axios
-    //   .put('/api/v2/release/' + releaseId + '/activate', { active: true })
-    //   .then(() => {
-    //     this.props.socket.emit(NOTICE_SHOW, { releaseId })
-    //   })
-    //   .catch(err => {
-    //     Log.error(err)
-    //     helpers.UI.showSnackbar(err, true)
-    //   })
-  }
-
-  onDeactivateRelease () {
-    // axios
-    //   .get('/api/v1/notice/clearactive')
-    //   .then(() => {
-    //     this.props.socket.emit(NOTICE_CLEAR)
-    //
-    //     helpers.UI.showSnackbar(this.props.t('Notice has been deactivated'), false)
-    //   })
-    //   .catch(err => {
-    //     Log.error(err)
-    //     helpers.UI.showSnackbar(err, true)
-    //   })
-  }
-
   onEditRelease (release) {
-    // this.props.showModal('EDIT_NOTICE', { release })
+    console.log("Edit release")
+    console.log(release)
+    this.props.showModal('EDIT_RELEASE', {
+      edit: true,
+      user: user.toJS()
+    })
   }
 
   onDeleteRelease (releaseId) {
@@ -86,7 +57,9 @@ class ReleaseContainer extends React.Component {
         </p>
         `,
       () => {
-        this.props.deleteRelease({ _id: releaseId })
+        // this.props.deleteRelease({ _id: releaseId })
+        console.log("Delete release")
+        console.log(releaseId)
       },
       {
         labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
@@ -96,41 +69,37 @@ class ReleaseContainer extends React.Component {
   }
 
   render () {
-    const tableItems = this.props.releases.map(notice => {
+    const tableItems = this.props.releases.map(release => {
       const formattedDate =
-        helpers.formatDate(notice.get('date'), helpers.getShortDateFormat()) +
+        helpers.formatDate(release.get('date'), helpers.getShortDateFormat()) +
         ', ' +
-        helpers.formatDate(notice.get('date'), helpers.getTimeFormat())
+        helpers.formatDate(release.get('date'), helpers.getTimeFormat())
+
+      const ticketsCount = release.get('tickets').length
+      console.log("ticketscount")
+      console.log(ticketsCount)
+      console.log(release.get('tickets'))
       return (
-        <TableRow key={notice.get('_id')} className={'vam nbb'} clickable={false}>
-          <TableCell style={{ padding: '18px 15px' }}>
-            <span style={{ display: 'block', width: 15, height: 15, backgroundColor: notice.get('color') }} />
-          </TableCell>
-          <TableCell style={{ fontWeight: 500, padding: '18px 5px' }}>{notice.get('name')}</TableCell>
-          <TableCell style={{ padding: '18px 5px' }}>{notice.get('message')}</TableCell>
+        <TableRow key={release.get('_id')} className={'vam nbb'} clickable={false}>
+          <TableCell style={{ fontWeight: 500, padding: '18px 5px' }}>{release.get('name')}</TableCell>
+          <TableCell style={{ padding: '18px 5px' }}>{release.getIn(['group', 'name'])}</TableCell>
+          <TableCell style={{ padding: '18px 5px' }}>{ticketsCount}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{formattedDate}</TableCell>
           <TableCell>
             <ButtonGroup>
-              <Button
-                icon={'spatial_audio_off'}
-                style={'success'}
-                small={true}
-                waves={true}
-                onClick={() => this.onActivateRelease(notice.get('_id'))}
-              />
               <Button
                 icon={'edit'}
                 extraClass={'hover-primary'}
                 small={true}
                 waves={true}
-                onClick={() => this.onEditRelease(notice.toJS())}
+                onClick={() => this.onEditRelease(release.toJS())}
               />
               <Button
                 icon={'delete'}
                 extraClass={'hover-danger'}
                 small={true}
                 waves={true}
-                onClick={() => this.onDeleteRelease(notice.get('_id'))}
+                onClick={() => this.onDeleteRelease(release.get('_id'))}
               />
             </ButtonGroup>
           </TableCell>
@@ -145,16 +114,6 @@ class ReleaseContainer extends React.Component {
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               <div className={'uk-width-1-1 mt-15 uk-text-right'}>
-                {helpers.canUser('release:deactivate') && (
-                  <Button
-                    text={this.props.t('Deactivate')}
-                    flat={false}
-                    small={true}
-                    waves={false}
-                    extraClass={'hover-accent'}
-                    // onClick={() => this.onDeactivateRelease()}
-                  />
-                )}
                 {helpers.canUser('release:create') && (
                   <Button
                     text={this.props.t('Create')}
@@ -178,9 +137,9 @@ class ReleaseContainer extends React.Component {
             stickyHeader={true}
             striped={true}
             headers={[
-              <TableHeader key={0} width={45} height={50} text={''} />,
               <TableHeader key={1} width={'20%'} text={this.props.t('Name')} />,
-              <TableHeader key={2} width={'60%'} text={this.props.t('Message')} />,
+              <TableHeader key={2} width={'30%'} text={this.props.t('Group')} />,
+              <TableHeader key={2} width={'30%'} text={this.props.t('Tickets count')} />,
               <TableHeader key={3} width={'10%'} text={this.props.t('Date')} />,
               <TableHeader key={4} width={150} text={''} />
             ]}

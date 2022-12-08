@@ -31,7 +31,7 @@ const COLLECTION = 'releases'
  * @property {Array} tickets An array of tickets _ids that included in current release.
  */
 const releaseSchema = mongoose.Schema({
-  uid: { type: Number, unique: true, index: true },
+  // uid: { type: Number, unique: true, index: true },
   group: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -55,61 +55,62 @@ const autoPopulate = function (next) {
 releaseSchema.pre('findOne', autoPopulate).pre('find', autoPopulate)
 
 releaseSchema.pre('save', function (next) {
-  this.wasNew = this.isNew
-
-  if (!_.isUndefined(this.uid) || this.uid) {
-    return next()
-  }
-
-  const c = require('./counters')
-  const self = this
-  c.increment('releases', function (err, res) {
-    if (err) return next(err)
-
-    self.uid = res.value.next
-
-    if (_.isUndefined(self.uid)) {
-      const error = new Error('Invalid UID.')
-      return next(error)
-    }
-
-    return next()
-  })
+  // this.wasNew = this.isNew
+  //
+  // if (!_.isUndefined(this.uid) || this.uid) {
+  //   return next()
+  // }
+  //
+  // const c = require('./counters')
+  // const self = this
+  // c.increment('releases', function (err, res) {
+  //   if (err) return next(err)
+  //
+  //   self.uid = res.value.next
+  //
+  //   if (_.isUndefined(self.uid)) {
+  //     const error = new Error('Invalid UID.')
+  //     return next(error)
+  //   }
+  //
+  //   return next()
+  // })
+  return next()
 })
 
-releaseSchema.post('save', async function (doc, next) {
-  if (!this.wasNew) {
-    const emitter = require('../emitter')
-    try {
-      const savedRelease = await doc.populate([
-        {
-          path: 'group',
-          model: groupSchema,
-          populate: [
-            {
-              path: 'members',
-              model: userSchema,
-              select: '-__v -accessToken -tOTPKey'
-            },
-            {
-              path: 'sendMailTo',
-              model: userSchema,
-              select: '-__v -accessToken -tOTPKey'
-            }
-          ]
-        }
-      ])
-
-      emitter.emit('release:updated', savedRelease)
-    } catch (err) {
-      winston.warn('WARNING: ' + err)
-    }
-
-    return next()
-  } else {
-    return next()
-  }
-})
+// releaseSchema.post('save', async function (doc, next) {
+//   if (!this.wasNew) {
+//     const emitter = require('../emitter')
+//     try {
+//       const savedRelease = await doc.populate([
+//         {
+//           path: 'group',
+//           model: groupSchema,
+//           populate: [
+//             {
+//               path: 'members',
+//               model: userSchema,
+//               select: '-__v -accessToken -tOTPKey'
+//             },
+//             {
+//               path: 'sendMailTo',
+//               model: userSchema,
+//               select: '-__v -accessToken -tOTPKey'
+//             }
+//           ]
+//         }
+//       ])
+//
+//       emitter.emit('release:updated', savedRelease)
+//     } catch (err) {
+//       winston.warn('WARNING: ' + err)
+//     }
+//
+//     return next()
+//   } else {
+//     return next()
+//   }
+// })
 
 releaseSchema.virtual('statusFormatted').get(function () {
   const s = this.status

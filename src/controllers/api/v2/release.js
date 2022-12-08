@@ -3,13 +3,55 @@ const logger = require('../../../logger');
 const Models = require('../../../models');
 const permissions = require('../../../permissions');
 const async = require('../../../public/js/vendor/async/async');
+const Notice = require("../../../models/notice");
+const winston = require("../../../logger");
+const Group = require("../../../models/group");
+const Team = require("../../../models/team");
+const Department = require("../../../models/department");
+const apiUtil = require("../apiUtils");
 
 
 const releasesV2 = {}
 
-releasesV2.create = function (req, res) {
+// releasesV2.create = function (req, res) {
+//   const postRelease =  req.body
+//   if (!postRelease) return apiUtils.sendApiError_InvalidPostData(res)
+// }
+releasesV2.create = async function (req, res) {
   const postRelease =  req.body
   if (!postRelease) return apiUtils.sendApiError_InvalidPostData(res)
+
+  try {
+    const release = await Models.Release.create({
+      name: postRelease.name,
+      group: postRelease.group,
+      tickets: postRelease.tickets
+    })
+
+    console.log("release")
+    console.log(release)
+    console.log("release")
+
+    savedId = release._id
+
+    // let tickets = []
+    // if (postRelease.tickets) {
+    //   tickets = await Tickets.getTickets(postRelease.tickets)
+    //   for (const ticket of tickets) {
+    //     await ticket.addMember(savedId)
+    //     await ticket.save()
+    //   }
+    // }
+
+    // release.group = groups.map(g => {
+    //   return { _id: g._id, name: g.name }
+    // })
+
+    return apiUtils.sendApiSuccess(res, { release })
+  } catch (err) {
+    winston.debug(err)
+    return apiUtils.sendApiError(res, 500, err.message)
+  }
 }
 
 releasesV2.get = async (req, res) => {

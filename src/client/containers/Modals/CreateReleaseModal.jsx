@@ -1,18 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { observer } from 'mobx-react'
-import { makeObservable, observable } from 'mobx'
-import { compose } from 'redux';
-import { withTranslation } from 'react-i18next';
+import {connect} from 'react-redux'
+import {observer} from 'mobx-react'
+import {makeObservable, observable} from 'mobx'
+import {compose} from 'redux';
+import {withTranslation} from 'react-i18next';
 
-import { createRelease } from 'actions/release'
-import { fetchGroups, unloadGroups } from 'actions/groups'
-import { fetchTickets, unloadTickets } from 'actions/tickets'
+import {createRelease} from 'actions/release'
+import {fetchGroups, unloadGroups} from 'actions/groups'
+import {fetchTickets, unloadTickets} from 'actions/tickets'
 import BaseModal from './BaseModal'
 import Button from 'components/Button'
 import SingleSelect from 'components/SingleSelect'
 import MultiSelect from 'components/MultiSelect'
+import MultiSelectTickets from 'components/MultiSelectTickets'
 
 import $ from 'jquery'
 import helpers from 'lib/helpers'
@@ -22,11 +23,21 @@ class CreateReleaseModal extends React.Component {
   @observable name = ''
 
   constructor (props) {
+    console.log("construct")
     super(props)
     makeObservable(this)
+
+    // const tickets = this.props.tickets
+    //   .map(ticket => {
+    //     return { text: ticket.get('subject'), value: ticket.get('_id') }
+    //   })
+    //   .toArray()
+    // this.currentTickets = null
+    this.state = { currentTickets: null}
   }
 
   componentDidMount () {
+    console.log("mount")
     this.props.fetchGroups({ type: 'all' })
     this.props.fetchTickets({ type: 'all' })
 
@@ -48,11 +59,51 @@ class CreateReleaseModal extends React.Component {
     else this.ticketSelectErrorMessage.classList.add('hide')
   }
 
+  showTicketsByGroup () {
+    // const newTickets = this.props.tickets
+    //   .filter(ticket => {
+    //     return this.selectedGroup === ticket.get('group').get('_id')
+    //   })
+    //   .map(ticket => {
+    //     return { text: ticket.get('subject'), value: ticket.get('_id') }
+    //   })
+    //   .toArray()
+    const newTickets = this.props.tickets
+      .map(ticket => {
+        if(this.selectedGroup === ticket.get('group').get('_id')) {
+          return { text: ticket.get('subject'), value: ticket.get('_id'), visibility: true }
+        } else {
+          return { text: ticket.get('subject'), value: ticket.get('_id'), visibility: false }
+        }
+
+      })
+      .toArray()
+
+    this.ticketSelect.deselectAll()
+
+    // const oldProps = this.ticketSelect.props.items
+
+    this.ticketSelect.props.items = newTickets
+
+    // this.ticketSelect.componentDidUpdate(oldProps)
+
+    // console.log(this.currentTickets)
+    //
+    // const container = document.getElementById('select-tickets')
+    //
+    // document.getElementById('multiselect-container').removeChild(container)
+
+    this.setState({ currentTickets: newTickets })
+
+  }
+
   onGroupSelectChange (e) {
     this.selectedGroup = e.target.value
 
     if (!this.selectedGroup || this.selectedGroup.length < 1) this.groupSelectErrorMessage.classList.remove('hide')
     else this.groupSelectErrorMessage.classList.add('hide')
+
+    this.showTicketsByGroup()
   }
 
   onFormSubmit (e) {
@@ -68,38 +119,55 @@ class CreateReleaseModal extends React.Component {
       if (isValid) isValid = false
     } else this.groupSelectErrorMessage.classList.add('hide')
 
-    const selectedTickets = this.ticketSelect ? this.ticketSelect.getSelected() : undefined
-    if (selectedTickets) {
-      if (selectedTickets.length < 1) {
-        this.ticketSelectErrorMessage.classList.remove('hide')
-        if (isValid) isValid = false
-      } else this.ticketSelectErrorMessage.classList.add('hide')
-    }
+    // const selectedTickets = this.ticketSelect ? this.ticketSelect.getSelected() : undefined
+    // if (selectedTickets) {
+    //   if (selectedTickets.length < 1) {
+    //     this.ticketSelectErrorMessage.classList.remove('hide')
+    //     if (isValid) isValid = false
+    //   } else this.ticketSelectErrorMessage.classList.add('hide')
+    // }
 
     if (!isValid) return
+
 
     const payload = {
       name: this.name,
       group: this.selectedGroup,
-      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : undefined,
+      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : undefined
     }
+
+    console.log("payload")
+    console.log(payload)
 
     this.props.createRelease(payload)
   }
 
   render () {
+    console.log("render")
     const groups = this.props.groups
       .map(group => {
         return { text: group.get('name'), value: group.get('_id') }
       })
       .toArray()
 
-    const tickets = this.props.tickets
-      .map(ticket => {
-        return { text: ticket.get('subject'), value: ticket.get('_id') }
-      })
-      .toArray()
+    // const tickets = this.props.tickets
+    //   .map(ticket => {
+    //     return { text: ticket.get('subject'), value: ticket.get('_id') }
+    //   })
+    //   .toArray()
 
+    // if(this.state.currentTickets === null && this.props.tickets.length > 0) {
+    //   console.log("add current")
+    //   const tickets = this.props.tickets
+    //     .map(ticket => {
+    //       return {text: ticket.get('subject'), value: ticket.get('_id')}
+    //     })
+    //     .toArray()
+    //
+    //   this.setState({ currentTickets: tickets })
+    // }
+
+    const tickets = this.state.currentTickets
 
     return (
       // <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'}>
@@ -143,7 +211,7 @@ class CreateReleaseModal extends React.Component {
             <div>
               <div className='uk-margin-medium-bottom'>
                 <label className='uk-form-label'>{this.props.t('Tickets')}</label>
-                <MultiSelect
+                <MultiSelectTickets
                   items={tickets}
                   onChange={e => this.onTicketSelectChange(e)}
                   ref={r => (this.ticketSelect = r)}

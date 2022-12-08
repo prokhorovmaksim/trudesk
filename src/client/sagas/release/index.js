@@ -36,12 +36,15 @@ function * fetchReleases ({ payload }) {
 
 function * createRelease ({ payload }) {
   try {
+    console.log("saga")
+    helpers.UI.showSnackbar(`Payload: ${payload}`, true)
+    console.log(payload)
     const response = yield call(api.release.create, payload)
     const sessionUser = yield select(getSessionUser)
     yield put({ type: CREATE_RELEASE.SUCCESS, response, sessionUser })
     yield put({ type: HIDE_MODAL.ACTION })
   } catch (error) {
-    const errorText = error.response.data.error
+    const errorText = error.response ? error.response.data.error : error
     helpers.UI.showSnackbar(`Error: ${errorText}`, true)
     Log.error(errorText, error.response)
     yield put({ type: CREATE_RELEASE.ERROR, error })

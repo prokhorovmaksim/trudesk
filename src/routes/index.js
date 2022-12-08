@@ -17,7 +17,6 @@ const winston = require('../logger')
 const packagejson = require('../../package.json')
 
 function mainRoutes (router, middleware, controllers) {
-  console.log("main routes redirect")
   router.get('/', middleware.redirectToDashboardIfLoggedIn, controllers.main.index)
   router.get('/healthz', function (req, res) {
     return res.status(200).send('OK')
@@ -284,8 +283,8 @@ function mainRoutes (router, middleware, controllers) {
 
   // Release
   router.get('/release', middleware.redirectToLogin, middleware.loadCommonData, controllers.release.get)
-  router.get('/release/create', middleware.redirectToLogin, middleware.loadCommonData, controllers.release.create)
-  router.get('/release/:id', middleware.redirectToLogin, middleware.loadCommonData, controllers.release.edit)
+  // router.get('/release/create', middleware.redirectToLogin, middleware.loadCommonData, controllers.release.create)
+  // router.get('/release/:id', middleware.redirectToLogin, middleware.loadCommonData, controllers.release.edit)
 
   router.get('/settings', middleware.redirectToLogin, middleware.loadCommonData, controllers.settings.general)
   router.get('/settings/general', middleware.redirectToLogin, middleware.loadCommonData, controllers.settings.general)
