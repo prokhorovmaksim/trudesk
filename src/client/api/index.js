@@ -349,7 +349,6 @@ api.release.create = payload => {
 }
 
 api.release.get = () => {
-  console.log("release get")
   return axios.get('/api/v2/release').then(res => {
     return res.data
   })

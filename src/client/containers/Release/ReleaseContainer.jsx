@@ -163,7 +163,7 @@ class ReleaseContainer extends React.Component {
                     waves={false}
                     extraClass={'hover-success'}
                     onClick={() => {
-                      // this.props.showModal('CREATE_NOTICE')
+                      this.props.showModal('CREATE_RELEASE')
                     }}
                   />
                 )}
