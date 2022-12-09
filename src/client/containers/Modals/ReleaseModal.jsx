@@ -50,6 +50,11 @@ class ReleaseModal extends React.Component {
 
             </p>
             <p style={{ marginTop: '10px', color: '#222', fontSize: '20px', paddingBottom: '15px' }}>
+              <label className='uk-form-label' style={{ fontSize: '20px', fontWeight: '500' }}>{this.props.t('Group')}</label>
+              <label className='uk-form-label' style={{ fontSize: '18px' }}>{release.group.name}</label>
+
+            </p>
+            <p style={{ marginTop: '10px', color: '#222', fontSize: '20px', paddingBottom: '15px' }}>
               <label className='uk-form-label' style={{ fontSize: '20px', fontWeight: '500' }}>{this.props.t('Status')}</label>
               <label className='uk-form-label' style={{ fontSize: '18px' }}>{release.status}</label>
 

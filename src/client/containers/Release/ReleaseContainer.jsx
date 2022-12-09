@@ -104,12 +104,14 @@ class ReleaseContainer extends React.Component {
                     if (input.length > 0) return false
                     this.openInfoRelease(release.toJS())
                   }}>
-          <TableCell style={{ fontWeight: 500, padding: '18px 5px 18px 20px' }}>{release.get('name')}</TableCell>
+          <TableCell style={{ padding: '18px 5px' }} />
+          <TableCell style={{ fontWeight: 500, padding: '18px 5px 18px 5px' }}>{release.get('name')}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{release.getIn(['group', 'name'])}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{ticketsCount}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{formattedDate}</TableCell>
           <TableCell>
             <ButtonGroup>
+              {helpers.canUser('release:edit') && (
               <Button
                 icon={'edit'}
                 extraClass={'hover-primary'}
@@ -117,14 +119,15 @@ class ReleaseContainer extends React.Component {
                 waves={true}
                 onClick={() => this.onEditRelease(release.toJS())}
 
-              />
+              />)}
+              {helpers.canUser('release:delete') && (
               <Button
                 icon={'delete'}
                 extraClass={'hover-danger'}
                 small={true}
                 waves={true}
                 onClick={() => this.onDeleteRelease(release.get('_id'))}
-              />
+              />)}
             </ButtonGroup>
           </TableCell>
         </TableRow>
@@ -156,16 +159,17 @@ class ReleaseContainer extends React.Component {
         />
         <PageContent padding={0} paddingBottom={0} extraClass={'uk-position-relative'}>
           <Table
-            style={{ margin: 0, padding: '0 0 0 20px' }}
+            style={{ margin: 0, paddingLeft: '20px' }}
             extraClass={'pDataTable'}
             stickyHeader={true}
             striped={true}
             headers={[
-              <TableHeader key={1} width={'30%'} text={this.props.t('Name')} />,
-              <TableHeader key={2} width={'30%'} text={this.props.t('Group')} />,
-              <TableHeader key={2} width={'10%'} text={this.props.t('Tickets count')} />,
-              <TableHeader key={3} width={'20%'} text={this.props.t('Date')} />,
-              <TableHeader key={4} width={150} text={''} />
+              <TableHeader key={1} width={45} text={''} />,
+              <TableHeader key={2} width={'30%'} text={this.props.t('Name')} style={{ paddingLeft: '20px' }}/>,
+              <TableHeader key={3} width={'30%'} text={this.props.t('Group')} />,
+              <TableHeader key={4} width={'10%'} text={this.props.t('Tickets count')} />,
+              <TableHeader key={5} width={'20%'} text={this.props.t('Date')} />,
+              <TableHeader key={6} width={150} text={''} />
             ]}
           >
             {!this.props.loading && this.props.releases.size < 1 && (

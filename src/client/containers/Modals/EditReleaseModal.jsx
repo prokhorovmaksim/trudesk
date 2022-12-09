@@ -6,7 +6,7 @@ import {makeObservable, observable} from 'mobx'
 import {compose} from 'redux';
 import {withTranslation} from 'react-i18next';
 
-import {updateRelease} from 'actions/accounts'
+import {updateRelease} from 'actions/release'
 import {fetchGroups, unloadGroups} from 'actions/groups'
 import {fetchTickets, unloadTickets} from 'actions/tickets'
 
@@ -25,11 +25,16 @@ class EditReleaseModal extends React.Component {
     super(props)
     makeObservable(this)
 
-    this.state = { currentTickets: null}
+    this.state = { currentTickets: null, isSet: false}
   }
 
   componentDidMount () {
     this.name = this.props.release.name
+    this.group = this.props.release.group._id
+
+    console.log("Mount")
+    console.log(this.name)
+    console.log(this.group)
 
     this.props.fetchGroups({ type: 'all' })
     this.props.fetchTickets({ type: 'all' })
@@ -65,7 +70,7 @@ class EditReleaseModal extends React.Component {
     console.log(this.selectedGroup)
     return this.props.tickets
       .map(ticket => {
-        if (this.selectedGroup === ticket.get('group').get('_id')) {
+        if (this.selectedGroup === ticket.getIn(['group', '_id'])) {
           return {text: ticket.get('subject'), value: ticket.get('_id'), visibility: true}
         } else {
           return {text: ticket.get('subject'), value: ticket.get('_id'), visibility: false}
@@ -98,7 +103,15 @@ class EditReleaseModal extends React.Component {
     if(this.selectedGroup === this.props.release.group._id) {
       return this.props.release.tickets.map(i => i._id)
     } else {
-      return null
+      return []
+    }
+  }
+
+  initGroupAndTickets () {
+    if(!this.state.isSet) {
+      this.group = this.props.release.group._id
+      this.name = this.props.release.name
+      this.setState({ isSet: true })
     }
   }
 
@@ -106,17 +119,38 @@ class EditReleaseModal extends React.Component {
     e.preventDefault()
     if (!this.props.edit) return
 
-    const payload = {
-      name: this.name,
-      group: this.selectedGroup,
-      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : undefined
+    const payload = {}
+
+    if(this.props.release.name !== this.name) {
+      console.log(this.name)
+      payload.name = this.name
     }
+
+    if(this.props.release.group._id !== this.selectedGroup) {
+      console.log(this.selectedGroup)
+      payload.group = this.selectedGroup
+    }
+
+    if(this.props.release.tickets !== this.ticketSelect.getSelected()) {
+      console.log(this.ticketSelect.getSelected())
+      payload.tickets = this.ticketSelect ? this.ticketSelect.getSelected() : []
+    }
+
+    // const payload = {
+    //   name: this.name,
+    //   group: this.selectedGroup,
+    //   tickets: this.ticketSelect ? this.ticketSelect.getSelected() : []
+    // }
+
+    console.log(payload)
 
     this.props.updateRelease(payload)
   }
 
   render () {
     const { release, edit } = this.props
+
+    this.initGroupAndTickets()
 
     const groups = this.props.groups
       .map(group => {
@@ -132,7 +166,6 @@ class EditReleaseModal extends React.Component {
     const tickets = this.filterTickets()
 
     console.log(tickets)
-    console.log(release.group)
 
     return (
       <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'} options={{ bgclose: false }}
@@ -156,7 +189,7 @@ class EditReleaseModal extends React.Component {
               <SingleSelect
                 items={groups}
                 width={'100'}
-                // initialSelected={{ text: release.group.name, value: release.group._id }}
+                initialSelected={release.group._id}
                 // defaultValue={{ text: release.group.name, value: release.group._id }}
                 defaultValue={release.group._id}
                 showTextbox={false}

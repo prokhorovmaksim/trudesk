@@ -93,7 +93,7 @@ class MultiSelect extends React.Component {
   render () {
     const { id, items } = this.props
     return (
-      <select id={id} multiple={'multiple'} className={'multiselect'} ref={r => (this.select = r)}>
+      <select id={id} multiple={'multiple'} style={ { fontSize: '20px'}} className={'multiselect'} ref={r => (this.select = r)}>
         {items &&
           items.map((item, i) => {
             if(item.visibility === true) {
