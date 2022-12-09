@@ -73,10 +73,15 @@ function * unloadThunkReleases ({ payload, meta }) {
 
 function * updateRelease ({ payload }) {
   try {
+    const response = yield call(api.release.update, payload)
     const sessionUser = yield select(getSessionUser)
-    yield put({ type: UPDATE_RELEASE.SUCCESS, payload, sessionUser })
+    yield put({ type: UPDATE_RELEASE.SUCCESS, response, sessionUser })
+    yield put({ type: HIDE_MODAL.ACTION })
   } catch (error) {
-    Log.error(error)
+    const errorText = error.response ? error.response.data.error : error
+    helpers.UI.showSnackbar(`Error: ${errorText}`, true)
+    Log.error(errorText, error.response)
+    yield put({ type: UPDATE_RELEASE.ERROR, error })
   }
 }
 

@@ -107,7 +107,11 @@ const ticketSchema = mongoose.Schema({
   notes: [noteSchema],
   attachments: [attachmentSchema],
   history: [historySchema],
-  subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'accounts' }]
+  subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'accounts' }],
+  release: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'release'
+  }
 })
 
 ticketSchema.index({ deleted: -1, group: 1, status: 1 })
@@ -405,6 +409,24 @@ ticketSchema.methods.setTicketGroup = function (ownerId, groupId, callback) {
     const historyItem = {
       action: 'ticket:set:group',
       description: 'Ticket Group set to: ' + ticket.group.name,
+      owner: ownerId
+    }
+    self.history.push(historyItem)
+
+    return callback(null, ticket)
+  })
+}
+
+ticketSchema.methods.setTicketRelease = function (ownerId, releaseId, callback) {
+  const self = this
+  self.release = releaseId
+
+  self.populate('release', function (err, ticket) {
+    if (err) return callback(err)
+
+    const historyItem = {
+      action: 'ticket:set:release',
+      description: 'Ticket Release set to: ' + ticket.release.name,
       owner: ownerId
     }
     self.history.push(historyItem)

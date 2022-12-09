@@ -44,6 +44,7 @@ function register (socket) {
   events.onCommentNoteSet(socket)
   events.onRemoveCommentNote(socket)
   events.onAttachmentsUIUpdate(socket)
+  events.onSetTicketRelease(socket)
 }
 
 function eventLoop () {}
@@ -272,6 +273,36 @@ events.onSetTicketGroup = function (socket) {
     })
   })
 }
+
+events.onSetTicketRelease = function (socket) {
+  socket.on(socketEvents.TICKETS_RELEASE_SET, function (data) {
+    const ticketId = data._id
+    const releaseId = data.value
+    const ownerId = socket.request.user._id
+
+    if (_.isUndefined(ticketId) || _.isUndefined(releaseId)) return true
+
+    ticketSchema.getTicketById(ticketId, function (err, ticket) {
+      if (err) return true
+
+      ticket.setTicketRelease(ownerId, releaseId, function (err, t) {
+        if (err) return true
+
+        t.save(function (err, tt) {
+          if (err) return true
+
+          ticketSchema.populate(tt, 'release', function (err) {
+            if (err) return true
+
+            // emitter.emit('ticket:updated', tt)
+            utils.sendToAllConnectedClients(io, socketEvents.TICKETS_UI_RELEASE_UPDATE, tt)
+          })
+        })
+      })
+    })
+  })
+}
+
 
 events.onSetTicketDueDate = function (socket) {
   socket.on(socketEvents.TICKETS_DUEDATE_SET, function (data) {

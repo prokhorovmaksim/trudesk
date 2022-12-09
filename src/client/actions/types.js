@@ -127,7 +127,7 @@ export const FETCH_RELEASES = defineAction('FETCH_RELEASES', [SUCCESS, PENDING, 
 export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
 export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [SUCCESS, PENDING, ERROR])
 export const UNLOAD_RELEASES = defineAction('UNLOAD_RELEASES', [SUCCESS])
-export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS])
+export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS, ERROR])
 export const RELEASE_EVENT = defineAction('RELEASE_EVENT', [SUCCESS])
 
 // Reports
