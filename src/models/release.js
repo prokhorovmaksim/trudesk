@@ -54,29 +54,29 @@ const autoPopulate = function (next) {
 
 releaseSchema.pre('findOne', autoPopulate).pre('find', autoPopulate)
 
-releaseSchema.pre('save', function (next) {
-  // this.wasNew = this.isNew
-  //
-  // if (!_.isUndefined(this.uid) || this.uid) {
-  //   return next()
-  // }
-  //
-  // const c = require('./counters')
-  // const self = this
-  // c.increment('releases', function (err, res) {
-  //   if (err) return next(err)
-  //
-  //   self.uid = res.value.next
-  //
-  //   if (_.isUndefined(self.uid)) {
-  //     const error = new Error('Invalid UID.')
-  //     return next(error)
-  //   }
-  //
-  //   return next()
-  // })
-  return next()
-})
+// releaseSchema.pre('save', function (next) {
+//   // this.wasNew = this.isNew
+//   //
+//   // if (!_.isUndefined(this.uid) || this.uid) {
+//   //   return next()
+//   // }
+//   //
+//   // const c = require('./counters')
+//   // const self = this
+//   // c.increment('releases', function (err, res) {
+//   //   if (err) return next(err)
+//   //
+//   //   self.uid = res.value.next
+//   //
+//   //   if (_.isUndefined(self.uid)) {
+//   //     const error = new Error('Invalid UID.')
+//   //     return next(error)
+//   //   }
+//   //
+//   //   return next()
+//   // })
+//   return next()
+// })
 
 // releaseSchema.post('save', async function (doc, next) {
 //   if (!this.wasNew) {

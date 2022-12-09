@@ -133,7 +133,7 @@ class CreateReleaseModal extends React.Component {
     const payload = {
       name: this.name,
       group: this.selectedGroup,
-      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : undefined
+      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : []
     }
 
     console.log("payload")
@@ -171,7 +171,7 @@ class CreateReleaseModal extends React.Component {
 
     return (
       // <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'}>
-      <BaseModal {...this.props} options={{ bgclose: false }}>
+      <BaseModal {...this.props} options={{ bgclose: false }} large={true}>
         <div className={'mb-25'}>
           <h2>{this.props.t('Create Release')}</h2>
         </div>

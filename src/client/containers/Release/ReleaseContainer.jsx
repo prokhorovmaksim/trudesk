@@ -43,9 +43,18 @@ class ReleaseContainer extends React.Component {
   onEditRelease (release) {
     console.log("Edit release")
     console.log(release)
+
     this.props.showModal('EDIT_RELEASE', {
       edit: true,
-      user: user.toJS()
+      release: release
+    })
+  }
+
+  openInfoRelease (release) {
+    console.log("Show release")
+    console.log(release)
+    this.props.showModal('SHOW_RELEASE', {
+      release: release
     })
   }
 
@@ -75,13 +84,18 @@ class ReleaseContainer extends React.Component {
         ', ' +
         helpers.formatDate(release.get('date'), helpers.getTimeFormat())
 
-      const ticketsCount = release.get('tickets').length
-      console.log("ticketscount")
-      console.log(ticketsCount)
-      console.log(release.get('tickets'))
+      const ticketsCount = release.get('tickets').size
       return (
-        <TableRow key={release.get('_id')} className={'vam nbb'} clickable={false}>
-          <TableCell style={{ fontWeight: 500, padding: '18px 5px' }}>{release.get('name')}</TableCell>
+        <TableRow key={release.get('_id')}
+                  className={'vam nbb'}
+                  clickable={true}
+                  onClick={e => {
+                    const td = e.target.closest('td')
+                    const input = td.getElementsByTagName('button')
+                    if (input.length > 0) return false
+                    this.openInfoRelease(release.toJS())
+                  }}>
+          <TableCell style={{ fontWeight: 500, padding: '18px 5px 18px 20px' }}>{release.get('name')}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{release.getIn(['group', 'name'])}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{ticketsCount}</TableCell>
           <TableCell style={{ padding: '18px 5px' }}>{formattedDate}</TableCell>
@@ -93,6 +107,7 @@ class ReleaseContainer extends React.Component {
                 small={true}
                 waves={true}
                 onClick={() => this.onEditRelease(release.toJS())}
+
               />
               <Button
                 icon={'delete'}
@@ -132,22 +147,22 @@ class ReleaseContainer extends React.Component {
         />
         <PageContent padding={0} paddingBottom={0} extraClass={'uk-position-relative'}>
           <Table
-            style={{ margin: 0 }}
+            style={{ margin: 0, padding: '0 0 0 20px' }}
             extraClass={'pDataTable'}
             stickyHeader={true}
             striped={true}
             headers={[
-              <TableHeader key={1} width={'20%'} text={this.props.t('Name')} />,
+              <TableHeader key={1} width={'30%'} text={this.props.t('Name')} />,
               <TableHeader key={2} width={'30%'} text={this.props.t('Group')} />,
-              <TableHeader key={2} width={'30%'} text={this.props.t('Tickets count')} />,
-              <TableHeader key={3} width={'10%'} text={this.props.t('Date')} />,
+              <TableHeader key={2} width={'10%'} text={this.props.t('Tickets count')} />,
+              <TableHeader key={3} width={'20%'} text={this.props.t('Date')} />,
               <TableHeader key={4} width={150} text={''} />
             ]}
           >
             {!this.props.loading && this.props.releases.size < 1 && (
               <TableRow clickable={false}>
                 <TableCell colSpan={10}>
-                  <h5 style={{ margin: 10 }}>{this.props.t('No Releases Found')}</h5>
+                  <h5 style={{ margin: 10, padding: '0 0 0 20px' }}>{this.props.t('No Releases Found')}</h5>
                 </TableCell>
               </TableRow>
             )}

@@ -39,7 +39,6 @@ class MultiSelect extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    console.log("update component")
     const $select = $(this.select)
     if (!helpers.arrayIsEqual(prevProps.items, this.props.items)) {
       $select.empty().multiSelect('refresh')
@@ -99,13 +98,13 @@ class MultiSelect extends React.Component {
           items.map((item, i) => {
             if(item.visibility === true) {
               return (
-                <option key={i} value={item.value}>
+                <option key={i} value={item.value} style={ { fontSize: '20px'}}>
                   {item.text}
                 </option>
               )
             } else {
               return (
-                <option key={i} value={item.value} style={ {display: 'none'}}>
+                <option key={i} value={item.value} style={ {display: 'none', fontSize: '20px'}}>
                   {item.text}
                 </option>
               )

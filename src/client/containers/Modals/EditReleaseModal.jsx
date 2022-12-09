@@ -1,21 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { observer } from 'mobx-react'
-import { makeObservable, observable } from 'mobx'
-import axios from 'axios'
-import Log from '../../logger'
-import { compose } from 'redux';
-import { withTranslation } from 'react-i18next';
+import {connect} from 'react-redux'
+import {observer} from 'mobx-react'
+import {makeObservable, observable} from 'mobx'
+import {compose} from 'redux';
+import {withTranslation} from 'react-i18next';
 
-import { updateRelease } from 'actions/accounts'
-import { fetchGroups, unloadGroups } from 'actions/groups'
-import { fetchTickets, unloadTickets } from 'actions/tickets'
+import {updateRelease} from 'actions/accounts'
+import {fetchGroups, unloadGroups} from 'actions/groups'
+import {fetchTickets, unloadTickets} from 'actions/tickets'
 
 import Button from 'components/Button'
 import BaseModal from 'containers/Modals/BaseModal'
 import SingleSelect from 'components/SingleSelect'
-import MultiSelect from 'components/MultiSelect'
+import MultiSelectTickets from 'components/MultiSelectTickets'
 
 import helpers from 'lib/helpers'
 
@@ -26,6 +24,8 @@ class EditReleaseModal extends React.Component {
   constructor (props) {
     super(props)
     makeObservable(this)
+
+    this.state = { currentTickets: null}
   }
 
   componentDidMount () {
@@ -46,9 +46,60 @@ class EditReleaseModal extends React.Component {
     this.props.unloadGroups()
   }
 
+  onTicketSelectChange () {
+    // const selectedTickets = this.ticketSelect.getSelected()
+    // if (!selectedTickets || selectedTickets.length < 1) this.ticketSelectErrorMessage.classList.remove('hide')
+    // else this.ticketSelectErrorMessage.classList.add('hide')
+  }
+
+  showTicketsByGroup () {
+    const newTickets = this.filterTickets()
+
+    this.ticketSelect.deselectAll()
+    this.ticketSelect.props.items = newTickets
+    this.setState({ currentTickets: newTickets })
+  }
+
+  filterTickets () {
+    console.log("Filter")
+    console.log(this.selectedGroup)
+    return this.props.tickets
+      .map(ticket => {
+        if (this.selectedGroup === ticket.get('group').get('_id')) {
+          return {text: ticket.get('subject'), value: ticket.get('_id'), visibility: true}
+        } else {
+          return {text: ticket.get('subject'), value: ticket.get('_id'), visibility: false}
+        }
+      })
+      .toArray()
+  }
+
+  onGroupSelectChange (e) {
+    console.log("Group change")
+    console.log(this.selectedGroup)
+    console.log(e.target.value)
+    const isShouldUpdate = this.selectedGroup !== e.target.value
+
+    this.selectedGroup = e.target.value
+    if(isShouldUpdate) {
+      this.showTicketsByGroup()
+    }
+  }
+
 
   onInputChanged (e, stateName) {
     this[stateName] = e.target.value
+  }
+
+  initialMultiSelectTickets () {
+    console.log("Initial")
+    console.log(this.selectedGroup)
+    console.log(this.props.release.group._id)
+    if(this.selectedGroup === this.props.release.group._id) {
+      return this.props.release.tickets.map(i => i._id)
+    } else {
+      return null
+    }
   }
 
   onSubmitEditRelease (e) {
@@ -68,25 +119,24 @@ class EditReleaseModal extends React.Component {
     const { release, edit } = this.props
 
     const groups = this.props.groups
-      ? this.props.groups
-        .map(group => {
-          return { text: group.get('name'), value: group.get('_id') }
-        })
-        .toArray()
-      : []
+      .map(group => {
+        return { text: group.get('name'), value: group.get('_id') }
+      })
+      .toArray()
 
-    const tickets = this.props.tickets
-      ? this.props.tickets
-        .map(ticket => {
-          return {text: ticket.get('subject'), value: ticket.get('_id')}
-        })
-        .toArray()
-      : []
+    // const tickets = this.props.tickets
+    //   .map(ticket => {
+    //     return {text: ticket.get('subject'), value: ticket.get('_id')}
+    //   })
+    //   .toArray()
+    const tickets = this.filterTickets()
 
-    if (!release.tickets) release.tickets = []
+    console.log(tickets)
+    console.log(release.group)
 
     return (
-      <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'} options={{ bgclose: false }}>
+      <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'} options={{ bgclose: false }}
+                 large={true}>
         <div style={{ margin: '24px 24px 0 24px' }}>
           <form className='uk-form-stacked' onSubmit={e => this.onSubmitEditRelease(e)}>
             <div className='uk-margin-medium-bottom uk-clearfix'>
@@ -106,7 +156,9 @@ class EditReleaseModal extends React.Component {
               <SingleSelect
                 items={groups}
                 width={'100'}
-                defaultValue={release.group}
+                // initialSelected={{ text: release.group.name, value: release.group._id }}
+                // defaultValue={{ text: release.group.name, value: release.group._id }}
+                defaultValue={release.group._id}
                 showTextbox={false}
                 onSelectChange={e => this.onGroupSelectChange(e)}
               />
@@ -114,9 +166,9 @@ class EditReleaseModal extends React.Component {
             <div>
               <div className='uk-margin-medium-bottom'>
                 <label className='uk-form-label'>{this.props.t('Tickets')}</label>
-                <MultiSelect
+                <MultiSelectTickets
                   items={tickets}
-                  initialSelected={release.tickets.map(i => i._id)}
+                  initialSelected={this.initialMultiSelectTickets()}
                   onChange={e => this.onTicketSelectChange(e)}
                   ref={r => (this.ticketSelect = r)}
                 />

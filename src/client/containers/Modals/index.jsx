@@ -45,6 +45,7 @@ import PasswordPromptModal from 'containers/Modals/PasswordPromptModal'
 import PrivacyPolicyModal from 'containers/Modals/PrivacyPolicyModal'
 import CreateReleaseModal from "./CreateReleaseModal"
 import EditReleaseModal from "./EditReleaseModal"
+import ShowReleaseModal from "./ReleaseModal"
 
 const MODAL_COMPONENTS = {
   NOTICE_ALERT: NoticeAlertModal,
@@ -75,6 +76,7 @@ const MODAL_COMPONENTS = {
   PRIVACY_POLICY: PrivacyPolicyModal,
   CREATE_RELEASE: CreateReleaseModal,
   EDIT_RELEASE: EditReleaseModal,
+  SHOW_RELEASE: ShowReleaseModal,
 }
 
 const ModalRoot = ({ modalType, modalProps }) => {
