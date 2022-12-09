@@ -23,6 +23,7 @@ import { withTranslation } from 'react-i18next';
 
 import { transferToThirdParty, fetchTicketTypes } from 'actions/tickets'
 import { fetchGroups, unloadGroups } from 'actions/groups'
+import { fetchReleases } from 'actions/release';
 import { showModal } from 'actions/common'
 
 import {
@@ -39,7 +40,9 @@ import {
   TICKETS_DUEDATE_SET,
   TICKETS_UI_TAGS_UPDATE,
   TICKETS_COMMENT_NOTE_REMOVE,
-  TICKETS_COMMENT_NOTE_SET
+  TICKETS_COMMENT_NOTE_SET,
+  TICKETS_UI_RELEASE_UPDATE,
+  TICKETS_RELEASE_SET,
 } from 'serverSocket/socketEventConsts'
 
 import AssigneeDropdownPartial from 'containers/Tickets/AssigneeDropdownPartial'
@@ -119,6 +122,7 @@ class SingleTicketContainer extends React.Component {
     this.props.socket.on(TICKETS_UI_GROUP_UPDATE, this.onUpdateTicketGroup)
     this.props.socket.on(TICKETS_UI_DUEDATE_UPDATE, this.onUpdateTicketDueDate)
     this.props.socket.on(TICKETS_UI_TAGS_UPDATE, this.onUpdateTicketTags)
+    this.props.socket.on(TICKETS_UI_RELEASE_UPDATE, this.onUpdateTicketRelease)
 
     fetchTicket(this)
     this.props.fetchTicketTypes()
@@ -138,6 +142,7 @@ class SingleTicketContainer extends React.Component {
     this.props.socket.off(TICKETS_UI_GROUP_UPDATE, this.onUpdateTicketGroup)
     this.props.socket.off(TICKETS_UI_DUEDATE_UPDATE, this.onUpdateTicketDueDate)
     this.props.socket.off(TICKETS_UI_TAGS_UPDATE, this.onUpdateTicketTags)
+    this.props.socket.off(TICKETS_UI_RELEASE_UPDATE, this.onUpdateTicketRelease)
 
     this.props.unloadGroups()
   }
@@ -174,6 +179,10 @@ class SingleTicketContainer extends React.Component {
 
   onUpdateTicketGroup (data) {
     if (this.ticket._id === data._id) this.ticket.group = data.group
+  }
+
+  onUpdateTicketRelease (data) {
+    if (this.ticket._id === data._id) this.ticket.release = data.release
   }
 
   onUpdateTicketDueDate (data) {
@@ -266,6 +275,12 @@ class SingleTicketContainer extends React.Component {
       ? this.props.groupsState.groups.map(group => {
           return { text: group.get('name'), value: group.get('_id') }
         })
+      : []
+
+    const mappedReleases = this.props.releasesState
+      ? this.props.releasesState.releases.map(rel => {
+        return { text: rel.get('name'), value: rel.get('_id') }
+      })
       : []
 
     const mappedTypes = this.props.ticketTypes
@@ -532,6 +547,30 @@ class SingleTicketContainer extends React.Component {
                                 </div>
                               ))}
                           </div>
+                        </div>
+
+                        {/*  Release */}
+                        <div className='uk-width-1-1 nopadding uk-clearfix'>
+                          <span>{this.props.t('Release')}</span>
+                          {hasTicketUpdate && (
+                            <select
+                              value={(this.ticket.release) ? this.ticket.release._id : undefined}
+                              onChange={e => {
+                                this.props.socket.emit(TICKETS_RELEASE_SET, {
+                                  _id: this.ticket._id,
+                                  value: e.target.value
+                                })
+                              }}
+                            >
+                              {mappedReleases &&
+                                mappedReleases.map(release => (
+                                  <option key={release.value} value={release.value}>
+                                    {release.text}
+                                  </option>
+                                ))}
+                            </select>
+                          )}
+                          {!hasTicketUpdate && <div className={'input-box'}>{this.ticket.group.name}</div>}
                         </div>
                       </div>
                     </div>
@@ -877,6 +916,8 @@ SingleTicketContainer.propTypes = {
   fetchTicketTypes: PropTypes.func.isRequired,
   groupsState: PropTypes.object.isRequired,
   fetchGroups: PropTypes.func.isRequired,
+  releasesState: PropTypes.object.isRequired,
+  fetchReleases: PropTypes.func.isRequired,
   unloadGroups: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired,
   transferToThirdParty: PropTypes.func
@@ -888,12 +929,14 @@ const mapStateToProps = state => ({
   sessionUser: state.shared.sessionUser,
   socket: state.shared.socket,
   ticketTypes: state.ticketsState.types,
-  groupsState: state.groupsState
+  groupsState: state.groupsState,
+  releasesState: state.releasesState
 })
 
 export default compose(withTranslation(), connect(mapStateToProps, {
   fetchTicketTypes,
   fetchGroups,
+  fetchReleases,
   unloadGroups,
   showModal,
   transferToThirdParty

@@ -163,15 +163,15 @@ releasesV2.single = async function (req, res) {
 }
 
 releasesV2.update = function (req, res) {
-  const uid = req.params.uid
-  const putRelease = req.body.release
-  if (!uid || !putRelease) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
+  var id = req.params.id
+  var payload = req.body
+  if (!id || !payload)
+    return apiUtils.sendApiError_InvalidPostData(res)
 
-  // todo: complete this...
-  Models.Release.getReleaseByUid(uid, function (err, release) {
+  Models.Release.findOneAndUpdate({ _id: id }, payload, { new: true }, function (err, updatedRelease) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
 
-    return apiUtils.sendApiSuccess(res, release)
+    return apiUtils.sendApiSuccess(res, { release: updatedRelease })
   })
 }
 
@@ -201,10 +201,10 @@ releasesV2.batchUpdate = function (req, res) {
 }
 
 releasesV2.delete = function (req, res) {
-  const uid = req.params.uid
-  if (!uid) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
+  const id = req.params.id
+  if (!id) return apiUtils.sendApiError(res, 400, 'Invalid Parameters')
 
-  Models.Release.softDeleteUid(uid, function (err, success) {
+  Models.Release.softDelete(id, function (err, success) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
     if (!success) return apiUtils.sendApiError(res, 500, 'Unable to delete release')
 

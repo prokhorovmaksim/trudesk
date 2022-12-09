@@ -81,10 +81,10 @@ module.exports = function (middleware, router, controllers) {
   // Release
   router.get('/api/v2/release', apiv2Auth, canUser('tickets:view'), apiv2.release.get)
   router.post('/api/v2/release', apiv2Auth, canUser('tickets:create'), apiv2.release.create)
-  router.get('/api/v2/release/:uid', apiv2Auth, canUser('tickets:view'), apiv2.release.single)
+  router.get('/api/v2/release/:id', apiv2Auth, canUser('tickets:view'), apiv2.release.single)
   router.put('/api/v2/release/batch', apiv2Auth, canUser('tickets:update'), apiv2.release.batchUpdate)
-  router.put('/api/v2/release/:uid', apiv2Auth, canUser('tickets:update'), apiv2.release.update)
-  router.delete('/api/v2/release/:uid', apiv2Auth, canUser('tickets:delete'), apiv2.release.delete)
+  router.put('/api/v2/release/:id', apiv2Auth, canUser('tickets:update'), apiv2.release.update)
+  router.delete('/api/v2/release/:id', apiv2Auth, canUser('tickets:delete'), apiv2.release.delete)
   router.delete('/api/v2/release/deleted/:id', apiv2Auth, isAdmin, apiv2.release.permDelete)
 
   router.get('/api/v2/messages/conversations', apiv2Auth, apiv2.messages.getConversations)

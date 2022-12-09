@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import Log from '../../logger'
 import axios from 'axios'
-import { fetchReleases, deleteRelease, unloadReleases } from 'actions/release'
+import { fetchReleases, deleteRelease, unloadReleases, updateRelease } from 'actions/release'
 import { showModal } from 'actions/common'
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
@@ -58,6 +58,15 @@ class ReleaseContainer extends React.Component {
     })
   }
 
+  onUpdateRelease() {
+    const id = '63922bb1f34a2dcc9fdc1714'
+    const payload = {
+      _id: id,
+      name: 'New name',
+    }
+    this.props.updateRelease(payload)
+  }
+
   onDeleteRelease (releaseId) {
     UIKit.modal.confirm(
       `<h2>${this.props.t('Are you sure?')}</h2>
@@ -66,7 +75,7 @@ class ReleaseContainer extends React.Component {
         </p>
         `,
       () => {
-        // this.props.deleteRelease({ _id: releaseId })
+        this.props.deleteRelease({ _id: releaseId })
         console.log("Delete release")
         console.log(releaseId)
       },
@@ -178,7 +187,7 @@ ReleaseContainer.propTypes = {
   socket: PropTypes.object.isRequired,
   releases: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
-
+  updateRelease: PropTypes.func.isRequired,
   fetchReleases: PropTypes.func.isRequired,
   deleteRelease: PropTypes.func.isRequired,
   unloadReleases: PropTypes.func.isRequired,
@@ -195,6 +204,6 @@ export default compose(withTranslation(), connect(mapStateToProps, {
   fetchReleases,
   deleteRelease,
   unloadReleases,
-
+  updateRelease,
   showModal
 }))(ReleaseContainer)
