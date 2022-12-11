@@ -138,6 +138,8 @@ class EditReleaseModal extends React.Component {
     // }
 
     this.props.updateRelease(payload)
+
+    this.props.updateReleaseList()
   }
 
   render () {
@@ -224,7 +226,8 @@ EditReleaseModal.propTypes = {
   fetchGroups: PropTypes.func.isRequired,
   unloadGroups: PropTypes.func.isRequired,
   fetchTickets: PropTypes.func.isRequired,
-  unloadTickets: PropTypes.func.isRequired
+  unloadTickets: PropTypes.func.isRequired,
+  updateReleaseList: PropTypes.func.isRequired
 }
 
 EditReleaseModal.defaultProps = {

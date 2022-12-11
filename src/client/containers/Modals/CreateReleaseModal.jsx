@@ -121,6 +121,8 @@ class CreateReleaseModal extends React.Component {
     console.log(payload)
 
     this.props.createRelease(payload)
+
+    this.props.updateReleaseList()
   }
 
   render () {
@@ -221,7 +223,8 @@ CreateReleaseModal.propTypes = {
   fetchGroups: PropTypes.func.isRequired,
   unloadGroups: PropTypes.func.isRequired,
   fetchTickets: PropTypes.func.isRequired,
-  unloadTickets: PropTypes.func.isRequired
+  unloadTickets: PropTypes.func.isRequired,
+  updateReleaseList: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({

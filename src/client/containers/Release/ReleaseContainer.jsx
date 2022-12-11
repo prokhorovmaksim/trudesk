@@ -24,6 +24,8 @@ import UIKit from 'uikit'
 class ReleaseContainer extends React.Component {
   constructor (props) {
     super(props)
+
+    this.updateReleaseList = this.updateReleaseList.bind(this)
   }
 
   componentDidMount () {
@@ -31,8 +33,6 @@ class ReleaseContainer extends React.Component {
   }
 
   componentDidUpdate () {
-    //TODO nado peredelat, eto chtobi ne vislo
-    this.props.fetchReleases()
     helpers.resizeAll()
   }
 
@@ -43,7 +43,8 @@ class ReleaseContainer extends React.Component {
   onEditRelease (release) {
     this.props.showModal('EDIT_RELEASE', {
       edit: true,
-      release: release
+      release: release,
+      updateReleaseList: this.updateReleaseList
     })
   }
 
@@ -51,6 +52,10 @@ class ReleaseContainer extends React.Component {
     this.props.showModal('SHOW_RELEASE', {
       release: release
     })
+  }
+
+  updateReleaseList() {
+    this.props.fetchReleases()
   }
 
   onUpdateRelease() {
@@ -71,6 +76,7 @@ class ReleaseContainer extends React.Component {
         `,
       () => {
         this.props.deleteRelease({ _id: releaseId })
+        this.updateReleaseList()
       },
       {
         labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
@@ -142,7 +148,10 @@ class ReleaseContainer extends React.Component {
                     waves={false}
                     extraClass={'hover-success'}
                     onClick={() => {
-                      this.props.showModal('CREATE_RELEASE')
+                      this.props.showModal('CREATE_RELEASE', {
+                        updateReleaseList: this.updateReleaseList
+                      })
+
                     }}
                   />
                 )}
