@@ -251,5 +251,9 @@
   "Access all current and new public groups?": "Дать доступ ко всем текущим и новым публичным группам?",
   "Releases": "Релизы",
   "Release": "Релиз",
-  "No Releases Found": "Релизы не найдены"
+  "No Releases Found": "Релизы не найдены",
+  "Tickets count": "Число заявок",
+  "Create Release": "Создать релиз",
+  "Release name": "Имя релиза",
+  "Save Release": "Сохранить релиз"
 }

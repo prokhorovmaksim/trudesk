@@ -36,9 +36,6 @@ function * fetchReleases ({ payload }) {
 
 function * createRelease ({ payload }) {
   try {
-    console.log("saga")
-    helpers.UI.showSnackbar(`Payload: ${payload}`, true)
-    console.log(payload)
     const response = yield call(api.release.create, payload)
     const sessionUser = yield select(getSessionUser)
     yield put({ type: CREATE_RELEASE.SUCCESS, response, sessionUser })

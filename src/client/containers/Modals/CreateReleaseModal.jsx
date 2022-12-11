@@ -60,14 +60,6 @@ class CreateReleaseModal extends React.Component {
   }
 
   showTicketsByGroup () {
-    // const newTickets = this.props.tickets
-    //   .filter(ticket => {
-    //     return this.selectedGroup === ticket.get('group').get('_id')
-    //   })
-    //   .map(ticket => {
-    //     return { text: ticket.get('subject'), value: ticket.get('_id') }
-    //   })
-    //   .toArray()
     const newTickets = this.props.tickets
       .map(ticket => {
         if(this.selectedGroup === ticket.get('group').get('_id')) {
@@ -81,17 +73,7 @@ class CreateReleaseModal extends React.Component {
 
     this.ticketSelect.deselectAll()
 
-    // const oldProps = this.ticketSelect.props.items
-
     this.ticketSelect.props.items = newTickets
-
-    // this.ticketSelect.componentDidUpdate(oldProps)
-
-    // console.log(this.currentTickets)
-    //
-    // const container = document.getElementById('select-tickets')
-    //
-    // document.getElementById('multiselect-container').removeChild(container)
 
     this.setState({ currentTickets: newTickets })
 
@@ -136,14 +118,12 @@ class CreateReleaseModal extends React.Component {
       tickets: this.ticketSelect ? this.ticketSelect.getSelected() : []
     }
 
-    console.log("payload")
     console.log(payload)
 
     this.props.createRelease(payload)
   }
 
   render () {
-    console.log("render")
     const groups = this.props.groups
       .map(group => {
         return { text: group.get('name'), value: group.get('_id') }
@@ -170,12 +150,10 @@ class CreateReleaseModal extends React.Component {
     const tickets = this.state.currentTickets
 
     return (
-      // <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'}>
       <BaseModal {...this.props} options={{ bgclose: false }} large={true}>
         <div className={'mb-25'}>
           <h2>{this.props.t('Create Release')}</h2>
         </div>
-        {/*<div style={{ margin: '24px 24px 0 24px' }}>*/}
         <div style={{ margin: '24px 24px 0 24px' }}>
           <form className='uk-form-stacked' onSubmit={e => this.onFormSubmit(e)}>
             <div className='uk-margin-medium-bottom'>

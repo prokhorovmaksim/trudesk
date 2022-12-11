@@ -251,5 +251,9 @@
   "Access all current and new public groups?": "Access all current and new public groups?",
   "Releases": "Releases",
   "Release": "Release",
-  "No Releases Found": "No Releases Found"
+  "No Releases Found": "No Releases Found",
+  "Tickets count": "Tickets count",
+  "Create Release": "Create Release",
+  "Release name": "Release name",
+  "Save Release": "Save Release"
 }

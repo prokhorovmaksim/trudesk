@@ -98,13 +98,13 @@ class MultiSelect extends React.Component {
           items.map((item, i) => {
             if(item.visibility === true) {
               return (
-                <option key={i} value={item.value} style={ { fontSize: '20px'}}>
+                <option key={i} value={item.value} >
                   {item.text}
                 </option>
               )
             } else {
               return (
-                <option key={i} value={item.value} style={ {display: 'none', fontSize: '20px'}}>
+                <option key={i} value={item.value} style={ {display: 'none'}}>
                   {item.text}
                 </option>
               )

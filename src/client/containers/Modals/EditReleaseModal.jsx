@@ -30,17 +30,19 @@ class EditReleaseModal extends React.Component {
 
   componentDidMount () {
     this.name = this.props.release.name
-    this.group = this.props.release.group._id
-
-    console.log("Mount")
-    console.log(this.name)
-    console.log(this.group)
+    this.selectedGroup = this.props.release.group._id
 
     this.props.fetchGroups({ type: 'all' })
     this.props.fetchTickets({ type: 'all' })
 
     helpers.UI.inputs()
     helpers.UI.reRenderInputs()
+  }
+
+  componentWillUnmount () {
+    console.log("Unmount modal")
+    this.props.fetchGroups({ type: 'all' })
+    this.props.fetchTickets({ type: 'all' })
   }
 
   componentDidUpdate () {
@@ -66,8 +68,6 @@ class EditReleaseModal extends React.Component {
   }
 
   filterTickets () {
-    console.log("Filter")
-    console.log(this.selectedGroup)
     return this.props.tickets
       .map(ticket => {
         if (this.selectedGroup === ticket.getIn(['group', '_id'])) {
@@ -80,9 +80,6 @@ class EditReleaseModal extends React.Component {
   }
 
   onGroupSelectChange (e) {
-    console.log("Group change")
-    console.log(this.selectedGroup)
-    console.log(e.target.value)
     const isShouldUpdate = this.selectedGroup !== e.target.value
 
     this.selectedGroup = e.target.value
@@ -97,9 +94,6 @@ class EditReleaseModal extends React.Component {
   }
 
   initialMultiSelectTickets () {
-    console.log("Initial")
-    console.log(this.selectedGroup)
-    console.log(this.props.release.group._id)
     if(this.selectedGroup === this.props.release.group._id) {
       return this.props.release.tickets.map(i => i._id)
     } else {
@@ -109,8 +103,9 @@ class EditReleaseModal extends React.Component {
 
   initGroupAndTickets () {
     if(!this.state.isSet) {
-      this.group = this.props.release.group._id
+      this.selectedGroup = this.props.release.group._id
       this.name = this.props.release.name
+      this.props.loading = true
       this.setState({ isSet: true })
     }
   }
@@ -119,15 +114,15 @@ class EditReleaseModal extends React.Component {
     e.preventDefault()
     if (!this.props.edit) return
 
-    const payload = {}
+    const payload = {
+      _id: this.props.release._id
+    }
 
     if(this.props.release.name !== this.name) {
-      console.log(this.name)
       payload.name = this.name
     }
 
     if(this.props.release.group._id !== this.selectedGroup) {
-      console.log(this.selectedGroup)
       payload.group = this.selectedGroup
     }
 
@@ -141,8 +136,6 @@ class EditReleaseModal extends React.Component {
     //   group: this.selectedGroup,
     //   tickets: this.ticketSelect ? this.ticketSelect.getSelected() : []
     // }
-
-    console.log(payload)
 
     this.props.updateRelease(payload)
   }
@@ -158,14 +151,7 @@ class EditReleaseModal extends React.Component {
       })
       .toArray()
 
-    // const tickets = this.props.tickets
-    //   .map(ticket => {
-    //     return {text: ticket.get('subject'), value: ticket.get('_id')}
-    //   })
-    //   .toArray()
     const tickets = this.filterTickets()
-
-    console.log(tickets)
 
     return (
       <BaseModal parentExtraClass={'pt-0'} extraClass={'p-0 pb-25'} options={{ bgclose: false }}
@@ -199,12 +185,15 @@ class EditReleaseModal extends React.Component {
             <div>
               <div className='uk-margin-medium-bottom'>
                 <label className='uk-form-label'>{this.props.t('Tickets')}</label>
-                <MultiSelectTickets
-                  items={tickets}
-                  initialSelected={this.initialMultiSelectTickets()}
-                  onChange={e => this.onTicketSelectChange(e)}
-                  ref={r => (this.ticketSelect = r)}
-                />
+                {!this.props.loading && (
+                  <MultiSelectTickets
+                    items={tickets}
+                    initialSelected={this.initialMultiSelectTickets()}
+                    onChange={e => this.onTicketSelectChange(e)}
+                    ref={r => (this.ticketSelect = r)}
+                  />
+                )}
+
               </div>
             </div>
             <div className='uk-modal-footer uk-text-right'>
@@ -230,6 +219,7 @@ EditReleaseModal.propTypes = {
   release: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
   tickets: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired,
   updateRelease: PropTypes.func.isRequired,
   fetchGroups: PropTypes.func.isRequired,
   unloadGroups: PropTypes.func.isRequired,
@@ -238,12 +228,14 @@ EditReleaseModal.propTypes = {
 }
 
 EditReleaseModal.defaultProps = {
-  edit: false
+  edit: false,
+  loading: true
 }
 
 const mapStateToProps = state => ({
   groups: state.groupsState.groups,
-  tickets: state.ticketsState.tickets
+  tickets: state.ticketsState.tickets,
+  loading: state.ticketsState.loading
 })
 
 export default compose(withTranslation(), connect(mapStateToProps, {

@@ -27,12 +27,12 @@ class ReleaseContainer extends React.Component {
   }
 
   componentDidMount () {
-    console.log("did mount release")
-    console.log(helpers.canUser('release:create'))
     this.props.fetchReleases()
   }
 
   componentDidUpdate () {
+    //TODO nado peredelat, eto chtobi ne vislo
+    this.props.fetchReleases()
     helpers.resizeAll()
   }
 
@@ -41,9 +41,6 @@ class ReleaseContainer extends React.Component {
   }
 
   onEditRelease (release) {
-    console.log("Edit release")
-    console.log(release)
-
     this.props.showModal('EDIT_RELEASE', {
       edit: true,
       release: release
@@ -51,8 +48,6 @@ class ReleaseContainer extends React.Component {
   }
 
   openInfoRelease (release) {
-    console.log("Show release")
-    console.log(release)
     this.props.showModal('SHOW_RELEASE', {
       release: release
     })
@@ -76,8 +71,6 @@ class ReleaseContainer extends React.Component {
         `,
       () => {
         this.props.deleteRelease({ _id: releaseId })
-        console.log("Delete release")
-        console.log(releaseId)
       },
       {
         labels: { Ok: this.props.t('Yes'), Cancel: this.props.t('No') },
