@@ -10,6 +10,7 @@ const utils = require('../helpers/utils')
 
 // Needed - For Population
 const groupSchema = require('./group')
+const userSchema = require('./user')
 require('./ticket')
 
 const COLLECTION = 'releases'
@@ -204,12 +205,13 @@ releaseSchema.methods.setName = function (ownerId, name, callback) {
 releaseSchema.methods.addTicket = function (ticketId, callback) {
   const self = this
 
-  const hasSub = _.some(self.subscribers, function (i) {
+  const hasSub = _.some(self.tickets, function (i) {
     return i._id.toString() === ticketId.toString()
   })
 
   if (!hasSub) {
     self.tickets.push(ticketId)
+    self.save()
   }
 
   return callback(null, self)
@@ -227,6 +229,7 @@ releaseSchema.methods.removeTicket = function (ticketId, callback) {
   self.tickets = _.reject(self.tickets, function (i) {
     return i._id.toString() === ticketId.toString()
   })
+  self.save()
 
   return callback(null, self)
 }

@@ -25,6 +25,8 @@ var userSchema = require('../models/user')
 var roleSchema = require('../models/role')
 var permissions = require('../permissions')
 var xss = require('xss')
+const Models = require('../models');
+const apiUtils = require('../controllers/api/apiUtils');
 
 var events = {}
 
@@ -278,6 +280,7 @@ events.onSetTicketRelease = function (socket) {
   socket.on(socketEvents.TICKETS_RELEASE_SET, function (data) {
     const ticketId = data._id
     const releaseId = data.value
+    const oldReleaseId = data.oldValue
     const ownerId = socket.request.user._id
 
     if (_.isUndefined(ticketId) || _.isUndefined(releaseId)) return true
@@ -293,6 +296,17 @@ events.onSetTicketRelease = function (socket) {
 
           ticketSchema.populate(tt, 'release', function (err) {
             if (err) return true
+
+            Models.Release.getReleaseById(oldReleaseId, function (err, release) {
+              if (err) return true
+              release.removeTicket(ticketId, () => {})
+            })
+
+            Models.Release.getReleaseById(releaseId, function (err, release) {
+              if (err) return true
+              release.addTicket(ticketId, () => {})
+            })
+
 
             // emitter.emit('ticket:updated', tt)
             utils.sendToAllConnectedClients(io, socketEvents.TICKETS_UI_RELEASE_UPDATE, tt)

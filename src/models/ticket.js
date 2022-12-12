@@ -110,7 +110,7 @@ const ticketSchema = mongoose.Schema({
   subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'accounts' }],
   release: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'release'
+    ref: 'releases'
   }
 })
 
@@ -1088,6 +1088,7 @@ ticketSchema.statics.getTicketByUid = function (uid, callback) {
       'owner assignee comments.owner notes.owner subscribers history.owner',
       'username fullname email role image title'
     )
+    .populate('release')
     .populate('type tags group')
 
   return q.exec(callback)

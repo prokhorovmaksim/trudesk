@@ -9,6 +9,8 @@ const Group = require("../../../models/group");
 const Team = require("../../../models/team");
 const Department = require("../../../models/department");
 const apiUtil = require("../apiUtils");
+const releaseSchema = require('../../../models/release');
+const ticketSchema = require('../../../models/ticket');
 
 
 const releasesV2 = {}
@@ -22,32 +24,39 @@ releasesV2.create = async function (req, res) {
   if (!postRelease) return apiUtils.sendApiError_InvalidPostData(res)
 
   try {
-    const release = await Models.Release.create({
+    const releaseEntity = await Models.Release.create({
       name: postRelease.name,
       group: postRelease.group,
       tickets: postRelease.tickets
     })
 
-    console.log("release")
-    console.log(release)
-    console.log("release")
+    // adding connection with tickets
+    releaseSchema.populate(releaseEntity, 'tickets', function (err, release) {
+      for (let i = 0; i < release.tickets.length; i++) {
+        ticketSchema.populate(release.tickets[i], 'release', function (err, t) {
+          if (err) return true
+          // remove ticket from previous release entity
+          if (t.release) {
+            try {
+              const index = t.release.tickets.indexOf(t._id);
+              if (index >= 0) {
+                t.release.tickets.splice( index, 1 );
+                t.release.save()
+              }
+            } catch (err) {
+              console.log(err)
+              winston.error(err)
+            }
+          }
+          // change release in ticket entity
+          t.release = release
+          t.save()
+        })
+      }
+    })
+    savedId = releaseEntity._id
 
-    savedId = release._id
-
-    // let tickets = []
-    // if (postRelease.tickets) {
-    //   tickets = await Tickets.getTickets(postRelease.tickets)
-    //   for (const ticket of tickets) {
-    //     await ticket.addMember(savedId)
-    //     await ticket.save()
-    //   }
-    // }
-
-    // release.group = groups.map(g => {
-    //   return { _id: g._id, name: g.name }
-    // })
-
-    return apiUtils.sendApiSuccess(res, { release })
+    return apiUtils.sendApiSuccess(res, { releaseEntity })
   } catch (err) {
     winston.debug(err)
     return apiUtils.sendApiError(res, 500, err.message)
@@ -171,7 +180,36 @@ releasesV2.update = function (req, res) {
   Models.Release.findOneAndUpdate({ _id: id }, payload, { new: true }, function (err, updatedRelease) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
 
-    return apiUtils.sendApiSuccess(res, { release: updatedRelease })
+    if (payload.tickets && payload.tickets.length !== 0) {
+      // adding connection with tickets
+      releaseSchema.populate(updatedRelease, 'tickets', function (err, release) {
+        for (let i = 0; i < updatedRelease.tickets.length; i++) {
+          if (!payload.tickets.includes(updatedRelease.tickets[i])) continue
+          ticketSchema.populate(updatedRelease.tickets[i], 'release', function (err, t) {
+            if (err) return true
+            // remove ticket from previous release entity
+            if (t.release) {
+              try {
+                const index = t.release.tickets.indexOf(t._id);
+                if (index >= 0) {
+                  t.release.tickets.splice(index, 1);
+                  t.release.save()
+                }
+              } catch (err) {
+                console.log(err)
+                winston.error(err)
+              }
+            }
+            // change release in ticket entity
+            t.release = release
+            t.save()
+          })
+        }
+      })
+    }
+    console.log('updatedRelease')
+    console.log(updatedRelease)
+    return apiUtils.sendApiSuccess(res, {release: updatedRelease})
   })
 }
 

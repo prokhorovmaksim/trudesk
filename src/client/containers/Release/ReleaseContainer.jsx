@@ -92,7 +92,7 @@ class ReleaseContainer extends React.Component {
         ', ' +
         helpers.formatDate(release.get('date'), helpers.getTimeFormat())
 
-      const ticketsCount = release.get('tickets').size
+      const ticketsCount = (release.get('tickets')) ? release.get('tickets').size : 0
       return (
         <TableRow key={release.get('_id')}
                   className={'vam nbb'}

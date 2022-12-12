@@ -110,6 +110,7 @@ class SingleTicketContainer extends React.Component {
     this.onUpdateTicketType = this.onUpdateTicketType.bind(this)
     this.onUpdateTicketPriority = this.onUpdateTicketPriority.bind(this)
     this.onUpdateTicketGroup = this.onUpdateTicketGroup.bind(this)
+    this.onUpdateTicketRelease = this.onUpdateTicketRelease.bind(this)
     this.onUpdateTicketDueDate = this.onUpdateTicketDueDate.bind(this)
     this.onUpdateTicketTags = this.onUpdateTicketTags.bind(this)
   }
@@ -127,6 +128,7 @@ class SingleTicketContainer extends React.Component {
     fetchTicket(this)
     this.props.fetchTicketTypes()
     this.props.fetchGroups()
+    this.props.fetchReleases()
   }
 
   componentDidUpdate () {
@@ -558,7 +560,8 @@ class SingleTicketContainer extends React.Component {
                               onChange={e => {
                                 this.props.socket.emit(TICKETS_RELEASE_SET, {
                                   _id: this.ticket._id,
-                                  value: e.target.value
+                                  value: e.target.value,
+                                  oldValue: (this.ticket.release) ? this.ticket.release._id : undefined
                                 })
                               }}
                             >
@@ -570,7 +573,7 @@ class SingleTicketContainer extends React.Component {
                                 ))}
                             </select>
                           )}
-                          {!hasTicketUpdate && <div className={'input-box'}>{this.ticket.group.name}</div>}
+                          {!hasTicketUpdate && <div className={'input-box'}>{this.ticket.release.name}</div>}
                         </div>
                       </div>
                     </div>
@@ -930,7 +933,7 @@ const mapStateToProps = state => ({
   socket: state.shared.socket,
   ticketTypes: state.ticketsState.types,
   groupsState: state.groupsState,
-  releasesState: state.releasesState
+  releasesState: state.releaseState
 })
 
 export default compose(withTranslation(), connect(mapStateToProps, {
