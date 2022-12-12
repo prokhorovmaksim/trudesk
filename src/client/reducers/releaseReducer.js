@@ -10,7 +10,6 @@ const initialState = {
 const reducer = handleActions(
   {
     [FETCH_RELEASES.PENDING]: (state, action) => {
-      console.log("pending release")
       return {
         ...state,
         loading: true
@@ -18,7 +17,6 @@ const reducer = handleActions(
     },
 
     [FETCH_RELEASES.SUCCESS]: (state, action) => {
-      console.log("success release")
       return {
         ...state,
         releases: fromJS(action.response.releases || []),
@@ -27,7 +25,6 @@ const reducer = handleActions(
     },
 
     [CREATE_RELEASE.SUCCESS]: (state, action) => {
-      console.log("create release")
       const release = action.response.release
 
       return {
@@ -37,7 +34,6 @@ const reducer = handleActions(
     },
 
     [UPDATE_RELEASE.SUCCESS]: (state, action) => {
-      console.log("update release")
       const release = action.response.release
       const idx = state.releases.findIndex(n => {
         return n.get('_id') === release._id
@@ -50,7 +46,6 @@ const reducer = handleActions(
     },
 
     [DELETE_RELEASE.SUCCESS]: (state, action) => {
-      console.log("delete release")
       const idx = state.releases.findIndex(n => {
         return n.get('_id') === action.payload._id
       })

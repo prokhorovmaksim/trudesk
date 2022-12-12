@@ -23,7 +23,6 @@ class CreateReleaseModal extends React.Component {
   @observable name = ''
 
   constructor (props) {
-    console.log("construct")
     super(props)
     makeObservable(this)
 
@@ -37,7 +36,6 @@ class CreateReleaseModal extends React.Component {
   }
 
   componentDidMount () {
-    console.log("mount")
     this.props.fetchGroups({ type: 'all' })
     this.props.fetchTickets({ type: 'all' })
 
@@ -62,10 +60,12 @@ class CreateReleaseModal extends React.Component {
   showTicketsByGroup () {
     const newTickets = this.props.tickets
       .map(ticket => {
+        const text =  ticket.get('release') ? `${ticket.get('subject')} (${ticket.getIn(['release', 'name'])})`
+          : ticket.get('subject')
         if(this.selectedGroup === ticket.get('group').get('_id')) {
-          return { text: ticket.get('subject'), value: ticket.get('_id'), visibility: true }
+          return { text: text, value: ticket.get('_id'), visibility: true }
         } else {
-          return { text: ticket.get('subject'), value: ticket.get('_id'), visibility: false }
+          return { text: text, value: ticket.get('_id'), visibility: false }
         }
 
       })

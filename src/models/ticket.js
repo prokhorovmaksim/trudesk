@@ -747,6 +747,7 @@ ticketSchema.statics.getAll = function (callback) {
     .find({ deleted: false })
     .populate('owner assignee', '-password -__v -preferences -iOSDeviceTokens -tOTPKey')
     .populate('type tags group')
+    .populate('release')
     .sort({ status: 1 })
     .lean()
 
@@ -811,6 +812,7 @@ ticketSchema.statics.getAllByStatus = function (status, callback) {
       'owner assignee comments.owner notes.owner subscribers history.owner',
       'username fullname email role image title'
     )
+    .populate('release')
     .populate('type tags group')
     .sort({ status: 1 })
     .lean()
@@ -924,6 +926,7 @@ function buildQueryWithObject (SELF, grpId, object, count) {
       )
       .populate('assignee', 'username fullname email role image title')
       .populate('type tags group')
+      .populate('release')
       .sort({ uid: -1 })
   }
 
