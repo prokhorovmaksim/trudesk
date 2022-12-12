@@ -1,15 +1,3 @@
-/*
- *       .                             .o8                     oooo
- *    .o8                             "888                     `888
- *  .o888oo oooo d8b oooo  oooo   .oooo888   .ooooo.   .oooo.o  888  oooo
- *    888   `888""8P `888  `888  d88' `888  d88' `88b d88(  "8  888 .8P'
- *    888    888      888   888  888   888  888ooo888 `"Y88b.   888888.
- *    888 .  888      888   888  888   888  888    .o o.  )88b  888 `88b.
- *    "888" d888b     `V88V"V8P' `Y8bod88P" `Y8bod8P' 8""888P' o888o o888o
- *  ========================================================================
- *  Updated:    6/21/19 9:32 AM
- *  Copyright (c) 2014-2019 Trudesk, Inc. All rights reserved.
- */
 
 import React, { Fragment, createRef } from 'react'
 import PropTypes from 'prop-types'
@@ -279,11 +267,23 @@ class SingleTicketContainer extends React.Component {
         })
       : []
 
-    const mappedReleases = this.props.releasesState
-      ? this.props.releasesState.releases.map(rel => {
+    let mappedReleases = this.props.releasesState && this.ticket
+      ? this.props.releasesState.releases.filter(rel => {
+        if(rel.getIn(['group', '_id']) === this.ticket.group._id) {
+          return rel
+        }
+      }).map(rel => {
         return { text: rel.get('name'), value: rel.get('_id') }
       })
       : []
+    if(this.ticket) {
+      mappedReleases.push({ text: '', value: '-1' })
+      mappedReleases = mappedReleases.toJS()
+      mappedReleases.push({ text: '', value: '-1' })
+    } else {
+      mappedReleases.push({ text: '', value: '-1' })
+    }
+
 
     const mappedTypes = this.props.ticketTypes
       ? this.props.ticketTypes.map(type => {
@@ -556,13 +556,23 @@ class SingleTicketContainer extends React.Component {
                           <span>{this.props.t('Release')}</span>
                           {hasTicketUpdate && (
                             <select
-                              value={(this.ticket.release) ? this.ticket.release._id : undefined}
+                              value={(this.ticket.release) ? this.ticket.release._id : '-1'}
                               onChange={e => {
-                                this.props.socket.emit(TICKETS_RELEASE_SET, {
-                                  _id: this.ticket._id,
-                                  value: e.target.value,
-                                  oldValue: (this.ticket.release) ? this.ticket.release._id : undefined
-                                })
+                                if(e.target.value == '-1') {
+                                  const emptyObject = ({})
+                                  this.props.socket.emit(TICKETS_RELEASE_SET, {
+                                    _id: this.ticket._id,
+                                    value: emptyObject,
+                                    oldValue: (this.ticket.release) ? this.ticket.release._id : {}
+                                  })
+                                } else {
+                                  this.props.socket.emit(TICKETS_RELEASE_SET, {
+                                    _id: this.ticket._id,
+                                    value: e.target.value,
+                                    oldValue: (this.ticket.release) ? this.ticket.release._id : {}
+                                  })
+                                }
+
                               }}
                             >
                               {mappedReleases &&

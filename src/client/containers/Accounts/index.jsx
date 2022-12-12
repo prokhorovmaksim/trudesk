@@ -224,7 +224,7 @@ class AccountsContainer extends React.Component {
     return (
       <div>
         <PageTitle
-          title={this.props.title}
+          title={this.props.title ? this.props.t(this.props.title.toString()) : this.props.title}
           rightComponent={
             <div className={'uk-grid uk-grid-collapse'}>
               {/*<div className={'uk-width-3-4 pr-10'}>*/}
