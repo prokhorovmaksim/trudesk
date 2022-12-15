@@ -283,12 +283,11 @@ class SingleTicketContainer extends React.Component {
     } else {
       mappedReleases.push({ text: '', value: '-1' })
     }
-
-
-    const mappedTypes = this.props.ticketTypes
-      ? this.props.ticketTypes.map(type => {
-          return { text: type.get('name'), value: type.get('_id'), raw: type.toJS() }
-        })
+    
+    const mappedTypes = this.ticket && this.ticket.group.ticketTypes
+      ? this.ticket.group.ticketTypes.map(type => {
+        return {text: type.name, value: type._id}
+      })
       : []
 
     // Perms
