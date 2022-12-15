@@ -67,34 +67,34 @@ class TicketsContainer extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.timeline) {
-      this.timeline.pause()
-      this.timeline.seek(0)
-    }
+    // if (this.timeline) {
+    //   this.timeline.pause()
+    //   this.timeline.seek(0)
+    // }
 
-    anime.remove('tr.overdue td')
+    // anime.remove('tr.overdue td')
 
-    this.timeline = anime.timeline({
-      direction: 'alternate',
-      duration: 800,
-      autoPlay: false,
-      easing: 'steps(1)',
-      loop: true,
-      backgroundColor: 'blue'
-    })
+    // this.timeline = anime.timeline({
+    //   direction: 'alternate',
+    //   duration: 800,
+    //   autoPlay: false,
+    //   easing: 'steps(1)',
+    //   loop: true,
+    //   backgroundColor: 'blue'
+    // })
+    //
+    // this.timeline.add({
+    //   targets: 'tr.overdue td',
+    //   backgroundColor: '#b71c1c',
+    //   color: '#ffffff'
+    // })
 
-    this.timeline.add({
-      targets: 'tr.overdue td',
-      backgroundColor: '#b71c1c',
-      color: '#ffffff'
-    })
-
-    this.timeline.play()
+    //this.timeline.play()
   }
 
   componentWillUnmount () {
-    anime.remove('tr.overdue td')
-    this.timeline = null
+    // anime.remove('tr.overdue td')
+    // this.timeline = null
     this.props.unloadTickets()
     this.props.socket.off('$trudesk:client:ticket:created', this.onTicketCreated)
     this.props.socket.off('$trudesk:client:ticket:updated', this.onTicketUpdated)
