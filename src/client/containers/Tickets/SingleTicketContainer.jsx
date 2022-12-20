@@ -499,11 +499,7 @@ class SingleTicketContainer extends React.Component {
                                 value={this.ticket.dueDate}
                                 small={true}
                                 onChange={e => {
-                                  const dueDate = moment(e.target.value, helpers.getShortDateFormat())
-                                    .utc()
-                                    .toISOString()
-
-                                  this.props.socket.emit(TICKETS_DUEDATE_SET, { _id: this.ticket._id, value: dueDate })
+                                  this.props.socket.emit(TICKETS_DUEDATE_SET, { _id: this.ticket._id, value: e.target.value })
                                 }}
                               />
                             </div>
@@ -582,7 +578,9 @@ class SingleTicketContainer extends React.Component {
                                 ))}
                             </select>
                           )}
-                          {!hasTicketUpdate && <div className={'input-box'}>{this.ticket.release.name}</div>}
+                          {!hasTicketUpdate && <div className={'input-box'}>
+                            {(this.ticket.release) ? this.ticket.release.name : ''}
+                          </div>}
                         </div>
                       </div>
                     </div>

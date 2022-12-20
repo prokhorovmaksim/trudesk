@@ -1480,7 +1480,7 @@ define([
 
     // Lets get the server Timezone as the default
     const settings = window.trudeskSettingsService.getSettings()
-    return settings.timezone.value || 'America/New_York' // Return America/New_York as the fallback
+    return settings.timezone.value || 'Europe/Moscow' // Return 'Europe/Moscow' as the fallback
   }
 
   helpers.getTimeFormat = function () {
