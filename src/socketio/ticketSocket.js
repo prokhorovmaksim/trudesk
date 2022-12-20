@@ -321,7 +321,8 @@ events.onSetTicketRelease = function (socket) {
 events.onSetTicketDueDate = function (socket) {
   socket.on(socketEvents.TICKETS_DUEDATE_SET, function (data) {
     const ticketId = data._id
-    const dueDate = data.value
+    const dueDate = (data.value) ? Date.parse(data.value)
+      : undefined
     const ownerId = socket.request.user._id
 
     if (_.isUndefined(ticketId)) return true

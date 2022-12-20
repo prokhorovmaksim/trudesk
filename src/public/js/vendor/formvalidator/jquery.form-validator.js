@@ -1714,6 +1714,7 @@
     $.formUtils.addValidator({
       name: 'email',
       validatorFunction: function (email) {
+        if (!email) return true
         var emailParts = email.toLowerCase().split('@'),
           localPart = emailParts[0],
           domain = emailParts[1]
