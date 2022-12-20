@@ -24,11 +24,27 @@ releasesV2.create = async function (req, res) {
   if (!postRelease) return apiUtils.sendApiError_InvalidPostData(res)
 
   try {
-    const releaseEntity = await Models.Release.create({
-      name: postRelease.name,
-      group: postRelease.group,
-      tickets: postRelease.tickets
-    })
+    let releaseEntity
+    // const releaseEntity = await Models.Release.create({
+    //   name: postRelease.name,
+    //   group: postRelease.group,
+    //   tickets: postRelease.tickets
+    // })
+
+    if(postRelease.date) {
+      releaseEntity = await Models.Release.create({
+        name: postRelease.name,
+        group: postRelease.group,
+        tickets: postRelease.tickets,
+        date: postRelease.date
+      })
+    } else {
+      releaseEntity = await Models.Release.create({
+        name: postRelease.name,
+        group: postRelease.group,
+        tickets: postRelease.tickets
+      })
+    }
 
     // adding connection with tickets
     releaseSchema.populate(releaseEntity, 'tickets', function (err, release) {

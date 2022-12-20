@@ -14,6 +14,8 @@ import Button from 'components/Button'
 import SingleSelect from 'components/SingleSelect'
 import MultiSelect from 'components/MultiSelect'
 import MultiSelectTickets from 'components/MultiSelectTickets'
+import DatePicker from 'components/DatePicker'
+import moment from 'moment'
 
 import $ from 'jquery'
 import helpers from 'lib/helpers'
@@ -112,10 +114,21 @@ class CreateReleaseModal extends React.Component {
     if (!isValid) return
 
 
+    console.log(this.ticketSelect)
     const payload = {
       name: this.name,
       group: this.selectedGroup,
-      tickets: this.ticketSelect ? this.ticketSelect.getSelected() : []
+      date: this.date ? this.date : undefined
+    }
+
+    if (this.ticketSelect) {
+      if(this.ticketSelect.getSelected() !== null) {
+        payload.tickets = this.ticketSelect.getSelected()
+      } else {
+        payload.tickets = []
+      }
+    } else {
+      payload.tickets = []
     }
 
     console.log(payload)
@@ -186,6 +199,29 @@ class CreateReleaseModal extends React.Component {
                 >
                     {this.props.t('Please select a group for this release.')}
                   </span>
+              </div>
+            </div>
+            <div>
+              <div className='uk-margin-medium-bottom'>
+                <label className='uk-form-label'>{this.props.t('Release Date')}</label>
+                <div className={'uk-display-inline'}>
+                  <DatePicker
+                    name={'release_due_date'}
+                    format={helpers.getShortDateFormat()}
+                    small={true}
+                    value={''}
+                    onChange={e => {
+                      const dueDate = moment(e.target.value, helpers.getShortDateFormat())
+                        .utc()
+                        .toISOString()
+
+                      this.date = dueDate
+
+                      console.log(dueDate)
+
+                    }}
+                  />
+                </div>
               </div>
             </div>
             <div>
