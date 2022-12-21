@@ -216,10 +216,8 @@ class CreateReleaseModal extends React.Component {
                         .toISOString()
 
                       this.date = dueDate
-
-                      console.log(dueDate)
-
                     }}
+                    validation={null}
                   />
                 </div>
               </div>

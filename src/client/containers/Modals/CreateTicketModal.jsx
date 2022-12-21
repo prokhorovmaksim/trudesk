@@ -95,7 +95,12 @@ class CreateTicketModal extends React.Component {
     const $form = $(e.target)
 
     const data = {}
-    if (this.issueText.length < 1) return
+    if (this.issueText.length < 1) {
+      this.descriptionErrorMessage.classList.remove('hide')
+      return
+    } else {
+      this.descriptionErrorMessage.classList.add('hide')
+    }
     const allowAgentUserTickets =
       this.props.viewdata.get('ticketSettings').get('allowAgentUserTickets') &&
       (this.props.shared.sessionUser.role.isAdmin || this.props.shared.sessionUser.role.isAgent)
@@ -325,11 +330,29 @@ class CreateTicketModal extends React.Component {
             </div>
           </div>
           <div className='uk-margin-medium-bottom'>
-            <span>{this.props.t('Description')}</span>
+            <div>
+              <span>{this.props.t('Description')}</span>
+            </div>
+            <div>
+              <span
+                className={'hide help-block'}
+                style={{ display: 'inline-block', marginTop: '3px', fontWeight: 'bold', color: '#d85030' }}
+                ref={r => (this.descriptionErrorMessage = r)}
+              >
+                {this.props.t('Please enter a Description.')}
+              </span>
+            </div>
             <div className='error-border-wrap uk-clearfix'>
               <EasyMDE
                 ref={i => (this.issueMde = i)}
-                onChange={val => (this.issueText = val)}
+                onChange={val => {
+                  this.issueText = val
+                  if(this.issueText.length < 1) {
+                    this.descriptionErrorMessage.classList.remove('hide')
+                  } else {
+                    this.descriptionErrorMessage.classList.add('hide')
+                  }
+                }}
                 allowImageUpload={true}
                 inlineImageUploadUrl={'/tickets/uploadmdeimage'}
                 inlineImageUploadHeaders={{ ticketid: 'uploads' }}

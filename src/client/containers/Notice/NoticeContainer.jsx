@@ -26,11 +26,9 @@ import UIKit from 'uikit'
 class NoticeContainer extends React.Component {
   constructor (props) {
     super(props)
-    console.log("create notice")
   }
 
   componentDidMount () {
-    console.log("did mount")
     this.props.fetchNotices()
   }
 
