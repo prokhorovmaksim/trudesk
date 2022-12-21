@@ -65,6 +65,7 @@ export const GET_TAGS_WITH_PAGE = defineAction('GET_TAGS_WITH_PAGE', [SUCCESS, E
 export const TAGS_UPDATE_CURRENT_PAGE = defineAction('TAGS_UPDATE_CURRENT_PAGE', [SUCCESS, ERROR])
 export const CREATE_TAG = defineAction('CREATE_TAG', [SUCCESS, ERROR])
 export const TRANSFER_TO_THIRDPARTY = defineAction('TRANSFER_TO_THIRDPARTY', [SUCCESS, ERROR])
+export const GET_OVERDUE_DATE = defineAction('GET_OVERDUE_DATE', [SUCCESS, ERROR])
 
 // Accounts
 export const FETCH_ACCOUNTS = defineAction('FETCH_ACCOUNTS', [PENDING, SUCCESS, ERROR])

@@ -35,7 +35,8 @@ import {
   DELETE_TICKET,
   TICKET_EVENT,
   TRANSFER_TO_THIRDPARTY,
-  FETCH_TICKET_TYPES
+  FETCH_TICKET_TYPES,
+  GET_OVERDUE_DATE
 } from 'actions/types'
 
 import helpers from 'lib/helpers'
@@ -254,6 +255,19 @@ function * fetchTicketTypes ({ payload }) {
   }
 }
 
+function * getOverdueDate ({ payload }) {
+  try {
+    const response = yield call(api.tickets.getOverdueDate, payload)
+    const sessionUser = yield select(getSessionUser)
+    yield put({ type: GET_OVERDUE_DATE.SUCCESS, response, sessionUser })
+  } catch (error) {
+    const errorText = error.response.data.error
+    helpers.UI.showSnackbar(`Error: ${errorText}`, true)
+    Log.error(errorText, error.response)
+    yield put({ type: GET_OVERDUE_DATE.ERROR, error })
+  }
+}
+
 export default function * watcher () {
   yield takeLatest(FETCH_TICKETS.ACTION, fetchTickets)
   yield takeLatest(CREATE_TICKET.ACTION, createTicket)
@@ -271,4 +285,5 @@ export default function * watcher () {
   yield takeLatest(CREATE_TAG.ACTION, createTag)
   yield takeLatest(TRANSFER_TO_THIRDPARTY.ACTION, transferToThirdParty)
   yield takeLatest(FETCH_TICKET_TYPES.ACTION, fetchTicketTypes)
+  yield takeLatest(GET_OVERDUE_DATE.ACTION, getOverdueDate)
 }

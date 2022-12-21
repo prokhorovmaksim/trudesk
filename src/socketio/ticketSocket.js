@@ -26,7 +26,6 @@ var roleSchema = require('../models/role')
 var permissions = require('../permissions')
 var xss = require('xss')
 const Models = require('../models');
-const apiUtils = require('../controllers/api/apiUtils');
 
 var events = {}
 
@@ -220,6 +219,9 @@ events.onSetTicketPriority = function (socket) {
           if (err) return true
           t.save(function (err, tt) {
             if (err) return true
+
+            const apiTickets = require('../controllers/api/v1/tickets')
+            apiTickets.setOverdueDate(ticketId, priority)
 
             // emitter.emit('ticket:updated', tt)
             utils.sendToAllConnectedClients(io, socketEvents.TICKETS_UI_PRIORITY_UPDATE, tt)

@@ -111,7 +111,8 @@ const ticketSchema = mongoose.Schema({
   release: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'releases'
-  }
+  },
+  overdueDate: {type: Date}
 })
 
 ticketSchema.index({ deleted: -1, group: 1, status: 1 })

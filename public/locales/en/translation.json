@@ -255,5 +255,18 @@
   "Tickets count": "Tickets count",
   "Create Release": "Create Release",
   "Release name": "Release name",
-  "Save Release": "Save Release"
+  "Save Release": "Save Release",
+  "Possible ticket types": "Possible ticket types",
+  "Working days": "Working days",
+  "Working day": "Working day",
+  "Start time": "Start time",
+  "End time": "End time",
+  "Day of the week": "Day of the week",
+  "Monday": "Monday",
+  "Tuesday": "Tuesday",
+  "Wednesday": "Wednesday",
+  "Thursday": "Thursday",
+  "Friday": "Friday",
+  "Saturday": "Saturday",
+  "Sunday": "Sunday"
 }

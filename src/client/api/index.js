@@ -67,6 +67,12 @@ api.tickets.create = payload => {
   })
 }
 
+api.tickets.getOverdueDate = payload => {
+  return axios.post('/api/v1/tickets/overdue_date', payload).then(res => {
+    return res.data
+  })
+}
+
 api.tickets.delete = ({ id }) => {
   return axios.delete(`/api/v1/tickets/${id}`).then(res => {
     return res.data

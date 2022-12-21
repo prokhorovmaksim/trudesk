@@ -40,7 +40,14 @@ var groupSchema = mongoose.Schema({
   ],
   sendMailTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'accounts' }],
   ticketTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'tickettypes' }],
-  public: { type: Boolean, required: true, default: false }
+  public: { type: Boolean, required: true, default: false },
+  workingDays: [{
+    number: { type: Number, required: true},
+    isEnabled: { type: Boolean, default: false },
+    startTime: { type: String },
+    endTime: { type: String }
+  }],
+  timezone: { type: String, default: 'Europe/Moscow' }
 })
 
 groupSchema.plugin(require('mongoose-autopopulate'))

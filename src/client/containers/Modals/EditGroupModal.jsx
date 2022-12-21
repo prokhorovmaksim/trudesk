@@ -30,11 +30,19 @@ import Button from 'components/Button'
 import helpers from 'lib/helpers'
 import $ from 'jquery'
 import SpinLoader from 'components/SpinLoader'
-import { fetchTicketTypes } from 'actions/tickets';
+import { fetchTicketTypes } from 'actions/tickets'
+import Table from 'components/Table'
+import TableHeader from 'components/Table/TableHeader'
+import TableRow from 'components/Table/TableRow'
+import TableCell from 'components/Table/TableCell'
+import EnableSwitch from 'components/Settings/EnableSwitch'
 
 @observer
 class EditGroupModal extends React.Component {
   @observable name = ''
+
+  @observable workingDays = []
+  @observable timezone = ''
 
   constructor (props) {
     super(props)
@@ -45,6 +53,8 @@ class EditGroupModal extends React.Component {
     this.props.fetchAccounts({ type: 'customers', limit: -1 })
     this.props.fetchTicketTypes({ limit: -1 })
     this.name = this.props.group.name
+    this.prepareDataForWorkingDays()
+    this.showTimezones()
 
     helpers.UI.inputs()
     helpers.UI.reRenderInputs()
@@ -69,7 +79,9 @@ class EditGroupModal extends React.Component {
       name: this.name,
       members: this.membersSelect.getSelected() || [],
       sendMailTo: this.sendMailToSelect.getSelected() || [],
-      ticketTypes: this.ticketTypesSelect.getSelected() || []
+      ticketTypes: this.ticketTypesSelect.getSelected() || [],
+      workingDays: this.workingDays,
+      timezone: this.timezone
     }
 
     this.props.updateGroup(payload)
@@ -77,6 +89,92 @@ class EditGroupModal extends React.Component {
 
   onInputChange (e) {
     this.name = e.target.value
+  }
+
+
+  prepareDataForWorkingDays () {
+    if (this.props.group.workingDays.length > 0) {
+      this.workingDays = this.props.group.workingDays
+    } else {
+      const workingDaysDefaultValues = Array.of(
+        {
+          number: 1,
+          isEnabled: true,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 2,
+          isEnabled: true,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 3,
+          isEnabled: true,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 4,
+          isEnabled: true,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 5,
+          isEnabled: true,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 6,
+          isEnabled: false,
+          startTime: '10:00',
+          endTime: '18:00'
+        },
+        {
+          number: 7,
+          isEnabled: false,
+          startTime: '10:00',
+          endTime: '18:00'
+        }
+      )
+      this.workingDays = workingDaysDefaultValues
+    }
+  }
+
+  showTimezones() {
+    const moment = require('moment-timezone');
+
+    const selectorOptions = moment.tz.names()
+      .reduce((memo, tz) => {
+        memo.push({
+          name: tz,
+          offset: moment.tz(tz).utcOffset()
+        });
+
+        return memo;
+      }, [])
+      .sort((a, b) => {
+        return a.offset - b.offset
+      })
+      .reduce((memo, tz) => {
+        const timezone = tz.offset ? moment.tz(tz.name).format('Z') : ''
+
+        return memo.concat(`<option value="${tz.name}">(GMT${timezone}) ${tz.name}</option>`)
+      }, "");
+
+    document.querySelector(".tz-selector").innerHTML = selectorOptions
+
+    document.querySelector(".tz-selector").addEventListener("change", e => {
+      this.timezone = e.target.value
+      // console.log(dateTimeLocal.format("ddd, DD MMM YYYY HH:mm:ss"))
+    });
+
+    // initial value
+    document.querySelector(".tz-selector").value = (this.props.group.timezone) ? this.props.group.timezone
+      : moment.tz.guess()
   }
 
   render () {
@@ -102,6 +200,17 @@ class EditGroupModal extends React.Component {
     const selectedSendMailTo = this.props.group.sendMailTo.map(member => {
       return member._id
     })
+
+    const dayNames = Array.of(
+      this.props.t('Monday'),
+      this.props.t('Tuesday'),
+      this.props.t('Wednesday'),
+      this.props.t('Thursday'),
+      this.props.t('Friday'),
+      this.props.t('Saturday'),
+      this.props.t('Sunday')
+    )
+
     return (
       <BaseModal>
         <SpinLoader active={this.props.accountsLoading} />
@@ -140,7 +249,7 @@ class EditGroupModal extends React.Component {
             />
           </div>
           <div className={'uk-margin-medium-bottom'}>
-            <label style={{ marginBottom: 5 }}>Possible ticket types</label>
+            <label style={{ marginBottom: 5 }}>{this.props.t('Possible ticket types')}</label>
             <MultiSelect
               items={allTicketTypes}
               initialSelected={selectedTicketTypes}
@@ -148,6 +257,77 @@ class EditGroupModal extends React.Component {
               ref={r => (this.ticketTypesSelect = r)}
             />
           </div>
+          <p style={{ marginTop: '10px', color: '#222', fontSize: '20px', paddingBottom: '15px' }}>
+            <label style={{ marginBottom: 15 }}>{this.props.t('Working days')}</label>
+            <p>
+              <select className="tz-selector"></select>
+            </p>
+            <Table
+              tableRef={ref => (this.workingDaysTable = ref)}
+              style={{ margin: 0 }}
+              extraClass={'pDataTable'}
+              stickyHeader={true}
+              striped={true}
+              className={'md-input'}
+              headers={[
+                <TableHeader key={1} width={'30%'} text={this.props.t('Day of the week')} textAlign="center" />,
+                <TableHeader key={2} width={'14%'} text={this.props.t('Working day')} textAlign="center" />,
+                <TableHeader key={3} width={'28%'} text={this.props.t('Start time')} textAlign="center" />,
+                <TableHeader key={4} width={'28%'} text={this.props.t('End time')} textAlign="center" />
+              ]}
+            >
+              {this.workingDays.map(wDay => {
+                return (
+                  <TableRow
+                    key={wDay.number}
+                    className={'vam nbb'}
+                    clickable={false}
+                  >
+                    <TableCell className={'vam nbb uk-text-center'}>
+                      <span className={'uk-display-inline-block'}>{dayNames[wDay.number - 1]}</span>
+                    </TableCell>
+                    <TableCell className={'vam nbb uk-text-center'}>
+                      <EnableSwitch
+                        key={wDay.number}
+                        stateName={`isWorkingDay-${wDay.number}`}
+                        style={{ margin: '0 0 0 0' }}
+                        labelStyle={{ display: 'none' }}
+                        label={''}
+                        leverClass="lever-for-working-days"
+                        checked={wDay.isEnabled}
+                        onChange={e => {
+                          this.workingDays[wDay.number - 1].isEnabled = e.target.checked
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell className={'vam nbb uk-text-center'}>
+                      <input
+                        id={`start-time-${wDay.number}`}
+                        name="startTime"
+                        type="time"
+                        step="60"
+                        value={wDay.startTime}
+                        onChange={(e) => {this.workingDays[wDay.number - 1].startTime = e.target.value}}
+                        pattern="[0-9]{2}:[0-9]{2}"
+                      />
+                    </TableCell>
+                    <TableCell className={'vam nbb uk-text-center'}>
+                      <input
+                        id={`end-time-${wDay.number}`}
+                        name="endTime"
+                        type="time"
+                        step="60"
+                        value={wDay.endTime}
+                        onChange={(e) => {this.workingDays[wDay.number - 1].endTime = e.target.value}}
+                        pattern="[0-9]{2}:[0-9]{2}"
+                      />
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </Table>
+          </p>
+
           <div className='uk-modal-footer uk-text-right'>
             <Button text={this.props.t('Close')} flat={true} waves={true} extraClass={'uk-modal-close'} />
             <Button text={this.props.t('Save Group')} flat={true} waves={true} style={'primary'} type={'submit'} />

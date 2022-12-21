@@ -445,30 +445,37 @@ apiTickets.create = function (req, res) {
           ticket.owner = req.user._id
         }
 
-        ticket.subject = sanitizeHtml(ticket.subject).trim()
+        console.log(ticket.date)
 
-        var marked = require('marked')
-        var tIssue = ticket.issue
-        tIssue = tIssue.replace(/(\r\n|\n\r|\r|\n)/g, '<br>')
-        tIssue = sanitizeHtml(tIssue).trim()
-        ticket.issue = xss(marked.parse(tIssue))
-        ticket.history = [HistoryItem]
-        ticket.subscribers = [user._id]
+        calculateOverdueData(postData.group, postData.priority, new Date(), (err, date) => {
+          if (err) console.log(err)
+          if (date) ticket.overdueDate = date
 
-        ticket.save(function (err, t) {
-          if (err) return done({ status: 400, error: err })
+          ticket.subject = sanitizeHtml(ticket.subject).trim()
 
-          t.populate('group owner priority', function (err, tt) {
-            if (err) return done({ status: 400, error: err })
+          var marked = require('marked')
+          var tIssue = ticket.issue
+          tIssue = tIssue.replace(/(\r\n|\n\r|\r|\n)/g, '<br>')
+          tIssue = sanitizeHtml(tIssue).trim()
+          ticket.issue = xss(marked.parse(tIssue))
+          ticket.history = [HistoryItem]
+          ticket.subscribers = [user._id]
 
-            emitter.emit('ticket:created', {
-              hostname: req.headers.host,
-              socketId: socketId,
-              ticket: tt
+          ticket.save(function (err, t) {
+            if (err) return done({status: 400, error: err})
+
+            t.populate('group owner priority', function (err, tt) {
+              if (err) return done({status: 400, error: err})
+
+              emitter.emit('ticket:created', {
+                hostname: req.headers.host,
+                socketId: socketId,
+                ticket: tt
+              })
+
+              response.ticket = tt
+              res.json(response)
             })
-
-            response.ticket = tt
-            res.json(response)
           })
         })
       }
@@ -487,6 +494,235 @@ apiTickets.create = function (req, res) {
   )
 }
 
+const calculateOverdueData = (groupId, priorityId, initialDate, callback) => {
+  let groupModel = require('../../../models/group')
+  let priorityModel = require('../../../models/ticketpriority')
+  const moment = require('moment-timezone');
+
+  groupModel.getGroupById(groupId, function (err, grp) {
+    if (err) return callback(err)
+    if (!grp) return callback({ message: `Invalid Group (${id}) - Group not found. Check Group ID.` })
+
+    priorityModel.getPriority(priorityId, function (err, priority) {
+      if (err) {
+        winston.debug(err)
+        return callback(err)
+      }
+
+      // timezone offset from utc in hours
+      let timezoneOffset = (grp.timezone) ? moment.tz(grp.timezone).utcOffset() / 60 : 0
+      let remainingMinutes = priority.overdueIn
+      let overdueDate = initialDate
+      overdueDate.setSeconds(0)
+
+      let workingDays = grp.workingDays
+      // if working days not set
+      if (!grp.workingDays || grp.workingDays.length < 1) {
+        workingDays = workingDaysDefaultValues
+      }
+
+      while (remainingMinutes > 0) {
+        const weekDay = overdueDate.getDay()
+        // Date.getDay(): 0 - Sunday, 1 - Monday...
+        // Group.workingDays: 0 - Monday, 1 - Tuesday
+        const weekDayIter = (weekDay > 0) ? weekDay - 1 : 6
+        const thisWorkingDay = workingDays[weekDayIter]
+
+        if (thisWorkingDay.isEnabled && Number(thisWorkingDay.endTime.split(':')[0]) - timezoneOffset > overdueDate.getHours()) {
+          // some minutes to count this day
+          if (Number(thisWorkingDay.startTime.split(':')[0]) - timezoneOffset > overdueDate.getHours()) {
+            // take all working day
+            const startHour = Number(thisWorkingDay.startTime.split(':')[0]) - timezoneOffset
+            const startMinute = Number(thisWorkingDay.startTime.split(':')[1])
+            const endHour = Number(thisWorkingDay.endTime.split(':')[0]) - timezoneOffset
+            const endMinute = Number(thisWorkingDay.endTime.split(':')[1])
+            const availableMinutes = (endHour - startHour ) * 60 + endMinute - startMinute
+
+            if (availableMinutes >= remainingMinutes) {
+              // final overdue date this day
+              overdueDate.setHours(startHour)
+              overdueDate.setMinutes(startMinute)
+              overdueDate.setMinutes(overdueDate.getMinutes() + remainingMinutes)
+              remainingMinutes = 0
+            } else {
+              // taking all available and keep remaining > 0
+              remainingMinutes = remainingMinutes - availableMinutes
+              // Sunday - 0, Monday - 1 ... according to Date().getDay()
+              const nextWeekDayIter = weekDay
+              const hours = Number(workingDays[nextWeekDayIter].startTime.split(':')[0]) - timezoneOffset
+              const minutes = Number(workingDays[nextWeekDayIter].startTime.split(':')[1])
+              overdueDate.setDate(overdueDate.getDate() + 1)
+              overdueDate.setHours(hours)
+              overdueDate.setMinutes(minutes)
+            }
+          } else {
+            // this working day has already started
+            const startHour = overdueDate.getHours()
+            const startMinute = overdueDate.getMinutes()
+            const endHour = Number(thisWorkingDay.endTime.split(':')[0]) - timezoneOffset
+            const endMinute = Number(thisWorkingDay.endTime.split(':')[1])
+            const availableMinutes =  (endHour - startHour ) * 60 + endMinute - startMinute
+
+            if (availableMinutes >= remainingMinutes) {
+              // final overdue date this day
+              overdueDate.setHours(startHour)
+              overdueDate.setMinutes(startMinute)
+              overdueDate.setMinutes(overdueDate.getMinutes() + remainingMinutes)
+              remainingMinutes = 0
+            } else {
+              // taking all available and keep remaining > 0
+              remainingMinutes = remainingMinutes - availableMinutes
+              // Sunday - 0, Monday - 1 ... according to Date().getDay()
+              const nextWeekDayIter = weekDay
+              const hours = Number(workingDays[nextWeekDayIter].startTime.split(':')[0]) - timezoneOffset
+              const minutes = Number(workingDays[nextWeekDayIter].startTime.split(':')[1])
+              overdueDate.setDate(overdueDate.getDate() + 1)
+              overdueDate.setHours(hours)
+              overdueDate.setMinutes(minutes)
+            }
+          }
+        } else {
+          // no more working this day -> transfer all sla time to next working day
+          // Sunday - 0, Monday - 1 ... according to Date().getDay()
+          const nextWeekDayIter = weekDay
+          const hours = Number(workingDays[nextWeekDayIter].startTime.split(':')[0]) - timezoneOffset
+          const minutes = Number(workingDays[nextWeekDayIter].startTime.split(':')[1])
+          overdueDate.setDate(overdueDate.getDate() + 1)
+          overdueDate.setHours(hours)
+          overdueDate.setMinutes(minutes)
+        }
+      }
+      if (typeof callback === 'function') return callback(null, overdueDate)
+    })
+  })
+}
+
+const workingDaysDefaultValues = Array.of(
+  {
+    number: 1,
+    isEnabled: true,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 2,
+    isEnabled: true,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 3,
+    isEnabled: true,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 4,
+    isEnabled: true,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 5,
+    isEnabled: true,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 6,
+    isEnabled: false,
+    startTime: '10:00',
+    endTime: '18:00'
+  },
+  {
+    number: 7,
+    isEnabled: false,
+    startTime: '10:00',
+    endTime: '18:00'
+  }
+)
+
+apiTickets.setOverdueDate = function (ticketId, newPriorityId) {
+  if (_.isUndefined(ticketId)) {
+    console.log('Param ticketId is undefined in setOverdueDate()')
+    return
+  }
+  var ticketModel = require('../../../models/ticket')
+  ticketModel.getTicketById(ticketId, function (err, ticket) {
+    if (err) {
+      console.log(err)
+      return
+    }
+    if (!ticket) {
+      console.log('Unable to locate ticket in setOverdueDate()')
+      return
+    }
+
+    calculateOverdueData(ticket.group._id, newPriorityId, new Date(ticket.date), (err, date) => {
+      if (err) {
+        console.log(err)
+        return
+      }
+      if (date) ticket.overdueDate = date
+      ticket.save(function (err, t) {
+        if (err) {
+          console.log(err)
+          return
+        }
+
+        t.populate('group owner priority', function (err, tt) {
+          if (err) {
+            console.log(err)
+          }
+        })
+      })
+    })
+  })
+}
+
+apiTickets.getOverdueDate = function (req, res) {
+  var response = {}
+  response.success = true
+
+  var postData = req.body
+  if (!_.isObject(postData))
+    return res.status(400).json({ success: false, error: 'Invalid Post Data' })
+
+  const ticketId = postData.ticket
+
+  if (_.isUndefined(ticketId)) return res.status(400).json({ success: false, error: 'Invalid Ticket ObjectID.' })
+  var ticketModel = require('../../../models/ticket')
+  ticketModel.getTicketById(ticketId, function (err, ticket) {
+    if (err) return res.status(400).json({success: false, error: err.message})
+    if (!ticket) return res.status(400).json({success: false, error: 'Unable to locate ticket. Aborting...'})
+
+    calculateOverdueData(ticket.group._id, ticket.priority._id, new Date(ticket.date), (err, date) => {
+      if (err) console.log(err)
+      if (date) ticket.overdueDate = date
+      response.overdueDate = date
+
+      ticket.save(function (err, t) {
+        if (err) {
+          console.log(err)
+          res.status(400).json({success: false, error: err.message})
+          return res
+        }
+
+        t.populate('group owner priority', function (err, tt) {
+          if (err) {
+            console.log(err)
+            res.status(400).json({success: false, error: err.message})
+            return res
+          } else {
+            response.ticket = tt
+          }
+        })
+      })
+
+      return res.json(response)
+    })
+  })
+}
 /**
  * @api {post} /api/v1/public/tickets/create Create Public Ticket
  * @apiName createPublicTicket

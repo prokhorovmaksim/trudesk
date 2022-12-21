@@ -26,7 +26,7 @@ apiGroups.create = function (req, res) {
   Group.create(postGroup, function (err, group) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
 
-    group.populate('members sendMailTo', function (err, group) {
+    group.populate('members sendMailTo ticketTypes', function (err, group) {
       if (err) return apiUtils.sendApiError(res, 500, err.message)
 
       return apiUtils.sendApiSuccess(res, { group: group })
@@ -76,11 +76,13 @@ apiGroups.update = function (req, res) {
     if (putData.members) group.members = putData.members
     if (putData.sendMailTo) group.sendMailTo = putData.sendMailTo
     if (putData.ticketTypes) group.ticketTypes = putData.ticketTypes
+    if (putData.workingDays) group.workingDays = putData.workingDays
+    if (putData.timezone) group.timezone = putData.timezone
 
     group.save(function (err, group) {
       if (err) return apiUtils.sendApiError(res, 500, err.message)
 
-      group.populate('members sendMailTo', function (err, group) {
+      group.populate('members sendMailTo ticketTypes', function (err, group) {
         if (err) return apiUtils.sendApiError(res, 500, err.message)
 
         return apiUtils.sendApiSuccess(res, { group: group })

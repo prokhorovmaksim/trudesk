@@ -16,13 +16,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { observer } from 'mobx-react'
 import { makeObservable, observable } from 'mobx'
-import { each, without, uniq } from 'lodash'
+import { each, uniq, without } from 'lodash'
 import { compose } from 'redux';
 import { withTranslation } from 'react-i18next';
 
 import Log from '../../logger'
 import axios from 'axios'
-import { fetchTickets, deleteTicket, ticketEvent, unloadTickets, ticketUpdated } from 'actions/tickets'
+import { deleteTicket, fetchTickets, getOverdueDate, ticketEvent, ticketUpdated, unloadTickets } from 'actions/tickets'
 import { fetchSearchResults } from 'actions/search'
 import { showModal } from 'actions/common'
 
@@ -40,8 +40,6 @@ import DropdownItem from 'components/Dropdown/DropdownItem'
 import DropdownSeparator from 'components/Dropdown/DropdownSeperator'
 
 import helpers from 'lib/helpers'
-import anime from 'animejs'
-import moment from 'moment-timezone'
 import SearchResults from 'components/SearchResults'
 
 @observer
@@ -383,6 +381,20 @@ class TicketsContainer extends React.Component {
                 const isOverdue = () => {
                   if (!this.props.common.viewdata.get('showOverdue') || [2, 3].indexOf(ticket.get('status')) !== -1)
                     return false
+                  let overdueDate
+                  if (ticket.get('overdueDate')) {
+                    overdueDate = new Date(ticket.get('overdueDate'))
+                  } else {
+                    const data = {}
+                    data.ticket = ticket.get('_id')
+                    overdueDate = this.props.getOverdueDate(data)
+                  }
+                  const nowUtcDate = new Date()
+                  // replace to calculate in utc
+                  // const nowUtcDate = new Date(new Date().toUTCString().substr(0, 25))
+                  return nowUtcDate >= overdueDate
+
+                  /*
                   const overdueIn = ticket.getIn(['priority', 'overdueIn'])
                   const now = moment()
                   let updated = ticket.get('updated')
@@ -391,6 +403,7 @@ class TicketsContainer extends React.Component {
 
                   const timeout = updated.clone().add(overdueIn, 'm')
                   return now.isAfter(timeout)
+                   */
                 }
 
                 return (
@@ -464,6 +477,7 @@ TicketsContainer.propTypes = {
   unloadTickets: PropTypes.func.isRequired,
   ticketUpdated: PropTypes.func.isRequired,
   showModal: PropTypes.func.isRequired,
+  getOverdueDate: PropTypes.func.isRequired,
   fetchSearchResults: PropTypes.func.isRequired,
   common: PropTypes.object.isRequired,
   filter: PropTypes.object.isRequired
@@ -493,5 +507,6 @@ export default compose(withTranslation(), connect(mapStateToProps, {
   unloadTickets,
   ticketUpdated,
   fetchSearchResults,
-  showModal
+  showModal,
+  getOverdueDate
 }))(TicketsContainer)

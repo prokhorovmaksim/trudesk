@@ -255,5 +255,18 @@
   "Tickets count": "Число заявок",
   "Create Release": "Создать релиз",
   "Release name": "Имя релиза",
-  "Save Release": "Сохранить релиз"
+  "Save Release": "Сохранить релиз",
+  "Possible ticket types": "Возможные типы заявок",
+  "Working days": "Рабочие дни",
+  "Working day": "Рабочий день",
+  "Start time": "Начало",
+  "End time": "Конец",
+  "Day of the week": "День недели",
+  "Monday": "Понедельник",
+  "Tuesday": "Вторник",
+  "Wednesday": "Среда",
+  "Thursday": "Четверг",
+  "Friday": "Пятница",
+  "Saturday": "Суббота",
+  "Sunday": "Воскресенье"
 }

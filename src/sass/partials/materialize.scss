@@ -111,6 +111,10 @@ $medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width 
   cursor: pointer;
 }
 
+.lever-for-working-days {
+  margin: 10px 10px 0 0 !important;
+}
+
 .md-switch .lever:after {
   content: "";
   position: absolute;

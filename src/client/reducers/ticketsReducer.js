@@ -23,7 +23,8 @@ import {
   DELETE_TICKET,
   TICKET_EVENT,
   FETCH_TICKET_TYPES,
-  FETCH_PRIORITIES
+  FETCH_PRIORITIES,
+  GET_OVERDUE_DATE
 } from 'actions/types'
 
 const initialState = {
@@ -112,6 +113,10 @@ const reducer = handleActions(
 
     [CREATE_TICKET.SUCCESS]: state => {
       // This is handle with a socket.io event...
+      return { ...state }
+    },
+
+    [GET_OVERDUE_DATE.SUCCESS]: state => {
       return { ...state }
     },
 
