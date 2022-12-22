@@ -129,8 +129,7 @@ class EditReleaseModal extends React.Component {
     }
 
     if(this.props.release.tickets !== this.ticketSelect.getSelected()) {
-      console.log(this.ticketSelect.getSelected())
-      payload.tickets = this.ticketSelect ? this.ticketSelect.getSelected() : []
+      payload.tickets = (this.ticketSelect && this.ticketSelect.getSelected()) ? this.ticketSelect.getSelected() : []
     }
 
     // const payload = {

@@ -193,23 +193,63 @@ releasesV2.update = function (req, res) {
   if (!id || !payload)
     return apiUtils.sendApiError_InvalidPostData(res)
 
+  // delete release link in old tickets
+  if (payload.tickets) {
+    Models.Release.getReleaseById(id, function (err, release) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      for (let i = 0; i < release.tickets.length; i++) {
+        if (!payload.tickets.includes(release.tickets[i]._id.toString())) {
+          Models.Ticket.getTicketById(release.tickets[i]._id, function (err, ticket) {
+            if (err) {
+              console.log(err)
+              return
+            }
+            if (!ticket) {
+              console.log('Unable to locate ticket in ReleasesV2.update()')
+              return
+            }
+
+            ticket.release = undefined
+            ticket.save(function (err, t) {
+              console.log('---- OLD TICKET SAVE ----')
+              console.log(t)
+              if (err) {
+                console.log(err)
+              }
+            })
+          })
+        }
+      }
+    })
+  }
+
+  // save release
   Models.Release.findOneAndUpdate({ _id: id }, payload, { new: true }, function (err, updatedRelease) {
     if (err) return apiUtils.sendApiError(res, 500, err.message)
-
     if (payload.tickets && payload.tickets.length !== 0) {
       // adding connection with tickets
       releaseSchema.populate(updatedRelease, 'tickets', function (err, release) {
-        for (let i = 0; i < updatedRelease.tickets.length; i++) {
-          if (!payload.tickets.includes(updatedRelease.tickets[i])) continue
-          ticketSchema.populate(updatedRelease.tickets[i], 'release', function (err, t) {
+        for (let i = 0; i < release.tickets.length; i++) {
+          if (release.tickets[i].release && release.tickets[i].release._id.toString() === id) {
+            // same ticket = no need to update links
+            continue
+          }
+          ticketSchema.populate(release.tickets[i], 'release', function (err, t) {
             if (err) return true
-            // remove ticket from previous release entity
             if (t.release) {
+              // remove ticket from previous release entity
               try {
                 const index = t.release.tickets.indexOf(t._id);
                 if (index >= 0) {
                   t.release.tickets.splice(index, 1);
-                  t.release.save()
+                  t.release.save(function (err, rr) {
+                    if (err) {
+                      console.log(err)
+                    }
+                  })
                 }
               } catch (err) {
                 console.log(err)
@@ -218,13 +258,15 @@ releasesV2.update = function (req, res) {
             }
             // change release in ticket entity
             t.release = release
-            t.save()
+            t.save(function (err, ttt) {
+              if (err) {
+                console.log(err)
+              }
+            })
           })
         }
       })
     }
-    console.log('updatedRelease')
-    console.log(updatedRelease)
     return apiUtils.sendApiSuccess(res, {release: updatedRelease})
   })
 }
