@@ -58,14 +58,6 @@ class ReleaseContainer extends React.Component {
     this.props.fetchReleases()
   }
 
-  onUpdateRelease() {
-    const id = '63922bb1f34a2dcc9fdc1714'
-    const payload = {
-      _id: id,
-      name: 'New name',
-    }
-    this.props.updateRelease(payload)
-  }
 
   onDeleteRelease (releaseId) {
     UIKit.modal.confirm(

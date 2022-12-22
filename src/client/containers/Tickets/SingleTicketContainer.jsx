@@ -292,6 +292,7 @@ class SingleTicketContainer extends React.Component {
 
     // Perms
     const hasTicketUpdate = this.ticket && this.ticket.status !== 3 && helpers.canUser('tickets:update')
+    const hasReleaseUpdate = this.ticket && this.ticket.status !== 3 && helpers.canUser('release:update')
     const hasTicketStatusUpdate = () => {
       const isAgent = this.props.sessionUser ? this.props.sessionUser.role.isAgent : false
       const isAdmin = this.props.sessionUser ? this.props.sessionUser.role.isAdmin : false
@@ -549,7 +550,7 @@ class SingleTicketContainer extends React.Component {
                         {/*  Release */}
                         <div className='uk-width-1-1 nopadding uk-clearfix'>
                           <span>{this.props.t('Release')}</span>
-                          {hasTicketUpdate && (
+                          {hasReleaseUpdate && (
                             <select
                               value={(this.ticket.release) ? this.ticket.release._id : '-1'}
                               onChange={e => {
@@ -578,7 +579,7 @@ class SingleTicketContainer extends React.Component {
                                 ))}
                             </select>
                           )}
-                          {!hasTicketUpdate && <div className={'input-box'}>
+                          {!hasReleaseUpdate && <div className={'input-box'}>
                             {(this.ticket.release) ? this.ticket.release.name : ''}
                           </div>}
                         </div>
