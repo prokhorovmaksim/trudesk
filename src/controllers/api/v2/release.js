@@ -72,7 +72,7 @@ releasesV2.create = async function (req, res) {
     })
     savedId = releaseEntity._id
 
-    return apiUtils.sendApiSuccess(res, { releaseEntity })
+    return apiUtils.sendApiSuccess(res, { release: releaseEntity })
   } catch (err) {
     winston.debug(err)
     return apiUtils.sendApiError(res, 500, err.message)
