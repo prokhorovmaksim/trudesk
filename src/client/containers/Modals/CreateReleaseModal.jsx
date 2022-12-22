@@ -113,8 +113,6 @@ class CreateReleaseModal extends React.Component {
 
     if (!isValid) return
 
-
-    console.log(this.ticketSelect)
     const payload = {
       name: this.name,
       group: this.selectedGroup,
@@ -130,8 +128,6 @@ class CreateReleaseModal extends React.Component {
     } else {
       payload.tickets = []
     }
-
-    console.log(payload)
 
     this.props.createRelease(payload)
 

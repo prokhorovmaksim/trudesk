@@ -14,6 +14,8 @@ import Button from 'components/Button'
 import BaseModal from 'containers/Modals/BaseModal'
 import SingleSelect from 'components/SingleSelect'
 import MultiSelectTickets from 'components/MultiSelectTickets'
+import DatePicker from 'components/DatePicker'
+import moment from 'moment'
 
 import helpers from 'lib/helpers'
 
@@ -30,6 +32,7 @@ class EditReleaseModal extends React.Component {
 
   componentDidMount () {
     this.name = this.props.release.name
+    this.date = this.props.release.date
     this.selectedGroup = this.props.release.group._id
 
     this.props.fetchGroups({ type: 'all' })
@@ -40,7 +43,6 @@ class EditReleaseModal extends React.Component {
   }
 
   componentWillUnmount () {
-    console.log("Unmount modal")
     this.props.fetchGroups({ type: 'all' })
     this.props.fetchTickets({ type: 'all' })
   }
@@ -107,6 +109,7 @@ class EditReleaseModal extends React.Component {
     if(!this.state.isSet) {
       this.selectedGroup = this.props.release.group._id
       this.name = this.props.release.name
+      this.date = this.props.release.date
       this.props.loading = true
       this.setState({ isSet: true })
     }
@@ -124,12 +127,15 @@ class EditReleaseModal extends React.Component {
       payload.name = this.name
     }
 
+    if(this.props.release.date !== this.date) {
+      payload.date = this.date
+    }
+
     if(this.props.release.group._id !== this.selectedGroup) {
       payload.group = this.selectedGroup
     }
 
     if(this.props.release.tickets !== this.ticketSelect.getSelected()) {
-      console.log(this.ticketSelect.getSelected())
       payload.tickets = this.ticketSelect ? this.ticketSelect.getSelected() : []
     }
 
@@ -185,6 +191,25 @@ class EditReleaseModal extends React.Component {
                 showTextbox={false}
                 onSelectChange={e => this.onGroupSelectChange(e)}
               />
+            </div>
+            <div className='uk-margin-medium-bottom'>
+              <label className='uk-form-label'>{this.props.t('Release Date')}</label>
+              <div className={'uk-display-inline'}>
+                <DatePicker
+                  name={'release_due_date'}
+                  format={helpers.getShortDateFormat()}
+                  small={true}
+                  value={this.date}
+                  onChange={e => {
+                    const dueDate = moment(e.target.value, helpers.getShortDateFormat())
+                      .utc()
+                      .toISOString()
+
+                    this.date = dueDate
+                  }}
+                  validation={null}
+                />
+              </div>
             </div>
             <div>
               <div className='uk-margin-medium-bottom'>
