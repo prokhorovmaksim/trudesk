@@ -331,13 +331,16 @@ class TicketsContainer extends React.Component {
               <TableHeader key={0} width={45} height={50} component={selectAllCheckbox} />,
               <TableHeader key={1} width={60} text={this.props.t('Status')} />,
               <TableHeader key={2} width={65} text={'#'} />,
-              <TableHeader key={3} width={'23%'} text={this.props.t('Subject')} />,
-              <TableHeader key={4} width={110} text={this.props.t('Created')} />,
-              <TableHeader key={5} width={125} text={this.props.t('Requester')} />,
-              <TableHeader key={6} width={175} text={this.props.t('Customer')} />,
-              <TableHeader key={7} text={this.props.t('Assignee')} />,
-              <TableHeader key={8} width={110} text={this.props.t('Due Date')} />,
-              <TableHeader key={9} text={this.props.t('Updated')} />
+              <TableHeader key={3} width={'10%'} text={this.props.t('Type')} />,
+              <TableHeader key={4} width={'20%'} text={this.props.t('Subject')} />,
+              <TableHeader key={5} width={110} text={this.props.t('Created')} />,
+              <TableHeader key={6} width={125} text={this.props.t('Requester')} />,
+              <TableHeader key={7} width={175} text={this.props.t('Customer')} />,
+              <TableHeader key={8} width={175} text={this.props.t('Assignee')} />,
+              <TableHeader key={9} width={'10%'} text={this.props.t('Release')} />,
+              <TableHeader key={10} width={150} text={this.props.t('Release Date')} />,
+              <TableHeader key={11} width={150} text={this.props.t('Due Date')} />,
+              <TableHeader key={12} width={200} text={this.props.t('Updated')} />
             ]}
           >
             {!this.props.loading && this.props.tickets.size < 1 && (
@@ -372,6 +375,10 @@ class TicketsContainer extends React.Component {
                   ? helpers.formatDate(ticket.get('updated'), helpers.getShortDateFormat()) +
                     ', ' +
                     helpers.formatDate(ticket.get('updated'), helpers.getTimeFormat())
+                  : '--'
+
+                const releaseDate = ticket.getIn(['release', 'date'])
+                  ? helpers.formatDate(ticket.getIn(['release', 'date']), helpers.getShortDateFormat())
                   : '--'
 
                 const dueDate = ticket.get('dueDate')
@@ -441,6 +448,7 @@ class TicketsContainer extends React.Component {
                       <span className={'uk-display-inline-block'}>{status()[0].toUpperCase()}</span>
                     </TableCell>
                     <TableCell className={'vam nbb'}>{ticket.get('uid')}</TableCell>
+                    <TableCell className={'vam nbb'}>{ticket.getIn(['type', 'name'])}</TableCell>
                     <TableCell className={'vam nbb'}>{ticket.get('subject')}</TableCell>
                     <TableCell className={'vam nbb'}>
                       {helpers.formatDate(ticket.get('date'), helpers.getShortDateFormat())}
@@ -448,6 +456,8 @@ class TicketsContainer extends React.Component {
                     <TableCell className={'vam nbb'}>{ticket.getIn(['owner', 'fullname'])}</TableCell>
                     <TableCell className={'vam nbb'}>{ticket.getIn(['group', 'name'])}</TableCell>
                     <TableCell className={'vam nbb'}>{assignee()}</TableCell>
+                    <TableCell className={'vam nbb'}>{ticket.getIn(['release', 'name'])}</TableCell>
+                    <TableCell className={'vam nbb'}>{releaseDate}</TableCell>
                     <TableCell className={'vam nbb'}>{dueDate}</TableCell>
                     <TableCell className={'vam nbb'}>{updated}</TableCell>
                   </TableRow>
