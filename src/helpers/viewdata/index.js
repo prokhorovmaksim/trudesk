@@ -170,7 +170,7 @@ viewController.getData = function (request, cb) {
           if (!err && timezone) {
             viewdata.timezone = timezone.value
           } else {
-            viewdata.timezone = 'America/New_York'
+            viewdata.timezone = 'Europe/Moscow'
           }
 
           return callback()
