@@ -608,6 +608,19 @@ class SingleTicketContainer extends React.Component {
                         </div>
                       </div>
                     )}
+                    <div className='uk-width-1-1 padding-left-right-15'
+                         style={{ textAlign: 'center' }}>
+                      <button
+                        onClick={e => {
+                          window.history.go(-1)
+                          return false
+                        }}
+                        className='uk-button uk-button-accent'
+                        style={{ padding: '15px 35px' }}
+                      >
+                        {this.props.t('Close')}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
