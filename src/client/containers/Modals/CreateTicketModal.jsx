@@ -210,7 +210,7 @@ class CreateTicketModal extends React.Component {
     })
 
     return (
-      <BaseModal {...this.props} options={{ bgclose: false }}>
+      <BaseModal {...this.props} large={true} options={{ bgclose: false }}>
         <form className={'uk-form-stacked'} onSubmit={e => this.onFormSubmit(e)}>
           <div className='uk-margin-medium-bottom'>
             <label>{this.props.t('Subject')}</label>
@@ -255,7 +255,7 @@ class CreateTicketModal extends React.Component {
           </div>
           <div className='uk-margin-medium-bottom' style={{paddingBottom: '20px'}}>
             <Grid>
-              <GridItem width={'1-3'}>
+              <GridItem width={'1-2'}>
                 <label className={'uk-form-label'}>{this.props.t('Type')}</label>
                 <SingleSelect
                   key={this.types}
@@ -270,7 +270,7 @@ class CreateTicketModal extends React.Component {
                   ref={i => (this.typeSelect = i)}
                 />
               </GridItem>
-              <GridItem width={'2-3'}>
+              <GridItem width={'1-2'}>
                 <label className={'uk-form-label'}>{this.props.t('Tags')}</label>
                 <SingleSelect
                   showTextbox={false}
