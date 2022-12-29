@@ -30,6 +30,7 @@ import noticesState from './noticesReducer'
 import searchState from './searchReducer'
 import messagesState from './messagesReducer'
 import releaseState from './releaseReducer'
+import exclusionsState from './exclusionsReducer'
 
 // const IndexReducer = (state = {}, action) => {
 //   return {
@@ -63,7 +64,8 @@ const IndexReducer = combineReducers({
   settings,
   tagsSettings,
   messagesState,
-  releaseState
+  releaseState,
+  exclusionsState
 })
 
 export default IndexReducer

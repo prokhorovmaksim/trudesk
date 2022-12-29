@@ -136,6 +136,10 @@ util.getSettings = async callback => {
         const priorities = await ticketPrioritySchema.getPriorities()
         content.data.priorities = _.sortBy(priorities, ['migrationNum', 'name'])
 
+        const exclusionsSchema = require('../models/exclusionday')
+        const exclusions = await exclusionsSchema.getExclusionDaysDirectories()
+        content.data.exclusions = _.sortBy(exclusions, 'name')
+
         const templateSchema = require('../models/template')
         const templates = await templateSchema.find({})
         content.data.mailTemplates = _.sortBy(templates, 'name')

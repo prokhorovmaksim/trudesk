@@ -46,6 +46,8 @@ import PrivacyPolicyModal from 'containers/Modals/PrivacyPolicyModal'
 import CreateReleaseModal from "./CreateReleaseModal"
 import EditReleaseModal from "./EditReleaseModal"
 import ShowReleaseModal from "./ReleaseModal"
+import CreateExclusionModal from './CreateExclusionModal'
+import EditExclusionModal from './EditExclusionModal';
 
 const MODAL_COMPONENTS = {
   NOTICE_ALERT: NoticeAlertModal,
@@ -77,6 +79,8 @@ const MODAL_COMPONENTS = {
   CREATE_RELEASE: CreateReleaseModal,
   EDIT_RELEASE: EditReleaseModal,
   SHOW_RELEASE: ShowReleaseModal,
+  CREATE_EXCLUSION: CreateExclusionModal,
+  EDIT_EXCLUSION: EditExclusionModal
 }
 
 const ModalRoot = ({ modalType, modalProps }) => {

@@ -270,5 +270,13 @@
   "Saturday": "Saturday",
   "Sunday": "Sunday",
   "Please enter a Description.": "Please enter a Description.",
-  "Release Date": "Release Date"
+  "Release Date": "Release Date",
+  "Edit set of exclusion days": "Edit set of exclusion days",
+  "Set name": "Set name",
+  "Select year": "Select year",
+  "Day": "Day",
+  "Working": "Working",
+  "Add day": "Add day",
+  "Exclusion days": "Exclusion days",
+  "Management": "Management"
 }

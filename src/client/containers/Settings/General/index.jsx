@@ -17,15 +17,18 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import moment from 'moment-timezone'
 import { updateSetting } from 'actions/settings'
+import { deleteExclusion } from 'actions/exclusion'
+import { showModal } from 'actions/common'
 
 import SettingItem from 'components/Settings/SettingItem'
 
 import InputWithSave from 'components/Settings/InputWithSave'
 import SingleSelect from 'components/SingleSelect'
-import EnableSwitch from 'components/Settings/EnableSwitch'
 import SettingSubItem from 'components/Settings/SettingSubItem'
 import Zone from 'components/ZoneBox/zone'
 import ZoneBox from 'components/ZoneBox'
+import Button from 'components/Button'
+import ButtonGroup from 'components/ButtonGroup'
 
 class GeneralSettings extends React.Component {
   constructor (props) {
@@ -64,6 +67,12 @@ class GeneralSettings extends React.Component {
 
   onTimezoneChange (e) {
     if (e.target.value) this.updateSetting('timezone', 'gen:timezone', e.target.value)
+  }
+
+  getExclusions () {
+    return this.props.settings && this.props.settings.get('exclusions')
+      ? this.props.settings.get('exclusions').toArray()
+      : []
   }
 
   render () {
@@ -173,6 +182,51 @@ class GeneralSettings extends React.Component {
             </ZoneBox>
           </Zone>
         </SettingItem>
+        <SettingItem
+          title={'Exclusion Days Directories'}
+          subtitle={'Set/change exclusion days for different locations'}
+          component={
+            <Button
+              text={'Create'}
+              style={'success'}
+              flat={true}
+              waves={true}
+              extraClass={'mt-10 right'}
+              onClick={e => this.props.showModal('CREATE_EXCLUSION')}
+            />
+          }
+        >
+          <Zone>
+            {this.getExclusions().map(excl => {
+              return (
+                <ZoneBox key={excl.get('_id')} extraClass={'priority-wrapper'}>
+                  <SettingSubItem
+                    parentClass={'view-priority'}
+                    title={excl.get('name')}
+                    subtitle={
+                      <div>
+                        Exclusion days count: <strong>{excl.get('days') ? excl.get('days').toArray().length : 0}</strong>
+                      </div>
+                    }
+                    component={
+                      <ButtonGroup classNames={'uk-float-right'}>
+                        <Button text={'Edit'} small={true} onClick={e => {
+                          this.props.showModal('EDIT_EXCLUSION', { exclusion: excl.toJS()})
+                        }} />
+                        <Button
+                          text={'Remove'}
+                          small={true}
+                          style={'danger'}
+                          onClick={e => this.props.deleteExclusion({ _id: excl.get('_id')})}
+                        />
+                      </ButtonGroup>
+                    }
+                  />
+                </ZoneBox>
+              )
+            })}
+          </Zone>
+        </SettingItem>
       </div>
     )
   }
@@ -182,7 +236,9 @@ GeneralSettings.propTypes = {
   active: PropTypes.bool,
   updateSetting: PropTypes.func.isRequired,
   viewdata: PropTypes.object.isRequired,
-  settings: PropTypes.object.isRequired
+  settings: PropTypes.object.isRequired,
+  showModal: PropTypes.func.isRequired,
+  deleteExclusion: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -190,4 +246,4 @@ const mapStateToProps = state => ({
   settings: state.settings.settings
 })
 
-export default connect(mapStateToProps, { updateSetting })(GeneralSettings)
+export default connect(mapStateToProps, { updateSetting, showModal, deleteExclusion })(GeneralSettings)

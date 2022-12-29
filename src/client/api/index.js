@@ -473,4 +473,29 @@ api.common.fetchViewData = () => {
   })
 }
 
+api.exclusion = {}
+api.exclusion.create = payload => {
+  return axios.post('/api/v2/exclusion', payload).then(res => {
+    return res.data
+  })
+}
+
+api.exclusion.get = () => {
+  return axios.get('/api/v2/exclusion').then(res => {
+    return res.data
+  })
+}
+
+api.exclusion.update = payload => {
+  return axios.put(`/api/v2/exclusion/${payload._id}`, payload).then(res => {
+    return res.data
+  })
+}
+
+api.exclusion.delete = ({ _id }) => {
+  return axios.delete(`/api/v2/exclusion/${_id}`).then(res => {
+    return res.data
+  })
+}
+
 export default api

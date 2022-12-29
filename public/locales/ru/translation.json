@@ -270,5 +270,13 @@
   "Saturday": "Суббота",
   "Sunday": "Воскресенье",
   "Please enter a Description.": "Пожалуйста, введите текст описания.",
-  "Release Date": "Дата релиза"
+  "Release Date": "Дата релиза",
+  "Edit set of exclusion days": "Редактирование набора дней-исключений",
+  "Set name": "Имя справочника",
+  "Select year": "Выберите год",
+  "Day": "День",
+  "Working": "Рабочий",
+  "Add day": "Добавить день",
+  "Exclusion days": "Дни-исключения",
+  "Management": "Управление"
 }

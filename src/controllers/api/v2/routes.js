@@ -97,4 +97,10 @@ module.exports = function (middleware, router, controllers) {
   router.get('/api/v2/es/status', apiv2Auth, isAdmin, apiv2.elasticsearch.status)
 
   router.get('/api/v2/mailer/check', apiv2Auth, isAdmin, apiv2.mailer.check)
+
+  // Exclusion Days
+  router.get('/api/v2/exclusion', apiv2Auth, isAdmin, apiv2.exclusion.get)
+  router.post('/api/v2/exclusion', apiv2Auth, isAdmin, apiv2.exclusion.create)
+  router.put('/api/v2/exclusion/:id', apiv2Auth, isAdmin, apiv2.exclusion.update)
+  router.delete('/api/v2/exclusion/:id', apiv2Auth, isAdmin, apiv2.exclusion.delete)
 }

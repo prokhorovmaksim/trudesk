@@ -12,6 +12,7 @@ const Department = require('./department')
 const Message = require('./chat/message')
 const Conversation = require('./chat/conversation')
 const Release = require('./release')
+const Exclusion = require('./exclusionday')
 
 module.exports = {
   User,
@@ -27,5 +28,6 @@ module.exports = {
   Department,
   Message,
   Conversation,
-  Release
+  Release,
+  Exclusion
 }

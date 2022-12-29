@@ -116,13 +116,6 @@ export const UPDATE_NOTICE = defineAction('UPDATE_NOTICE', [SUCCESS, PENDING, ER
 export const DELETE_NOTICE = defineAction('DELETE_NOTICE', [PENDING, SUCCESS, ERROR])
 export const UNLOAD_NOTICES = defineAction('UNLOAD_NOTICES', [SUCCESS])
 
-// // Releases
-// export const FETCH_RELEASE = defineAction('FETCH_RELEASE', [PENDING, SUCCESS, ERROR])
-// export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
-// export const UPDATE_RELEASE = defineAction('UPDATE_RELEASE', [SUCCESS, PENDING, ERROR])
-// export const DELETE_RELEASE = defineAction('DELETE_RELEASE', [PENDING, SUCCESS, ERROR])
-// export const UNLOAD_RELEASE = defineAction('UNLOAD_RELEASE', [SUCCESS])
-
 // Releases
 export const FETCH_RELEASES = defineAction('FETCH_RELEASES', [SUCCESS, PENDING, ERROR])
 export const CREATE_RELEASE = defineAction('CREATE_RELEASE', [SUCCESS, PENDING, ERROR])
@@ -153,3 +146,9 @@ export const CHANGE_DELETED_TICKETS_PAGE = defineAction('CHANGE_DELETED_TICKETS_
 export const UPDATE_PERMISSIONS = defineAction('UPDATE_PERMISSIONS', [PENDING, SUCCESS, ERROR])
 export const CREATE_ROLE = defineAction('CREATE_ROLE', [SUCCESS, ERROR])
 export const DELETE_ROLE = defineAction('DELETE_ROLE', [SUCCESS, ERROR])
+
+// Exclusion days
+export const FETCH_EXCLUSIONS = defineAction('FETCH_EXCLUSIONS', [SUCCESS, PENDING, ERROR])
+export const CREATE_EXCLUSION = defineAction('CREATE_EXCLUSION', [SUCCESS, PENDING, ERROR])
+export const DELETE_EXCLUSION = defineAction('DELETE_EXCLUSION', [SUCCESS, PENDING, ERROR])
+export const UPDATE_EXCLUSION = defineAction('UPDATE_EXCLUSION', [SUCCESS, ERROR])
