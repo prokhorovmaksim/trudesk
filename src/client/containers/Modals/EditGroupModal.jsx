@@ -26,11 +26,13 @@ import { withTranslation } from 'react-i18next';
 import BaseModal from 'containers/Modals/BaseModal'
 import MultiSelect from 'components/MultiSelect'
 import Button from 'components/Button'
+import SingleSelect from 'components/SingleSelect'
 
 import helpers from 'lib/helpers'
 import $ from 'jquery'
 import SpinLoader from 'components/SpinLoader'
 import { fetchTicketTypes } from 'actions/tickets'
+import { fetchExclusions } from 'actions/exclusion'
 import Table from 'components/Table'
 import TableHeader from 'components/Table/TableHeader'
 import TableRow from 'components/Table/TableRow'
@@ -52,6 +54,7 @@ class EditGroupModal extends React.Component {
   componentDidMount () {
     this.props.fetchAccounts({ type: 'customers', limit: -1 })
     this.props.fetchTicketTypes({ limit: -1 })
+    this.props.fetchExclusions()
     this.name = this.props.group.name
     this.prepareDataForWorkingDays()
     this.showTimezones()
@@ -81,7 +84,8 @@ class EditGroupModal extends React.Component {
       sendMailTo: this.sendMailToSelect.getSelected() || [],
       ticketTypes: this.ticketTypesSelect.getSelected() || [],
       workingDays: this.workingDays,
-      timezone: this.timezone
+      timezone: this.timezone,
+      exclusionSet: (this.exclusionSelect.value !== '-1') ? this.exclusionSelect.value : undefined
     }
 
     this.props.updateGroup(payload)
@@ -190,6 +194,15 @@ class EditGroupModal extends React.Component {
       })
       .toArray()
 
+    let allExclusionSets = this.props.exclusions
+      .map(excl => {
+      return { text: excl.get('name'), value: excl.get('_id') }
+    })
+      .toArray()
+
+    allExclusionSets.unshift({ text: '', value: '-1' })
+    const selectedExclusion = this.props.group.exclusionSet ? this.props.group.exclusionSet._id : ''
+
     const selectedTicketTypes = this.props.group.ticketTypes.map(type => {
       return type._id
     })
@@ -259,9 +272,20 @@ class EditGroupModal extends React.Component {
           </div>
           <p style={{ marginTop: '10px', color: '#222', fontSize: '20px', paddingBottom: '15px' }}>
             <label style={{ marginBottom: 15 }}>{this.props.t('Working days')}</label>
+            <label style={{ marginBottom: 15 }}>{this.props.t('Timezone')}</label>
             <p>
               <select className="tz-selector"></select>
             </p>
+            <div className='uk-margin-medium-bottom'>
+              <label style={{marginBottom: 15}}>{this.props.t('Exclusions set')}</label>
+              <SingleSelect
+                showTextbox={false}
+                items={allExclusionSets}
+                defaultValue={selectedExclusion}
+                width={'100%'}
+                ref={i => (this.exclusionSelect = i)}
+              />
+            </div>
             <Table
               tableRef={ref => (this.workingDaysTable = ref)}
               style={{ margin: 0 }}
@@ -347,15 +371,18 @@ EditGroupModal.propTypes = {
   fetchTicketTypes: PropTypes.func.isRequired,
   unloadAccounts: PropTypes.func.isRequired,
   accountsLoading: PropTypes.bool.isRequired,
-  ticketTypesLoading: PropTypes.bool.isRequired
+  ticketTypesLoading: PropTypes.bool.isRequired,
+  fetchExclusions: PropTypes.func.isRequired,
+  exclusions: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
   accounts: state.accountsState.accounts,
   accountsLoading: state.accountsState.loading,
   ticketTypes: state.ticketsState.types,
-  ticketTypesLoading: state.ticketsState.loadingTicketTypes
+  ticketTypesLoading: state.ticketsState.loadingTicketTypes,
+  exclusions: state.exclusionsState.exclusions
 })
 
-export default compose(withTranslation(), connect(mapStateToProps, { updateGroup, fetchAccounts, fetchTicketTypes, unloadAccounts }
+export default compose(withTranslation(), connect(mapStateToProps, { updateGroup, fetchAccounts, fetchTicketTypes, unloadAccounts, fetchExclusions }
 ))(EditGroupModal)

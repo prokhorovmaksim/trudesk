@@ -445,7 +445,6 @@ apiTickets.create = function (req, res) {
           ticket.owner = req.user._id
         }
 
-        console.log(ticket.date)
 
         calculateOverdueData(postData.group, postData.priority, new Date(), (err, date) => {
           if (err) console.log(err)
@@ -528,7 +527,20 @@ const calculateOverdueData = (groupId, priorityId, initialDate, callback) => {
         const weekDayIter = (weekDay > 0) ? weekDay - 1 : 6
         const thisWorkingDay = workingDays[weekDayIter]
 
-        if (thisWorkingDay.isEnabled && Number(thisWorkingDay.endTime.split(':')[0]) - timezoneOffset > overdueDate.getHours()) {
+        let isThisDayWorking = thisWorkingDay.isEnabled
+        if (grp.exclusionSet) {
+          for (let i = 0; i < grp.exclusionSet.days.length; i++) {
+            const exclDate = grp.exclusionSet.days[i].date
+            if ((overdueDate.getFullYear() === exclDate.getFullYear())
+              && (overdueDate.getMonth() === exclDate.getMonth())
+              && (overdueDate.getDate() === exclDate.getDate())) {
+              isThisDayWorking = grp.exclusionSet.days[i].isEnabled
+              break
+            }
+          }
+        }
+
+        if (isThisDayWorking && Number(thisWorkingDay.endTime.split(':')[0]) - timezoneOffset > overdueDate.getHours()) {
           // some minutes to count this day
           if (Number(thisWorkingDay.startTime.split(':')[0]) - timezoneOffset > overdueDate.getHours()) {
             // take all working day

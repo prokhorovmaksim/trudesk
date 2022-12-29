@@ -2,6 +2,7 @@ const apiUtils = require('../apiUtils');
 const logger = require('../../../logger');
 const Models = require('../../../models');
 const winston = require("../../../logger");
+const _ = require('lodash')
 
 
 const exclusionV2 = {}
@@ -26,10 +27,10 @@ exclusionV2.create = async function (req, res) {
 
 exclusionV2.get = async (req, res) => {
   try {
-    const exclusions = await Models.Exclusion.getExclusionDaysDirectories(function (result) {
-      return apiUtils.sendApiSuccess(res, {
-        exclusions: result,
-      })
+    const exclusions = await Models.Exclusion.getExclusionDaysDirectories()
+    const exclusionsSorted = _.sortBy(exclusions, 'name')
+    return apiUtils.sendApiSuccess(res, {
+      exclusions: exclusionsSorted,
     })
   } catch (err) {
     logger.warn(err)

@@ -78,6 +78,11 @@ apiGroups.update = function (req, res) {
     if (putData.ticketTypes) group.ticketTypes = putData.ticketTypes
     if (putData.workingDays) group.workingDays = putData.workingDays
     if (putData.timezone) group.timezone = putData.timezone
+    if (putData.exclusionSet) {
+      group.exclusionSet = putData.exclusionSet
+    } else {
+      group.exclusionSet = undefined
+    }
 
     group.save(function (err, group) {
       if (err) return apiUtils.sendApiError(res, 500, err.message)

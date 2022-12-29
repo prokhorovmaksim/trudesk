@@ -47,7 +47,12 @@ var groupSchema = mongoose.Schema({
     startTime: { type: String },
     endTime: { type: String }
   }],
-  timezone: { type: String, default: 'Europe/Moscow' }
+  timezone: { type: String, default: 'Europe/Moscow' },
+  exclusionSet: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: 'exclusion_days'
+  },
 })
 
 groupSchema.plugin(require('mongoose-autopopulate'))
@@ -154,6 +159,7 @@ groupSchema.statics.getGroupByName = function (name, callback) {
     .findOne({ name: name })
     .populate('members', '_id username fullname email role preferences image title deleted')
     .populate('sendMailTo', '_id username fullname email role preferences image title deleted')
+    .populate('exclusionSet')
 
   return q.exec(callback)
 }
@@ -170,6 +176,7 @@ groupSchema.statics.getWithObject = function (obj, callback) {
       .skip(page * limit)
       .populate('members', '_id username fullname email role preferences image title deleted')
       .populate('sendMailTo', '_id username fullname email role preferences image title deleted')
+      .populate('exclusionSet')
       .sort('name')
       .exec(callback)
   }
@@ -180,6 +187,7 @@ groupSchema.statics.getWithObject = function (obj, callback) {
     .skip(page * limit)
     .populate('members', '_id username fullname email role preferences image title deleted')
     .populate('sendMailTo', '_id username fullname email role preferences image title deleted')
+    .populate('exclusionSet')
     .sort('name')
     .exec(callback)
 }
@@ -193,6 +201,7 @@ groupSchema.statics.getAllGroups = async function (callback) {
         .find({})
         .populate('members', '_id username fullname email role preferences image title deleted')
         .populate('sendMailTo', '_id username fullname email role preferences image title deleted')
+        .populate('exclusionSet')
         .sort('name')
 
       if (typeof callback === 'function') return q.exec(callback)
@@ -244,6 +253,7 @@ groupSchema.statics.getGroups = async function (groupIds, callback) {
         const exec = this.model(COLLECTION)
           .find({ _id: { $in: groupIds } })
           .populate('members', '_id username fullname email role preferences image title deleted')
+          .populate('exclusionSet')
           .sort('name')
 
         if (typeof callback === 'function') {
@@ -274,6 +284,7 @@ groupSchema.statics.getAllGroupsOfUser = async function (userId, callback) {
         .find({ members: userId })
         .populate('members', '_id username fullname email role preferences image title deleted')
         .populate('sendMailTo', '_id username fullname email role preferences image title deleted')
+        .populate('exclusionSet')
         .sort('name')
 
       if (typeof callback === 'function') return q.exec(callback)
@@ -302,6 +313,7 @@ groupSchema.statics.getGroupById = function (gId, callback) {
     .findOne({ _id: gId })
     .populate('members', '_id username fullname email role preferences image title')
     .populate('sendMailTo', '_id username fullname email role preferences image title')
+    .populate('exclusionSet')
 
   return q.exec(callback)
 }
