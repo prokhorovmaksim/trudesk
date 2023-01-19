@@ -75,7 +75,7 @@ teamSchema.methods.removeMember = function (memberId, callback) {
 
       if (!isMember(this.members, memberId)) {
         if(typeof callback === 'function') return callback(null, false)
-        return reject(false)
+        return resolve(false)
       }
       this.members.splice(_.indexOf(this.members, _.find(this.members, { _id: memberId })), 1)
       this.members = _.uniq(this.members)
